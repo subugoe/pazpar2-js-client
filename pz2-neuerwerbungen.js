@@ -1,13 +1,14 @@
 /*
  * pz2-neuerwerbungen.js
  *
- * 2010-2012 by Sven-S. Porst, SUB Göttingen
- * porst@sub.uni-goettingen.de
+ * 2010-2012 by Sven-S. Porst, SUB Göttingen <porst@sub.uni-goettingen.de>
  *
  * JavaScript for interactive loading and display of new acquisitions by
  * the library.
  *
  * For use with the pazpar2neuerwerbungen plugin of the pazpar2 TYPO3 extension.
+ *
+ * https://github.com/ssp/pazpar2-js-client
  */
 
 

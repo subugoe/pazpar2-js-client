@@ -1,8 +1,14 @@
 /* 
  * pz2-client.js
  * 
- * Adapted from Indexdata’s js-client.js by Sven-S. Porst
- * for SUB Göttingen <porst@sub.uni-goettingen.de>
+ * Mildly based on Indexdata’s js-client.js.
+ * 2010-2012 Sven-S. Porst, SUB Göttingen <porst@sub.uni-goettingen.de>
+ *
+ * JavaScript for running pazpar2 queries and displaying their results.
+ *
+ * Please refer to the readme in the repository:
+ *
+ * https://github.com/ssp/pazpar2-js-client
  */
 
 var usesessions = true;
