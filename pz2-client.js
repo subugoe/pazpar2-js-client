@@ -3630,7 +3630,7 @@ function renderDetails(recordID) {
 			if (XMLString) {
 				form = document.createElement('form');
 				form.method = 'POST';
-				var scriptPath = 'typo3conf/ext/pazpar2/Resources/Public/convert-pazpar2-record.php';
+				var scriptPath = 'typo3conf/ext/pazpar2/Resources/Public/pz2-client/converter/convert-pazpar2-record.php';
 				var scriptGetParameters = {'format': exportFormat}
 				if (pageLanguage !== undefined) {
 					scriptGetParameters.language = pageLanguage;

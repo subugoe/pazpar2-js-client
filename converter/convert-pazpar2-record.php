@@ -17,7 +17,7 @@
  *	* q - containing a UTF-8 encoded XML serialisation of a pazpar2 location record
  *  * format - containing the name of the format to convert the record to
  * 
- * It returns the result of converting the pazpar2 record to the desired format. 
+ * It returns the result of converting the pazpar2 record to the desired format.
  */
 
 function transform (&$errorMessage) {
@@ -54,7 +54,7 @@ function transform (&$errorMessage) {
 	if (array_key_exists('q', $parameters) && array_key_exists('format', $parameters)) {
 		$format = $formats[$parameters['format']];
 		if ($format !== Null) {
-			$xslPath = '../Private/XSL/' . $format['xsl'];
+			$xslPath = $format['xsl'];
 			$xsl = new DOMDocument();
 			$xsl->load($xslPath);
 			$xsltproc = new XSLTProcessor();
