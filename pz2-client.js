@@ -382,6 +382,8 @@ var useHistogramForYearFacets = true;
 var siteName = undefined;
 // Add COinS elements to our results list for the benefit of zotero >= 3?
 var provideCOinSExport = true;
+// Whether to include a link to Karlsruher Virtueller Katalog along with the export links.
+var showKVKLink = true;
 // List of export formats we provide links for. An empty list suppresses the
 // creation of export links.
 var exportFormats = ['ris', 'bibtex'];
