@@ -1,4 +1,4 @@
-# pz2-client
+# pazpar2-js-client
 A JavaScript client to interact with [Indexdata’s pazpar2](http://www.indexdata.com/pazpar2) metasearch software and to display its search results.
 
 2010-2012 by [Sven-S. Porst](http://earthlingsoft.net/ssp/), [SUB Göttingen](http://www.sub.uni-goettingen.de) [<porst@sub.uni-goettingen.de](mailto:porst@sub.uni-goettingen.de?subject=pz2-client)
