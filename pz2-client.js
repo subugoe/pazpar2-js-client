@@ -3201,7 +3201,20 @@ function renderDetails(recordID) {
 					label = localisedLabelString;
 				}
 
-				var content = value.join(', ').replace(/^[ ]*/,'').replace(/[ ;.,]*$/,'');
+				var valueStrings = [];
+				for ( var valueIndex in value ) {
+					var currentValue = value[valueIndex];
+					if ( typeof(currentValue) === 'string' ) {
+						valueStrings.push(currentValue);
+					}
+					else if ( typeof(currentValue) === 'object' ) {
+						if ( typeof(currentValue['#text']) === 'string' ) {
+							valueStrings.push(currentValue['#text']);
+						}
+					}
+				}
+
+				var content = valueStrings.join(', ').replace(/^[ ]*/,'').replace(/[ ;.,]*$/,'');
 
 				infoItem = detailInfoItemWithLabel(content, label);
 			}
