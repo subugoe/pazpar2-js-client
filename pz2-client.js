@@ -661,7 +661,7 @@ function displayLists (list) {
 				if (dateString) {
 					var yearsArray = dateString.split('-');
 					var lastYear = yearsArray[yearsArray.length - 1];
-					year = parseInt(lastYear);
+					year = parseInt(lastYear, 10);
 				}
 			}
 
@@ -773,7 +773,7 @@ function my_onshow (data) {
 			for (var dateIndex in record['md-date']) {
 				var dateParts = record['md-date'][dateIndex].match(/[0-9]{4}/g);
 				if (dateParts && dateParts.length > 0) {
-					var parsedDate = parseInt(dateParts[dateParts.length - 1]);
+					var parsedDate = parseInt(dateParts[dateParts.length - 1], 10);
 					if (!isNaN(parsedDate)) {
 						result.push(parsedDate);
 					}
@@ -1253,7 +1253,7 @@ function updatePagers () {
 					var target = targetStatus[targetIndex];
 
 					if (!isNaN(target.hits)) {
-						totalResultCount += parseInt(target.hits);
+						totalResultCount += parseInt(target.hits, 10);
 					}
 
 					if (target.state === 'Client_Working') {
@@ -1635,7 +1635,7 @@ function facetListForType (type, preferOriginalFacets) {
 
 		var graphData = [];
 		for (var termIndex in terms) {
-			var year = parseInt(terms[termIndex].name);
+			var year = parseInt(terms[termIndex].name, 10);
 			if (year) {
 				graphData.push([year, terms[termIndex].freq]);
 			}
@@ -3727,7 +3727,7 @@ function renderDetails(recordID) {
 			var submenuList = document.createElement('ul');
 			submenuContainer.appendChild(submenuList);
 			for (var locationIndex in locations) {
-				var itemLabel = localise('download-label-submenu-index-format').replace(/\*/, parseInt(locationIndex) + 1);
+				var itemLabel = localise('download-label-submenu-index-format').replace(/\*/, parseInt(locationIndex, 10) + 1);
 				submenuList.appendChild(exportItem([locations[locationIndex]], exportFormat, itemLabel));
 			}
 			
