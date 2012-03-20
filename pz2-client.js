@@ -2654,14 +2654,13 @@ function renderDetails(recordID) {
 
 
 	/*	ZDBQuery
-		Loads XML journal info from ZDB via a proxy on our own server
-			(to avoid cross-domain load problems).
+		Loads XML journal info from ZDB-JOP (via a proxy on our own server
+			to avoid cross-domain load problems).
 		Inserts the information into the DOM.
 
 		input:	element - DOM element that the resulting information is inserted into.
 	*/
 	var addZDBInfoIntoElement = function (element) {
-		// Do nothing if there are no ISSNs.
 		var ISSN;
 		if (data['md-issn'] && data['md-issn'].length > 0) {
 			ISSN = data['md-issn'][0];
@@ -2674,10 +2673,10 @@ function renderDetails(recordID) {
 			eISSN = data['md-eissn'][0];
 		}
 		
-		if ( !(ISSN || eISSN) ) {return;}
+		// Do nothing if there are no ISSNs or we do not want to use ZDB-JOP.
+		if ( !(ISSN || eISSN) || !useZDB ) { return; }
 
-		var serviceID = 'sub:vlib';
-		var parameters = 'sid=' + serviceID;
+		var parameters = '';
 
 		if ( ISSN ) {
 			parameters += '&issn=' + ISSN;
@@ -4070,9 +4069,7 @@ function renderDetails(recordID) {
 		appendInfoToContainer( locationDetails(), detailsList );
 		appendGoogleBooksElementTo(detailsList);
 		appendInfoToContainer( mapDetailLine(), detailsList );
-		if (useZDB === true) {
-			addZDBInfoIntoElement( detailsList );
-		}
+		addZDBInfoIntoElement( detailsList );
 
 		if (exportFormats.length > 0) {
 			appendInfoToContainer( exportLinks(), detailsDiv );
