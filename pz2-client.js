@@ -30,7 +30,7 @@ var termLists = {
 };
 
 
-if (document.location.hash == '#useproxy') {
+if (document.location.hash === '#useproxy') {
 	usesessions = false;
 	pazpar2path = '/service-proxy/';
 	showResponseType = 'json';
@@ -115,8 +115,7 @@ var germanTerms = {
 	'Error indicator': '\u2022',
 	'Bei der Übertragung von Daten aus # der abgefragten Kataloge ist ein Fehler aufgetreten.': '\u2022: Bei der Übertragung von Daten aus # der abgefragten Kataloge ist ein Fehler aufgetreten.',
 	'In diesem Katalog gibt es noch # weitere Treffer.': 'In diesem Katalog gibt es noch # weitere Treffer, die wir nicht herunterladen und hier anzeigen können. Bitte verwenden Sie einen spezifischeren Suchbegriff, um die Trefferzahl zu reduzieren. Oder suchen Sie direkt im Katalog.',
-	'Nicht alle Datenbanken verfügbar.': 'Von Ihrem aktuellen Internetzugang haben sie nicht Zugriff auf alle Datenbanken.\n\
-Bei Zugriff aus einem deutschen Universitätsnetzwerk umfaßt Ihre Abfrage zusätzliche Datenbanken.',
+	'Nicht alle Datenbanken verfügbar.': 'Von Ihrem aktuellen Internetzugang haben sie nicht Zugriff auf alle Datenbanken.\nBei Zugriff aus einem deutschen Universitätsnetzwerk umfaßt Ihre Abfrage zusätzliche Datenbanken.',
 	'Zugang über:': 'Zugang über:',
 	'Gastzugang': 'Gastzugang',
 	// Pager

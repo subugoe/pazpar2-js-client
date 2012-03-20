@@ -18,6 +18,7 @@ Include »pz2.js«, »pz2-client.js« and »pz2.css« in your HTML file to load 
 For the scripts to operate successfully, you will need:
 
 * your pazpar2 server (or a reverse-proxy forwarding to it) set up at the path /pazpar2/search.pz2 [[example apache configuration]](https://raw.github.com/ssp/pazpar2-extras/blob/master/fileadmin/apache/pazpar2.conf)
+* your results will be best if you use the same metadata fields we do. These are based on the ones provided by tmarc.xsl and augmented with additional fields in a few areas. The full list of fields can be found in the Readme of our [TYPO3 Extension](https://github.com/ssp/typo3-pazpar2).
 * [jQuery 1.7.1](http://jquery.com/) or higher included in your site
 * [flot](http://code.google.com/p/flot/) with its selection module included in your site if you set the useHistogramForYearFacets option to true; the script is included in the repository as a submodule
 * for the optional usage of ZDB journal availability information (mostly useful in Germany), you are expected to proxy [ZDB’s Journals Online & Print](http://www.zeitschriftendatenbank.de/services/journals-online-print/) service to the /zdb/ and /zdb-local/ paths of your server [[example apache configuration]](https://raw.github.com/ssp/pazpar2-extras/blob/master/fileadmin/apache/zdb.conf).
