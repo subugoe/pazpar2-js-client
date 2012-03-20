@@ -29,7 +29,8 @@ A number of parameters can be set for the scripts. To be set after including »p
 
 To be set after including »pz2-client.js« if you want to override the default values:
 
-* useGoogleBooks (boolean, default: false): whether to use Google Books cover art and preview for items with ISBN or OCLC number, if set to true, you also need to include Google’s script for Google Books
+* useGoogleBooks (boolean, default: false): whether to use Google Books cover art and preview for items with ISBN or OCLC number; if set to true, you also need to include Google’s script for Google Books
+* useMaps (boolean, default: false): whether to use Google Maps to display a map with a highlight for the region covered by the item; if set to true, you also need to load Google loader
 * useZDB (boolean, default: false): whether to look up journal availability at the user’s IP (in German university networks) using ZDB’s Journals Online and Print service
 * ZDBUseClientIP (boolean, default: true): if true, the ZDB-JOP proxy is expected to be a /zdb/, if false, the ZDB-JOP proxy is expected to be at /zdb-local/
 * useHistogramForYearFacets (boolean, default: true): if true, year facets are displayed as a histogram rather than as a list
@@ -52,6 +53,7 @@ The configuration of the [Lib AAC](http://aac.sub.uni-goettingen.de/) site can b
 		<script type="text/javascript" src="pz2-client/pz2-client.js"></script>
 		<script type="text/javascript">
 			useGoogleBooks = true;
+			useMaps = true;
 			useZDB = true;
 			ZDBUseClientIP = true;
 			useHistogramForYearFacets = true;

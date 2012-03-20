@@ -575,6 +575,11 @@ a.pz2-ZDBGeneralInfo {
 }
 
 
+.pz2-mapContainer {
+	height: 200px;
+}
+
+
 
 /*
 Hide/Show elements depending on JavaScript status.

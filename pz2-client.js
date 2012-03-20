@@ -77,6 +77,8 @@ var germanTerms = {
 	'detail-label-doi-plural': 'DOIs',
 	'detail-label-keyword': 'Schlagwort',
 	'detail-label-keyword-plural': 'Schlagwörter',
+	'detail-label-map': 'Ort',
+	'detail-label-mapscale': 'Maßstab',
 	'detail-label-creator': 'erfasst von',
 	'detail-label-verfügbarkeit': 'Verfügbarkeit',
 	'elektronisch': 'digital',
@@ -189,6 +191,8 @@ var englishTerms = {
 	'detail-label-doi-plural': 'DOIs',
 	'detail-label-keyword': 'Keyword',
 	'detail-label-keyword-plural': 'Keywords',
+	'detail-label-map': 'Location',
+	'detail-label-mapscale': 'Scale',
 	'detail-label-creator': 'catalogued by',
 	'detail-label-verfügbarkeit': 'Availability',
 	'elektronisch': 'electronic',
@@ -377,6 +381,8 @@ var targetStatus = {};
 var displaySort =  [];
 // Use Google Books for cover art when an ISBN or OCLC number is known?
 var useGoogleBooks = false;
+// Use Google Maps to display the region covered by records?
+var useMaps = false;
 // Query ZDB-JOP for availability information based for items with ISSN?
 // ZDB-JOP needs to be reverse-proxied to /zdb/ (passing on the client IP)
 // or /zdb-local/ (passing on the server’s IP) depedning on ZDBUseClientIP.
@@ -3146,7 +3152,160 @@ function renderDetails(recordID) {
 	} // end of addGoogleBooksLinkIntoElement
 
 
-	
+
+	/*	mapDetailLine
+		Add a graphical map displaying the region covered by a record if
+		the metadata exist and configured to do so.
+
+		output: Array of DOM elements containing
+				0:	DT element with title Map Location
+				1:	DD element with the graphical map and a markers for the
+						regions covered by the record
+	*/
+	var mapDetailLine = function () {
+		/*	mapsLoaded
+			Callback function for Google Loader.
+			Creates and configures the Map object once it is available.
+		*/
+		var mapsLoaded = function () {
+			var options = {
+				'mapTypeId': google.maps.MapTypeId.TERRAIN,
+				'mapTypeControl': false,
+				'scrollwheel': false,
+				'streetViewControl': false
+			};
+			var map = new google.maps.Map(mapContainer, options);
+
+			var containingBounds = new google.maps.LatLngBounds();
+			var highlightColour = jQuery('.pz2-termList-xtargets a').css('color');
+
+			for (var rectangleID in rectangles) {
+				var rectangle = rectangles[rectangleID];
+
+				var bounds = new google.maps.LatLngBounds(
+					new google.maps.LatLng(rectangle[1][0], rectangle[1][1]),
+					new google.maps.LatLng(rectangle[3][0], rectangle[3][1])
+				);
+				containingBounds.union(bounds);
+
+				var rectangleOptions = new google.maps.Rectangle({
+					'map': map,
+					'bounds': bounds,
+					'strokeColor': highlightColour,
+					'fillColor': highlightColour
+				});
+			}
+
+			map.fitBounds(containingBounds);
+		}
+
+
+
+		/*	borderNumbersForString
+			Takes ISBD-style geographical range string and converts it into an
+			array of floating point numbers.
+
+			input:	ISBD-style coordinate range string
+			output:	Array of floating point numbers
+		*/
+		var borderNumbersForString = function (borderString) {
+			/*	degreeStringToDecimal
+				Takes an ISBD-style geographical degree string and converts it into
+				a floating point number:
+					* North/East -> +, South/West -> -
+					* Degrees[/Minutes[/Seconds]] -> Decimal numbers
+					* Takes into account different Symbols for Degrees/Minutes/Seconds
+						(proper Unicode, ASCII equivalents, spaces)
+			
+				input:	ISBD-style coordinate string
+				output:	floating point number
+			*/
+			var degreeStringToDecimal = function (degreeString) {
+				var degrees;
+
+				var degreeComponents = degreeString.replace(/[°'"′″]/, ' ').split(' ');
+				if (degreeComponents.length >= 2) {
+					degrees = parseInt(degreeComponents[1], 10);
+					if (degreeComponents[0] === 'W' && degreeComponents[0] === 'S') {
+						degrees *= -1;
+					}
+					if (degreeComponents.length >= 3) {
+						degrees += parseInt(degreeComponents[2], 10) / 60;
+						if (degreeComponents.length >= 4) {
+							degrees += parseFloat(degreeComponents[3]) / 3600;
+						}
+					}
+				}
+
+				return degrees;
+			}
+
+			var result;
+			var components = borderString.replace('--', '–').split('–');
+			if (components.length === 2) {
+				result = [degreeStringToDecimal(components[0]), degreeStringToDecimal(components[1])];
+			}
+
+			return result;
+		}
+
+
+
+		/*	rectangleVerticesForCoordinatesString
+			Converts ISBD-style coordinate string into an array with coordinate
+			pairs (Array of [latitude, longitude] numbers) of the vertices of
+			the rectangle it describes.
+
+			input:	ISBD-style coordinates string
+			output:	Array containing the [top-left, bottom-left, bottom-right, top-right] coordinate pairs
+		*/
+		var rectangleVerticesForCoordinatesString = function (coordinatesString) {
+			var coordinates = [];
+			var longLatArray = coordinatesString.split('/');
+			if (longLatArray.length == 2) {
+				var longitudeNumbers = borderNumbersForString(longLatArray[0]);
+				var latitudeNumbers = borderNumbersForString(longLatArray[1]);
+				coordinates.push([latitudeNumbers[0], longitudeNumbers[0]]);
+				coordinates.push([latitudeNumbers[1], longitudeNumbers[0]]);
+				coordinates.push([latitudeNumbers[1], longitudeNumbers[1]]);
+				coordinates.push([latitudeNumbers[0], longitudeNumbers[1]]);
+			}
+
+			return coordinates;
+		}
+
+
+		var line;
+		if (useMaps === true) {
+			var rectangles = [];
+			for (var locationID in data.location) {
+				var location = data.location[locationID];
+				if (location['md-mapscale']) {
+					for (var mapscaleID in location['md-mapscale']) {
+						var mapscale = location['md-mapscale'][mapscaleID];
+						if (mapscale['@coordinates']) {
+							var rectangle = rectangleVerticesForCoordinatesString(mapscale['@coordinates']);
+							rectangles.push(rectangle);
+						}
+					}
+				}
+			}
+
+			if (rectangles.length > 0) {
+				var mapContainer = document.createElement('div');
+				mapContainer.setAttribute('class', 'pz2-mapContainer');
+				google.load('maps', '3', {'callback': mapsLoaded, 'other_params': 'sensor=false'});
+
+				var title = document.createTextNode(localise('detail-label-map') + ':');
+				line = detailLineBasic(title, mapContainer);
+			}
+		}
+
+		return line;
+	} // End of mapDetailLine
+
+
+
 	/*	locationDetails
 		Returns markup for each location of the item found from the current data.
 		output:	DOM object with information about this particular copy/location of the item found
@@ -3906,13 +4065,16 @@ function renderDetails(recordID) {
 		appendInfoToContainer( ISSNsDetailLine(), detailsList );
 		appendInfoToContainer( detailLineAuto('doi'), detailsList );
 		appendInfoToContainer( detailLineAuto('creator'), detailsList );
+		appendInfoToContainer( detailLineAuto('mapscale'), detailsList );
 		appendInfoToContainer( keywordsDetailLine(), detailsList);
 
 		appendInfoToContainer( locationDetails(), detailsList );
 		appendGoogleBooksElementTo(detailsList);
+		appendInfoToContainer( mapDetailLine(), detailsList );
 		if (useZDB === true) {
 			addZDBInfoIntoElement( detailsList );
 		}
+
 		if (exportFormats.length > 0) {
 			appendInfoToContainer( exportLinks(), detailsDiv );
 		}
