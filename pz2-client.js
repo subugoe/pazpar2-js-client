@@ -55,6 +55,8 @@ var germanTerms = {
 	'# weitere anzeigen': '# weitere anzeigen',
 	// Detail display
 	'Im Katalog ansehen': 'Im Katalog ansehen.',
+	'enthaltendes Werk im Katalog ansehen': 'Alle zugehörigen Publikationen im Katalog ansehen.',
+	'enthaltendes Werk': 'zugehörige Publikationen',
 	'detail-label-title': 'Titel',
 	'detail-label-author': 'Autor',
 	'detail-label-author-plural': 'Autoren',
@@ -168,6 +170,8 @@ var englishTerms = {
 	'# weitere anzeigen': 'Show # more items',
 	// Detail display
 	'Im Katalog ansehen': 'View in catalogue.',
+	'enthaltendes Werk im Katalog ansehen': 'View all associated items in catalogue.',
+	'enthaltendes Werk': 'associated items',
 	'detail-label-title': 'Title',
 	'detail-label-author': 'Author',
 	'detail-label-author-plural': 'Authors',
@@ -3580,16 +3584,20 @@ function renderDetails(recordID) {
 
 
 
-		/*	catalogueLink
-			Returns a link for the current record that points to the catalogue page for that item.
-			output:	DOM anchor element pointing to the catalogue page.
+		/*	processedCatalogueURLFromField
+			Checks whether the field with the passed name exists, extracts the
+			first instance of it and manipulates it if configured to do so.
+
+			input:	fieldName - string with the name of the metadata field to take the URL from
+			output: string with the URL pointing to the catalogue page
 		*/
-		var catalogueLink = function () {
-			var catalogueURL = location['md-catalogue-url'];
+		var processedCatalogueURLFromField = function (fieldName) {
+			var URL;
+			var catalogueURL = location['md-' + fieldName];
 			
 			if (catalogueURL && catalogueURL.length > 0) {
-				catalogueURL = catalogueURL[0];
-				
+				var URL = catalogueURL[0];
+
 				/*	If the user does not have a Uni Göttingen IP address
 					and we don’t generally prefer using the Opac, redirect Opac links
 					to GVK which is a superset and offers better services for non-locals.
@@ -3597,18 +3605,56 @@ function renderDetails(recordID) {
 				if (!preferSUBOpac && clientIPAddress.search('134.76.') !== 0) {
 					var opacBaseURL = 'https?://opac.sub.uni-goettingen.de/DB=1';
 					var GVKBaseURL = 'http://gso.gbv.de/DB=2.1';
-					catalogueURL = catalogueURL.replace(opacBaseURL, GVKBaseURL);
+					URL = URL.replace(opacBaseURL, GVKBaseURL);
 				}
 			}
+			
+			return URL;
+		}
 
-			var targetName = localise(location['@name'], catalogueNames);
-			if (catalogueURL && targetName) {
+
+
+		/*	parentLink
+			Returns a DOM element linking to the catalogue page of the current
+			record’s parent record.
+
+			output: DOM anchor element pointing to the catalogue page.
+		*/
+		var parentLink = function () {
+			var result;
+			var URL = processedCatalogueURLFromField('parent-catalogue-url');
+
+			if (URL) {
 				var linkElement = document.createElement('a');
-				linkElement.setAttribute('href', catalogueURL);
+				linkElement.setAttribute('href', URL);
+				linkElement.title = localise('enthaltendes Werk im Katalog ansehen');
+				turnIntoNewWindowLink(linkElement);
+				jQuery(linkElement).addClass('pz2-detail-parentCatalogueLink');
+				linkElement.appendChild(document.createTextNode(localise('enthaltendes Werk')));
+				result = [linkElement, document.createTextNode(' ')];
+			}
+
+			return result;
+		}
+
+
+
+		/*	catalogueLink
+			Returns a DOM element linking to the catalogue page of the current record.
+
+			output:	DOM anchor element pointing to the catalogue page.
+		*/
+		var catalogueLink = function () {
+			var linkElement;
+			var URL = processedCatalogueURLFromField('catalogue-url');
+			var targetName = localise(location['@name'], catalogueNames);
+
+			if (URL && targetName) {
+				linkElement = document.createElement('a');
+				linkElement.setAttribute('href', URL);
+				linkElement.title = localise('Im Katalog ansehen');
 				turnIntoNewWindowLink(linkElement);
 				jQuery(linkElement).addClass('pz2-detail-catalogueLink')
-				var linkTitle = localise('Im Katalog ansehen');
-				linkElement.title = linkTitle;
 				linkElement.appendChild(document.createTextNode(targetName));
 			}
 
@@ -3640,8 +3686,9 @@ function renderDetails(recordID) {
 				cleanISBNs();
 				appendInfoToContainer( detailInfoItem('isbn'), detailsData );
 			}
-			appendInfoToContainer( electronicURLs(), detailsData);
-			appendInfoToContainer( catalogueLink(), detailsData);
+			appendInfoToContainer( electronicURLs(), detailsData );
+			appendInfoToContainer( parentLink(), detailsData )
+			appendInfoToContainer( catalogueLink(), detailsData );
 
 			if (detailsData.childNodes.length == 0) {locationDetails = [];}
 		}
