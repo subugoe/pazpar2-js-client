@@ -3615,8 +3615,8 @@ function renderDetails(recordID) {
 
 
 		/*	parentLink
-			Returns a DOM element linking to the catalogue page of the current
-			record’s parent record.
+			Returns DOM elements linking to the catalogue page of the current
+			record’s parent record, plus spacing.
 
 			output: DOM anchor element pointing to the catalogue page.
 		*/
