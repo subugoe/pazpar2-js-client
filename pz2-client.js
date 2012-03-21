@@ -4029,19 +4029,12 @@ function renderDetails(recordID) {
 
 
 
-		var exportLinks = document.createElement('div');
-		jQuery(exportLinks).addClass('pz2-extraLinks');
-		var exportLinksLabel = document.createElement('span');
-		exportLinks.appendChild(exportLinksLabel);
-		jQuery(exportLinksLabel).addClass('pz2-extraLinksLabel');
-		exportLinksLabel.appendChild(document.createTextNode(localise('mehr Links')));
 		var extraLinkList = document.createElement('ul');
-		exportLinks.appendChild(extraLinkList);
 
 		if (showKVKLink == 1) {
 			appendInfoToContainer(KVKItem(data), extraLinkList);
 		}
-		
+
 		if (data.location.length == 1) {
 			var labelFormat = localise('download-label-format-simple');
 			appendExportItemsTo(data.location, labelFormat, extraLinkList);
@@ -4049,12 +4042,23 @@ function renderDetails(recordID) {
 		else {
 			var labelFormatAll = localise('download-label-format-all');
 			appendExportItemsTo(data.location, labelFormatAll, extraLinkList);
-			
+
 			if (showExportLinksForEachLocation) {
 				for (var formatIndex in exportFormats) {
 					extraLinkList.appendChild(exportItemSubmenu(data.location, exportFormats[formatIndex]));
 				}
 			}
+		}
+
+		var exportLinks;
+		if (extraLinkList.childNodes.length > 0) {
+			exportLinks = document.createElement('div');
+			jQuery(exportLinks).addClass('pz2-extraLinks');
+			var exportLinksLabel = document.createElement('span');
+			exportLinks.appendChild(exportLinksLabel);
+			jQuery(exportLinksLabel).addClass('pz2-extraLinksLabel');
+			exportLinksLabel.appendChild(document.createTextNode(localise('mehr Links')));
+			exportLinks.appendChild(extraLinkList);
 		}
 
 		return exportLinks;
@@ -4117,10 +4121,7 @@ function renderDetails(recordID) {
 		appendGoogleBooksElementTo(detailsList);
 		appendInfoToContainer( mapDetailLine(), detailsList );
 		addZDBInfoIntoElement( detailsList );
-
-		if (exportFormats.length > 0) {
-			appendInfoToContainer( exportLinks(), detailsDiv );
-		}
+		appendInfoToContainer( exportLinks(), detailsDiv );
 	}
 
 	return detailsDiv;
