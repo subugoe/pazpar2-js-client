@@ -3179,23 +3179,41 @@ function renderDetails(recordID) {
 			var map = new google.maps.Map(mapContainer, options);
 
 			var containingBounds = new google.maps.LatLngBounds();
+			var rectsOnMap = [];
 			var highlightColour = jQuery('.pz2-termList-xtargets a').css('color');
 
 			for (var rectangleID in rectangles) {
 				var rectangle = rectangles[rectangleID];
+				var drawThisRect = true;
+				
+				// Determine whether this rectangle has already been added to the map
+				// and avoid drawing duplicates.
+				for (var rectOnMapID in rectsOnMap) {
+					var rectOnMap = rectsOnMap[rectOnMapID];
+					if (rectOnMap[1][0] === rectangle[1][0]
+						&& rectOnMap[1][1] === rectangle[1][1]
+						&& rectOnMap[3][0] === rectangle[3][0]
+						&& rectOnMap[3][1] === rectangle[3][1] ) {
+						drawThisRect = false;
+						break;
+					}
+				}
 
-				var bounds = new google.maps.LatLngBounds(
-					new google.maps.LatLng(rectangle[1][0], rectangle[1][1]),
-					new google.maps.LatLng(rectangle[3][0], rectangle[3][1])
-				);
-				containingBounds.union(bounds);
+				if (drawThisRect) {
+					var bounds = new google.maps.LatLngBounds(
+						new google.maps.LatLng(rectangle[1][0], rectangle[1][1]),
+						new google.maps.LatLng(rectangle[3][0], rectangle[3][1])
+					);
+					containingBounds.union(bounds);
 
-				var rectangleOptions = new google.maps.Rectangle({
-					'map': map,
-					'bounds': bounds,
-					'strokeColor': highlightColour,
-					'fillColor': highlightColour
-				});
+					new google.maps.Rectangle({
+						'map': map,
+						'bounds': bounds,
+						'strokeColor': highlightColour,
+						'fillColor': highlightColour
+					});
+					rectsOnMap.push(rectangle);
+				}
 			}
 
 			map.fitBounds(containingBounds);
