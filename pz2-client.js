@@ -3179,44 +3179,72 @@ function renderDetails(recordID) {
 			var map = new google.maps.Map(mapContainer, options);
 
 			var containingBounds = new google.maps.LatLngBounds();
-			var rectsOnMap = [];
+			var rectanglesOnMap = [];
 			var highlightColour = jQuery('.pz2-termList-xtargets a').css('color');
 
-			for (var rectangleID in rectangles) {
-				var rectangle = rectangles[rectangleID];
+			for (var markerID in markers) {
+				var marker = markers[markerID];
+				var rect = marker.rect;
+				var newBounds = new google.maps.LatLngBounds(
+					new google.maps.LatLng(rect[1][0], rect[1][1]),
+					new google.maps.LatLng(rect[3][0], rect[3][1])
+				);
 				var drawThisRect = true;
 				
 				// Determine whether this rectangle has already been added to the map
 				// and avoid drawing duplicates.
-				for (var rectOnMapID in rectsOnMap) {
-					var rectOnMap = rectsOnMap[rectOnMapID];
-					if (rectOnMap[1][0] === rectangle[1][0]
-						&& rectOnMap[1][1] === rectangle[1][1]
-						&& rectOnMap[3][0] === rectangle[3][0]
-						&& rectOnMap[3][1] === rectangle[3][1] ) {
+				for (var rectangleOnMapID in rectanglesOnMap) {
+					var rectangleOnMap = rectanglesOnMap[rectangleOnMapID];
+					if (newBounds.equals(rectangleOnMap.getBounds())) {
 						drawThisRect = false;
+						rectangleOnMap.pz2Locations.push(marker.location);
 						break;
 					}
 				}
 
 				if (drawThisRect) {
-					var bounds = new google.maps.LatLngBounds(
-						new google.maps.LatLng(rectangle[1][0], rectangle[1][1]),
-						new google.maps.LatLng(rectangle[3][0], rectangle[3][1])
-					);
-					containingBounds.union(bounds);
+					containingBounds.union(newBounds);
+					// Use zIndexes to avoid smaller rects being covered by larger ones.
+					// Ideally events would be passed on to all rects beneath the cursor,
+					// but that does not seem to happen.
+					var areaSpan = newBounds.toSpan();
+					var zIndex = 1 / (areaSpan.lat() + areaSpan.lng());
 
-					new google.maps.Rectangle({
+					var mapRectangle = new google.maps.Rectangle({
 						'map': map,
-						'bounds': bounds,
+						'bounds': newBounds,
 						'strokeColor': highlightColour,
-						'fillColor': highlightColour
+						'fillColor': highlightColour,
+						'zIndex': zIndex
 					});
-					rectsOnMap.push(rectangle);
+					mapRectangle.pz2Locations = [marker.location];
+					google.maps.event.addListener(mapRectangle, 'mouseover', rectMouseOver);
+					google.maps.event.addListener(mapRectangle, 'mouseout', rectMouseOut);
+					rectanglesOnMap.push(mapRectangle);
 				}
 			}
 
 			map.fitBounds(containingBounds);
+			trackPiwik('map');
+		}
+
+
+
+		/*	rectMouseOver, rectMouseOut
+			Handlers for rectangle mouse events.
+		*/
+		var rectMouseOver = function (event) {
+			for (var itemID in this.pz2Locations) {
+				var recordLocation = this.pz2Locations[itemID];
+				jQuery(recordLocation.element).addClass('pz2-highlight');
+			}
+		}
+
+		var rectMouseOut = function () {
+			for (var itemID in this.pz2Locations) {
+				var recordLocation = this.pz2Locations[itemID];
+				jQuery(recordLocation.element).removeClass('pz2-highlight');
+			}
 		}
 
 
@@ -3294,24 +3322,23 @@ function renderDetails(recordID) {
 			return coordinates;
 		}
 
-
 		var line;
 		if (useMaps === true) {
-			var rectangles = [];
+			var markers = [];
 			for (var locationID in data.location) {
 				var location = data.location[locationID];
 				if (location['md-mapscale']) {
 					for (var mapscaleID in location['md-mapscale']) {
 						var mapscale = location['md-mapscale'][mapscaleID];
 						if (mapscale['@coordinates']) {
-							var rectangle = rectangleVerticesForCoordinatesString(mapscale['@coordinates']);
-							rectangles.push(rectangle);
+							var rect = rectangleVerticesForCoordinatesString(mapscale['@coordinates']);
+							markers.push({'rect': rect, 'location': location});
 						}
 					}
 				}
 			}
 
-			if (rectangles.length > 0) {
+			if (markers.length > 0) {
 				var mapContainer = document.createElement('div');
 				mapContainer.setAttribute('class', 'pz2-mapContainer');
 				google.load('maps', '3', {'callback': mapsLoaded, 'other_params': 'sensor=false'});

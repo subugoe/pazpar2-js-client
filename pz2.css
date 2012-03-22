@@ -458,6 +458,11 @@
 	margin-left: 0.2em;
 }
 
+a.pz2-detail-parentCatalogueLink,
+a.pz2-detail-parentCatalogueLink:hover {
+	font-weight: normal;
+}
+
 .pz2-details ul {
 	padding-left: 1.5em;
 	margin: 0;
@@ -574,6 +579,9 @@ a.pz2-ZDBGeneralInfo {
 	width: 450px;
 }
 
+.pz2-highlight {
+	background: #dde;
+}
 
 .pz2-mapContainer {
 	height: 200px;
