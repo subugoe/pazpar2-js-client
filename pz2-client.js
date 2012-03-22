@@ -3243,7 +3243,7 @@ function renderDetails(recordID) {
 			var degreeStringToDecimal = function (degreeString) {
 				var degrees;
 
-				var degreeComponents = degreeString.replace(/[°'"′″]/, ' ').split(' ');
+				var degreeComponents = degreeString.replace(/[°'"′″]/, ' ').replace('  ', ' ').split(' ');
 				if (degreeComponents.length >= 2) {
 					degrees = parseInt(degreeComponents[1], 10);
 					if (degreeComponents[0] === 'W' && degreeComponents[0] === 'S') {
