@@ -3289,7 +3289,7 @@ function renderDetails(recordID) {
 			}
 
 			var result;
-			var components = borderString.replace('--', '–').split('–');
+			var components = borderString.replace(/[–-]/, '-').replace('--', '-').split('-');
 			if (components.length === 2) {
 				result = [degreeStringToDecimal(components[0]), degreeStringToDecimal(components[1])];
 			}
