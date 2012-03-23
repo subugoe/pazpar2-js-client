@@ -3283,6 +3283,21 @@ function renderDetails(recordID) {
 							degrees += parseFloat(degreeComponents[3]) / 3600;
 						}
 					}
+					var direction = degreeComponents[0];
+
+					// Slightly tweak numbers around the poles and datelines to avoid
+					// problems Google maps has in those regions.
+					if ((direction === 'N' || direction === 'S') && degrees >= 90) {
+						degrees = 85;
+					}
+					else if ((direction === 'W' || direction === 'E') && degrees >= 180) {
+						degrees = 179.9;
+					}
+
+					// Encode W/S directions as negative numbers.
+					if (direction === 'W' || direction === 'S') {
+						degrees *= -1;
+					}
 				}
 
 				return degrees;
