@@ -3274,13 +3274,16 @@ function renderDetails(recordID) {
 				var degreeComponents = degreeString.replace(/[°'"′″]/, ' ').replace('  ', ' ').split(' ');
 				if (degreeComponents.length >= 2) {
 					degrees = parseInt(degreeComponents[1], 10);
-					if (degreeComponents[0] === 'W' && degreeComponents[0] === 'S') {
-						degrees *= -1;
-					}
-					if (degreeComponents.length >= 3) {
-						degrees += parseInt(degreeComponents[2], 10) / 60;
+					if (degreeComponents.length >= 3 && !isNaN(degrees)) {
+						var minutes = parseInt(degreeComponents[2], 10);
+						if (!isNaN(minutes)) {
+							degrees += minutes / 60;
+						}
 						if (degreeComponents.length >= 4) {
-							degrees += parseFloat(degreeComponents[3]) / 3600;
+							var seconds = parseFloat(degreeComponents[3]);
+							if (!isNaN(seconds)) {
+								degrees +=  seconds / 3600;
+							}
 						}
 					}
 					var direction = degreeComponents[0];
