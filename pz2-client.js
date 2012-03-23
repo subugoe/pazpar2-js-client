@@ -3313,10 +3313,12 @@ function renderDetails(recordID) {
 			if (longLatArray.length == 2) {
 				var longitudeNumbers = borderNumbersForString(longLatArray[0]);
 				var latitudeNumbers = borderNumbersForString(longLatArray[1]);
-				coordinates.push([latitudeNumbers[0], longitudeNumbers[0]]);
-				coordinates.push([latitudeNumbers[1], longitudeNumbers[0]]);
-				coordinates.push([latitudeNumbers[1], longitudeNumbers[1]]);
-				coordinates.push([latitudeNumbers[0], longitudeNumbers[1]]);
+				if (latitudeNumbers && longitudeNumbers) {
+					coordinates.push([latitudeNumbers[0], longitudeNumbers[0]]);
+					coordinates.push([latitudeNumbers[1], longitudeNumbers[0]]);
+					coordinates.push([latitudeNumbers[1], longitudeNumbers[1]]);
+					coordinates.push([latitudeNumbers[0], longitudeNumbers[1]]);
+				}
 			}
 
 			return coordinates;
