@@ -3710,6 +3710,47 @@ function renderDetails(recordID) {
 			output:	DOM anchor element pointing to the catalogue page.
 		*/
 		var catalogueLink = function () {
+			var DAIAConfiguration = {
+  'sru.gbv.de/opac-de-7': {
+    'name': 'opac-de-7',
+    'URL': 'http://daia.gbv.de/',
+    'IDType': 'ppn'
+    }
+};
+
+			var addAvailabilityInformation = function (linkElement) {
+				var DAIAInformation = DAIAConfiguration[location['@id']];
+				var jLinkElement = jQuery(linkElement);
+				jLinkElement.addClass('pz2-detail-daia');
+				if (DAIAInformation) {
+					var DAIAURL = DAIAInformation.URL + '?callback=?';
+					var DAIAID = DAIAInformation.name + ':' + DAIAInformation.IDType + ':' + location['md-id'][0];
+					var parameters = {'format': 'json', 'id': DAIAID};
+					jQuery.getJSON(DAIAURL, parameters, function (data) {
+						var availabilityStrings = [];
+						if (data.document && data.document.length > 0) {
+							var item = data.document[0].item[0];
+							for (var availableID in item.available) {
+								var availableInfo = item.available[availableID];
+								jLinkElement.addClass('pz2-detail-daia-' + availableInfo.service);
+								availabilityStrings.push(localise('availability-' + availableInfo.service));
+							}
+							for (var unavailableID in item.unavailable) {
+								var unavailableInfo = item.unavailable[unavailableID];
+								jLinkElement.addClass('pz2-detail-daia-not-' + unavailableInfo.service);
+								availabilityStrings.push(localise('availability-not-' + unavailableInfo.service));
+							}
+							var availabilityElement = document.createElement('span');
+							jQuery(availabilityElement).addClass('pz2-detail-daia-info');
+							var availabilityString = availabilityStrings.join('\n');
+							availabilityElement.title = availabilityString;
+							jLinkElement.prepend(availabilityElement);
+						}
+					});
+				}
+			}
+
+
 			var linkElement;
 			var URL = processedCatalogueURLFromField('catalogue-url');
 			var targetName = localise(location['@name'], catalogueNames);
@@ -3721,6 +3762,7 @@ function renderDetails(recordID) {
 				turnIntoNewWindowLink(linkElement);
 				jQuery(linkElement).addClass('pz2-detail-catalogueLink')
 				linkElement.appendChild(document.createTextNode(targetName));
+				addAvailabilityInformation(linkElement);
 			}
 
 			return linkElement;
