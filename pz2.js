@@ -29,7 +29,7 @@ var pz2 = function ( paramArray )
     
     // at least one callback required
     if ( !paramArray )
-        throw new Error("Pz2.js: Array with parameters has to be suplied."); 
+        throw new Error("Pz2.js: Array with parameters has to be supplied.");
 
     //supported pazpar2's protocol version
     this.suppProtoVer = '1';
@@ -144,7 +144,7 @@ pz2.prototype =
         }
    },
 
-    // stop activity by clearing tiemouts 
+    // stop activity by clearing tiemouts
    stop: function ()
    {
        clearTimeout(this.statTimer);
@@ -645,17 +645,21 @@ pz2.prototype =
                         .childNodes[0].nodeValue == "OK" ) {
                     var targetNodes = data.getElementsByTagName("target");
                     var bytarget = new Array();
-                    for ( i = 0; i < targetNodes.length; i++) {
+                    for (var i = 0; i < targetNodes.length; i++) {
                         bytarget[i] = new Array();
-                        for( j = 0; j < targetNodes[i].childNodes.length; j++ ) {
-                            if ( targetNodes[i].childNodes[j].nodeType 
+                        for(var j = 0; j < targetNodes[i].childNodes.length; j++ ) {
+                            if ( targetNodes[i].childNodes[j].nodeType
                                 == Node.ELEMENT_NODE ) {
-                                var nodeName = 
+                                var nodeName =
                                     targetNodes[i].childNodes[j].nodeName;
-                                var nodeText = 
-                                    targetNodes[i].childNodes[j]
-                                        .firstChild.nodeValue;
-                                bytarget[i][nodeName] = nodeText;
+                                if (targetNodes[i].childNodes[j].firstChild != null) {
+                                    var nodeText = targetNodes[i].childNodes[j]
+                                       .firstChild.nodeValue;
+                                    bytarget[i][nodeName] = nodeText;
+                                }
+                                else {
+                                    bytarget[i][nodeName] = "";
+                                }
                             }
                         }
                         if (bytarget[i].diagnostic == "1") {
