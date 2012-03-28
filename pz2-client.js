@@ -2038,7 +2038,7 @@ function triggerSearchForForm (form, additionalQueryTerms) {
 		if (isExtendedSearch) {
 			addSearchStringForFieldToArray('title', searchChunks);
 			addSearchStringForFieldToArray('person', searchChunks);
-			addSearchStringForFieldToArray('keyword', searchChunks);
+			addSearchStringForFieldToArray('subject', searchChunks);
 			addSearchStringForFieldToArray('date', searchChunks);
 		}
 		searchChunks = searchChunks.concat(curAdditionalQueryTerms)
