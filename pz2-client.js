@@ -2596,7 +2596,7 @@ function renderDetails(recordID) {
 
 
 /*	keywordsDetailLine
-		If useKeywords is true, returns DOMElements with markupt for the
+		If useKeywords is true, returns DOMElements with markup for the
 			record’s keywords, each wrapped in a link for starting the
 			associated keyword search.
 
@@ -2614,14 +2614,13 @@ function renderDetails(recordID) {
 
 			for (var subjectIndex = 0; subjectIndex < data['md-subject'].length; subjectIndex++) {
 				var keyword = data['md-subject'][subjectIndex];
-				var keywordQuery = "keyword=\\\"" + keyword + "\\\"";
 				var linkElement = document.createElement('a');
 				var parameters = {'tx_pazpar2_pazpar2[extended]': 1,
 									'tx_pazpar2_pazpar2[controller]': 'Pazpar2',
 									'tx_pazpar2_pazpar2[action]': 'index',
 									'tx_pazpar2_pazpar2[queryStringKeyword]': '"' + keyword + '"',
 									'tx_pazpar2_pazpar2[useJS]': 'no'
-							}
+				}
 				var linkURL = document.location.href.split('?')[0] + '?' + jQuery.param(parameters);
 				linkElement.setAttribute('href', linkURL);
 				var titleString = localise('nach Schlagwort "#" suchen').replace('#', keyword);
