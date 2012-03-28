@@ -2595,10 +2595,10 @@ function renderDetails(recordID) {
 
 
 
-/*	keywordsDetailLine
+	/*	keywordsDetailLine
 		If useKeywords is true, returns DOMElements with markup for the
 			record’s keywords, each wrapped in a link for starting the
-			associated keyword search.
+			associated subject search.
 
 		output: Array of DOM elements containing
 				0:	DT element with the row’s title ISSN or ISSNs
@@ -2613,33 +2613,33 @@ function renderDetails(recordID) {
 			infoElements = [infoElement];
 
 			for (var subjectIndex = 0; subjectIndex < data['md-subject'].length; subjectIndex++) {
-				var keyword = data['md-subject'][subjectIndex];
+				var subject = data['md-subject'][subjectIndex];
 				var linkElement = document.createElement('a');
 				var parameters = {'tx_pazpar2_pazpar2[extended]': 1,
 									'tx_pazpar2_pazpar2[controller]': 'Pazpar2',
 									'tx_pazpar2_pazpar2[action]': 'index',
-									'tx_pazpar2_pazpar2[queryStringKeyword]': '"' + keyword + '"',
+									'tx_pazpar2_pazpar2[queryStringSubject]': '"' + subject + '"',
 									'tx_pazpar2_pazpar2[useJS]': 'no'
 				}
 				var linkURL = document.location.href.split('?')[0] + '?' + jQuery.param(parameters);
 				linkElement.setAttribute('href', linkURL);
-				var titleString = localise('nach Schlagwort "#" suchen').replace('#', keyword);
+				var titleString = localise('nach Schlagwort "#" suchen').replace('#', subject);
 				linkElement.setAttribute('title', titleString);
 
-				var searchForKeyword = function () {
+				var searchForSubject = function () {
 					jForm = jQuery('form.pz2-searchForm');
 					if (!jForm.hasClass('pz2-extended')) {
 						addExtendedSearch(null, true);
 					}
 					jQuery(".pz2-searchField", jForm).val("");
-					jQuery("input#pz2-field-keyword", jForm).val('"' + this.textContent + '"');
+					jQuery("input#pz2-field-subject", jForm).val('"' + this.textContent + '"');
 					triggerSearchForForm();
 					return false;
 				}
 
-				linkElement.onclick = searchForKeyword;
+				linkElement.onclick = searchForSubject;
 
-				linkElement.appendChild(document.createTextNode(keyword));
+				linkElement.appendChild(document.createTextNode(subject));
 				infoElement.appendChild(linkElement);
 
 				if (subjectIndex + 1 < data['md-subject'].length) {
