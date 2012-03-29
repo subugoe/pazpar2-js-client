@@ -3648,29 +3648,19 @@ function renderDetails(recordID) {
 
 
 
-		/*	processedCatalogueURLFromField
-			Checks whether the field with the passed name exists, extracts the
-			first instance of it and manipulates it if configured to do so.
+		/*	contentOfFirstFieldWithName
+			Checks whether the field with the passed name exists and gets the
+			data from its first occurence.
 
 			input:	fieldName - string with the name of the metadata field to take the URL from
-			output: string with the URL pointing to the catalogue page
+			output: string in the first metadata field with that name
 		*/
-		var processedCatalogueURLFromField = function (fieldName) {
+		var contentOfFirstFieldWithName = function (fieldName) {
 			var URL;
+
 			var catalogueURL = location['md-' + fieldName];
-			
 			if (catalogueURL && catalogueURL.length > 0) {
 				var URL = catalogueURL[0];
-
-				/*	If the user does not have a Uni Göttingen IP address
-					and we don’t generally prefer using the Opac, redirect Opac links
-					to GVK which is a superset and offers better services for non-locals.
-				*/
-				if (!preferSUBOpac && clientIPAddress.search('134.76.') !== 0) {
-					var opacBaseURL = 'https?://opac.sub.uni-goettingen.de/DB=1';
-					var GVKBaseURL = 'http://gso.gbv.de/DB=2.1';
-					URL = URL.replace(opacBaseURL, GVKBaseURL);
-				}
 			}
 			
 			return URL;
@@ -3686,7 +3676,7 @@ function renderDetails(recordID) {
 		*/
 		var parentLink = function () {
 			var result;
-			var URL = processedCatalogueURLFromField('parent-catalogue-url');
+			var URL = contentOfFirstFieldWithName('parent-catalogue-url');
 
 			if (URL) {
 				var linkElement = document.createElement('a');
@@ -3710,7 +3700,7 @@ function renderDetails(recordID) {
 		*/
 		var catalogueLink = function () {
 			var linkElement;
-			var URL = processedCatalogueURLFromField('catalogue-url');
+			var URL = contentOfFirstFieldWithName('catalogue-url');
 			var targetName = localise(location['@name'], catalogueNames);
 
 			if (URL && targetName) {
