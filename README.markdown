@@ -39,7 +39,6 @@ To be set after including »pz2-client.js« if you want to override the default 
 * showKVKLink (boolean, default: true): if true, a link to [Karlsruher Virtueller Katalog](http://www.ubka.uni-karlsruhe.de/kvk.html) for searching German union catalogues is included with the export links
 * exportFormats (array of strings, default: ['ris', 'bibtex']): format names for export links
 * displaySort (array of objects, default: []): sort order
-* preferSUBOpac (boolean, default: false):
 
 The configuration of the [Lib AAC](http://aac.sub.uni-goettingen.de/) site can be used as an example:
 
@@ -58,8 +57,6 @@ The configuration of the [Lib AAC](http://aac.sub.uni-goettingen.de/) site can b
 			useZDB = true;
 			ZDBUseClientIP = true;
 			useHistogramForYearFacets = true;
-			clientIPAddress = "134.76.162.165";
-			preferSUBOpac = false;
 			provideCOinSExport = true;
 			showExportLinksForEachLocation = false;
 			showKVKLink = true;
