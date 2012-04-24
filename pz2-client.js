@@ -2002,8 +2002,9 @@ function triggerSearchForForm (form, additionalQueryTerms) {
 			output: string - e.g. '(subject=rocket not subject=science)'
 		*/
 		var createSearchString = function (indexName, searchString) {
-			var search = indexName + '=' + searchString;
+			var search = searchString;
 			if (indexName !== 'all') {
+				search = indexName + '=' + searchString;
 				search = search.replace(' and ', ' and ' + indexName + '=');
 				search = search.replace(' not ', ' not ' + indexName + '=');
 				search = search.replace(' or ', ' or ' + indexName + '=');
