@@ -388,7 +388,7 @@ var useGoogleBooks = false;
 var useMaps = false;
 // Query ZDB-JOP for availability information based for items with ISSN?
 // ZDB-JOP needs to be reverse-proxied to /zdb/ (passing on the client IP)
-// or /zdb-local/ (passing on the server’s IP) depedning on ZDBUseClientIP.
+// or /zdb-local/ (passing on the server’s IP) depending on ZDBUseClientIP.
 var useZDB = false;
 var ZDBUseClientIP = true;
 // Display year facets using a histogram graphic?
@@ -1991,29 +1991,53 @@ function triggerSearchForForm (form, additionalQueryTerms) {
 				array - array containing the search strings
 	*/
 	var addSearchStringForFieldToArray = function (fieldName, array) {
-		var searchString = jQuery('#pz2-field-' + fieldName, myForm).val()
+
+		/*	createSearchString
+			Makes a pazpar2-style search string for the given index name and search term.
+			If configured to do so, 'and', 'not' and 'or' in the search string will
+				be replaced by the boolean operator with a following index name and '='.
+
+			inputs:	indexName - string, e.g. 'subject'
+					searchString - string e.g. 'rocket not science'
+			output: string - e.g. '(subject=rocket not subject=science)'
+		*/
+		var createSearchString = function (indexName, searchString) {
+			var search = indexName + '=' + searchString;
+			if (indexName !== 'all') {
+				search = search.replace(' and ', ' and ' + indexName + '=');
+				search = search.replace(' not ', ' not ' + indexName + '=');
+				search = search.replace(' or ', ' or ' + indexName + '=');
+				search = '(' + search + ')';
+			}
+
+			return search;
+		}
+
+
+		var searchString = jQuery('#pz2-field-' + fieldName, myForm).val();
+		var indexName = fieldName;
+
 		if (searchString && searchString != '') {
 			searchString = jQuery.trim(searchString);
-			if (fieldName == 'all') {
+			if (fieldName === 'all') {
 				if (jQuery('#pz2-checkbox-fulltext:checked', myForm).length > 0) {
-					searchString = 'fulltext=' + searchString;
+					indexName = 'fulltext';
 				}
 			}
-			else if (fieldName == 'title' && jQuery('#pz2-checkbox-journal:checked', myForm).length > 0) {
+			else if (fieldName === 'title' && jQuery('#pz2-checkbox-journal:checked', myForm).length > 0) {
 				// Special case for title restricted to journals only.
-				searchString = 'journal=' + searchString;
+				indexName = 'journal';
 			}
-			else if (fieldName == 'person') {
-				// Special case for person search: do a phrase search.
-				searchString = fieldName + '="' + searchString + '"';
+			else if (fieldName === 'person') {
+				// Special case for person search: always do a phrase search.
+				// Remove potentially added quotation marks for a phrase search and add new ones.
+				searchString = '"' + searchString.replace(/^[\s"]*/, '').replace(/[\s"]*$/, '') + '"';
 			}
-			else {
-				searchString = fieldName + '=' + searchString;
-			}
-			
-			array.push(searchString);
+
+			array.push(createSearchString(indexName, searchString));
 		}
 	}
+
 
 	var myForm = form;
 	// If no form is passed use the first .pz2-mainForm.
