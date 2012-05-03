@@ -37,253 +37,6 @@ if (document.location.hash === '#useproxy') {
 }
 
 
-/*	Simple-minded localisation:
-	Create a hash for each language, then use the appropriate one on the page.
-*/
-var germanTerms = {
-	// Facets
-	'gefiltert': 'gefiltert',
-	'Filter aufheben': 'Filter aufheben',
-	'Filter # aufheben': 'Filter # aufheben',
-	'Facetten': 'Facetten',
-	'facet-title-xtargets': 'Kataloge',
-	'facet-title-medium': 'Art',
-	'facet-title-author': 'Autoren',
-	'facet-title-language': 'Sprache',
-	'facet-title-subject': 'Themengebiete',
-	'facet-title-filterDate': 'Jahre',
-	'# weitere anzeigen': '# weitere anzeigen',
-	// Detail display
-	'Im Katalog ansehen': 'Im Katalog ansehen.',
-	'enthaltendes Werk im Katalog ansehen': 'Alle zugehörigen Publikationen im Katalog ansehen.',
-	'enthaltendes Werk': 'zugehörige Publikationen',
-	'detail-label-title': 'Titel',
-	'detail-label-author': 'Autor',
-	'detail-label-author-plural': 'Autoren',
-	'detail-label-author-clean': 'Autor',
-	'detail-label-author-clean-plural': 'Autoren',
-	'detail-label-other-person': 'Person',
-	'detail-label-other-person-plural': 'Personen',
-	'detail-label-other-person-clean': 'Person',
-	'detail-label-other-person-clean-plural': 'Personen',
-	'detail-label-medium': 'Art',
-	'detail-label-description': 'Information',
-	'detail-label-description-plural': 'Informationen',
-	'detail-label-abstract': 'Abstract',
-	'detail-label-series-title': 'Reihe',
-	'detail-label-issn': 'ISSN',
-	'detail-label-acronym-issn': 'Internationale Standardseriennummer',
-	'detail-label-acronym-isbn': 'Internationale Standardbuchnummer',
-	'detail-label-doi': 'DOI',
-	'detail-label-acronym-doi': 'Document Object Identifier: Mit dem Link zu dieser Nummer kann das Dokument im Netz gefunden werden.',
-	'detail-label-doi-plural': 'DOIs',
-	'detail-label-keyword': 'Schlagwort',
-	'detail-label-keyword-plural': 'Schlagwörter',
-	'detail-label-classification-msc': 'MSC',
-	'detail-label-acronym-classification-msc': 'Mathematics Subject Classification',
-	'detail-label-map': 'Ort',
-	'detail-label-mapscale': 'Maßstab',
-	'detail-label-creator': 'erfasst von',
-	'detail-label-verfügbarkeit': 'Verfügbarkeit',
-	'elektronisch': 'digital',
-	'gedruckt': 'gedruckt',
-	'gemäß': 'gemäß',
-	'nach Schlagwort "#" suchen': 'nach Schlagwort \u201e#\u201c suchen',
-	'Ausgabe': 'Ausgabe',
-	/* Google Books status Strings from
-		http://code.google.com/intl/de-DE/apis/books/examples/translated-branding-elements.html	*/
-	'Google Books: Vollständige Ansicht': 'Google Books: Vollständige Ansicht',
-	'Google Books: Eingeschränkte Vorschau': 'Google Books: Eingeschränkte Vorschau',
-	'Vorschau schließen': 'Vorschau schließen',
-	'Umschlagbild': 'Umschlagbild',
-	// Download/Extra Links
-	'mehr Links': 'mehr Links',
-	'download-label-format-simple': 'Bibliographische Daten für diesen Treffer als * laden',
-	'download-label-format-all': 'Alle Ausgaben als * laden',
-	'download-label-submenu-format': 'Einzelne als * laden',
-	'download-label-submenu-index-format': 'Ausgabe *',
-	'download-label-ris': 'RIS',
-	'download-label-bibtex': 'BibTeX',
-	'KVK': 'KVK',
-	'deutschlandweit im KVK suchen': 'deutschlandweit im KVK suchen',
-	'&lang=de': '&lang=de',
-	// Short Display
-	'von': 'von',
-	'In': 'In',
-	// General Information
-	'Suche...': 'Suche\u2026',
-	'keine Suchabfrage': 'keine Suchabfrage',
-	'keine Treffer gefunden': 'keine Treffer',
-	'+': '+',
-	'Es können nicht alle # Treffer geladen werden.': '+: Es können nicht alle # Treffer geladen werden. Bitte verwenden Sie einen spezifischeren Suchbegriff, um die Trefferzahl zu reduzieren.',
-	'...': '\u2026',
-	'Error indicator': '\u2022',
-	'Bei der Übertragung von Daten aus # der abgefragten Kataloge ist ein Fehler aufgetreten.': '\u2022: Bei der Übertragung von Daten aus # der abgefragten Kataloge ist ein Fehler aufgetreten.',
-	'In diesem Katalog gibt es noch # weitere Treffer.': 'In diesem Katalog gibt es noch # weitere Treffer, die wir nicht herunterladen und hier anzeigen können. Bitte verwenden Sie einen spezifischeren Suchbegriff, um die Trefferzahl zu reduzieren. Oder suchen Sie direkt im Katalog.',
-	'Nicht alle Datenbanken verfügbar.': 'Von Ihrem aktuellen Internetzugang haben sie nicht Zugriff auf alle Datenbanken.\nBei Zugriff aus einem deutschen Universitätsnetzwerk umfaßt Ihre Abfrage zusätzliche Datenbanken.',
-	'Zugang über:': 'Zugang über:',
-	'Gastzugang': 'Gastzugang',
-	// Pager
-	'Vorige Trefferseite anzeigen': 'Vorige Trefferseite anzeigen',
-	'Nächste Trefferseite anzeigen': 'Nächste Trefferseite anzeigen',
-	// Histogram Tooltip
-	'Treffer': 'Treffer',
-	// ZDB-JOP status labels
-	'frei verfügbar': 'frei verfügbar',
-	'teilweise frei verfügbar': 'teilweise frei verfügbar',
-	'verfügbar': 'verfügbar',
-	'teilweise verfügbar': 'teilweise verfügbar',
-	'nicht verfügbar': 'nicht verfügbar',
-	'diese Ausgabe nicht verfügbar': 'diese Ausgabe nicht verfügbar',
-	'Informationen bei der Zeitschriftendatenbank': 'Verfügbarkeitsinformationen bei der Zeitschriftendatenbank ansehen',
-	'[neuere Bände im Lesesaal 2]': '[neuere Bände im Lesesaal 2]',
-	// Link tooltip
-	'Erscheint in separatem Fenster.': 'Erscheint in separatem Fenster.',
-	// Search Form
-	'erweiterte Suche': 'erweiterte Suche',
-	'einfache Suche': 'einfache Suche',
-	// Status display
-	'Übertragungsstatus': 'Übertragungsstatus',
-	'Status:': 'Status:',
-	'Aktive Abfragen:': 'Aktive Abfragen:',
-	'Geladene Datensätze:': 'Geladene Datensätze:',
-	'Datenbank': 'Datenbank',
-	'Code': 'Statuscode',
-	'Status': 'Status',
-	'Geladen': 'Geladen',
-	'Client_Working': 'arbeitet',
-	'Client_Idle': 'fertig',
-	'Client_Error': 'Fehler',
-	'Client_Disconnected': 'Verbindungsabbruch'
-};
-
-
-var englishTerms = {
-	// Facets
-	'gefiltert': 'filtered',
-	'Filter aufheben': 'Remove filter',
-	'Filter # aufheben': 'Remove filter #',
-	'Facetten': 'Facets',
-	'facet-title-xtargets': 'Catalogues',
-	'facet-title-medium': 'Type',
-	'facet-title-author': 'Authors',
-	'facet-title-language': 'Languages',
-	'facet-title-subject': 'Subjects',
-	'facet-title-filterDate': 'Years',
-	'# weitere anzeigen': 'Show # more items',
-	// Detail display
-	'Im Katalog ansehen': 'View in catalogue.',
-	'enthaltendes Werk im Katalog ansehen': 'View all associated items in catalogue.',
-	'enthaltendes Werk': 'associated items',
-	'detail-label-title': 'Title',
-	'detail-label-author': 'Author',
-	'detail-label-author-plural': 'Authors',
-	'detail-label-author-clean': 'Author',
-	'detail-label-author-clean-plural': 'Authors',
-	'detail-label-other-person': 'Person',
-	'detail-label-other-person-plural': 'People',
-	'detail-label-other-person-clean': 'Person',
-	'detail-label-other-person-clean-plural': 'People',
-	'detail-label-medium': 'Type',
-	'detail-label-description': 'Information',
-	'detail-label-description-plural': 'Information',
-	'detail-label-abstract': 'Abstract',
-	'detail-label-series-title': 'Series',
-	'detail-label-issn': 'ISSN',
-	'detail-label-acronym-issn': 'International Standard Series Number',
-	'detail-label-acronym-isbn': 'International Standard Book Number',
-	'detail-label-doi': 'DOI',
-	'detail-label-acronym-doi': 'Document Object Identifier: Use the link to load the document.',
-	'detail-label-doi-plural': 'DOIs',
-	'detail-label-keyword': 'Keyword',
-	'detail-label-keyword-plural': 'Keywords',
-	'detail-label-classification-msc': 'MSC',
-	'detail-label-acronym-classification-msc': 'Mathematics Subject Classification',
-	'detail-label-map': 'Location',
-	'detail-label-mapscale': 'Scale',
-	'detail-label-creator': 'catalogued by',
-	'detail-label-verfügbarkeit': 'Availability',
-	'elektronisch': 'electronic',
-	'gedruckt': 'printed',
-	'gemäß': 'according to',
-	'nach Schlagwort "#" suchen': 'search for keyword \u201c#\u201d',
-	'Ausgabe': 'Edition',
-	/* Google Books status Strings from
-		http://code.google.com/intl/de-DE/apis/books/examples/translated-branding-elements.html	*/
-	'Google Books: Vollständige Ansicht': 'Google Books: Full view',
-	'Google Books: Eingeschränkte Vorschau': 'Google Books: Limited Preview',
-	'Vorschau schließen': 'Close Preview',
-	'Umschlagbild': 'Book Cover',
-	// Short Display
-	'von': 'of',
-	'In': 'In',
-	// Download/Extra Links
-	'mehr Links': 'additional Links',
-	'download-label-format-simple': 'Load bibliographic data for this result as *',
-	'download-label-format-all': 'Load all Editions as *',
-	'download-label-submenu-format': 'Load as *',
-	'download-label-submenu-index-format': 'Record *',
-	'download-label-ris': 'RIS',
-	'download-label-bibtex': 'BibTeX',
-	'KVK': 'KVK',
-	'deutschlandweit im KVK suchen': 'search for this title in union catalogues throughout Germany (KVK)',
-	'&lang=de': '&lang=en',
-	// General Information
-	'Suche...': 'Searching\u2026',
-	'keine Treffer gefunden': 'no matching records',
-	'keine Suchabfrage': 'no search query',
-	'+': '+',
-	'Es können nicht alle # Treffer geladen werden.': '+: There are # results, not all of which can be loaded. Please use a more specific search query to reduce the number of results.',
-	'...': '\u2026',
-	'Error indicator': '\u2022',
-	'In diesem Katalog gibt es noch # weitere Treffer.': 'There are # additional results available in this catalogue which we cannot download and display. Please use a more specific search query.',
-	'Nicht alle Datenbanken verfügbar.': 'You do not have permission to access all catalogues from your current location.\n\
-Please run the search from a German university network for more complete results.',
-	'Zugang über:': 'Access provided by:',
-	'Gastzugang': 'Guest Access',
-	// Pager
-	'Vorige Trefferseite anzeigen': 'Show next page of results',
-	'Nächste Trefferseite anzeigen': 'Show previous page of results',
-	// Histogram Tooltip
-	'Treffer': 'Treffer',
-	// ZDB-JOP status labels
-	'frei verfügbar': 'accessible for all',
-	'teilweise frei verfügbar': 'partially accessible for all',
-	'verfügbar': 'accessible',
-	'teilweise verfügbar': 'partially accessible',
-	'nicht verfügbar': 'not accessible',
-	'diese Ausgabe nicht verfügbar': 'this issue not accessible',
-	'Informationen bei der Zeitschriftendatenbank': 'View availability information at Zeitschriftendatenbank',
-	'[neuere Bände im Lesesaal 2]': '[current volumes in Lesesaal 2]',
-	// Link tooltip
-	'Erscheint in separatem Fenster.': 'Link opens in a new window.',
-	// Search Form
-	'erweiterte Suche': 'Extended Search',
-	'einfache Suche': 'Basic Search',
-	// Status display
-	'Übertragungsstatus': 'Status Information',
-	'Status:': 'Status:',
-	'Aktive Abfragen:': 'Active Queries:',
-	'Geladene Datensätze:': 'Loaded Records:',
-	'Datenbank': 'Database',
-	'Code': 'Status Code',
-	'Status': 'Status',
-	'Gesamt': 'Loaded',
-	'Client_Working': 'working',
-	'Client_Idle': 'done',
-	'Client_Error': 'Error',
-	'Client_Disconnected': 'disconnected'
-};
-
-
-
-var localisations = {
-	'de': germanTerms,
-	'en': englishTerms
-};
-
-
-
 /*	localise
 	Return localised term using the passed dictionary
 		or the one stored in localisations variable.
@@ -4294,113 +4047,7 @@ function recordIDForHTMLID (HTMLID) {
 
 
 
-/* Localised Media Types
-*/
-var mediaNames = {
-	'de': {
-		'article': 'Aufsatz',
-		'audio-visual': 'Film',
-		'book': 'Buch',
-		'electronic': 'Datei',
-		'letter': 'Brief',
-		'journal': 'Zeitschrift',
-		'map': 'Karte',
-		'microform': 'Mikroform',
-		'multivolume': 'Mehrere Bände',
-		'music-score': 'Noten',
-		'manuscript': 'Manuskript',
-		'other': 'Andere',
-		'recording': 'Tonaufnahme',
-		'website': 'Website',
-		'multiple': 'Verschiedene Medien',
-		'image': 'Bild'
-	},
-	
-	'en': {
-		'article': 'Article',
-		'audio-visual': 'Film',
-		'book': 'Book',
-		'electronic': 'Computer file',
-		'journal': 'Journal',
-		'map': 'Map',
-		'microform': 'Microform',
-		'music-score': 'Music score',
-		'manuscript': 'Manuscript',
-		'multivolume': 'Multiple volumes',
-		'other': 'Other',
-		'recording': 'Recording',
-		'website': 'Website',
-		'multiple': 'Mixed media types',
-		'image': 'Image'
-	}
-};
-
-
-/*	Localised Catalogue names
-*/
-var catalogueNames = {
-	'de': {
-
-	},
-	'en': {
-		'Geschichte Aufsätze': 'Essays: History',
-		'Anglistik Aufsätze': 'Essays: Literature',
-		'Alte Karten': 'Old Maps'
-	}
-}
-
-
-
-/*	Localised Link Descriptions
-	For link terminology found in:
-	* GVK Catalogue records
-	* Repository stylesheets
-*/
-var linkDescriptions = {
-	'de': {
-		'Book review (H-Net)': 'Rezension',
-		'Buchrezension (H-Soz-u-Kult)': 'Rezension',
-		'Contributor biographical information': 'Biographische Informationen',
-		'Deutschlandweit zugänglich': 'deutschlandweit zugänglich',
-		'Document': 'Volltext',
-		'Gesamtes Dokument': 'Volltext',
-		'Inhaltsverzeichnis': 'Inhaltsverzeichnis',
-		'kostenfrei': 'kostenfrei',
-		'Leseprobe': 'Leseprobe',
-		'Link': 'Link',
-		'Publisher Description': 'Verlagsbeschreibung',
-		'Repository': 'Repository',
-		'Rezension': 'Rezension',
-		'Table of Contents': 'Inhaltsverzeichnis',
-		'Table of contents': 'Inhaltsverzeichnis',
-		'Table of contents only': 'Inhaltsverzeichnis',
-		'TOC': 'Inhaltsverzeichnis',
-		'Volltext': 'Volltext'
-	},
-	'en': {
-		'Book review (H-Net)': 'Review',
-		'Buchrezension (H-Soz-u-Kult)': 'Review',
-		'Contributor biographical information': 'Biographical Information',
-		'Deutschlandweit zugänglich': 'accessible in Germany',
-		'Document': 'Full Text',
-		'Gesamtes Dokument': 'Full Text',
-		'Inhaltsverzeichnis': 'Table of Contents',
-		'kostenfrei': 'free',
-		'Leseprobe': 'Excerpt',
-		'Link': 'Link',
-		'Publisher Description': 'Publisher Description',
-		'Repository': 'Repository',
-		'Rezension': 'Review',
-		'Table of Contents': 'Table of Contents',
-		'Table of contents': 'Table of Contents',
-		'Table of contents only': 'Table of Contents',
-		'TOC': 'Table of Contents',
-		'Volltext': 'Full text'
-	}
-}
-
-
-/* Localised Language Codes
+/*	Localised ISO 639-2/B Language Codes
 */
 var languageNames = {
 	'de': {
@@ -5410,3 +5057,352 @@ var languageNames = {
 		'zzz': 'unknown'
 	}
 };
+
+
+
+/*	Localised user interface strings.
+	German and English
+*/
+var localisations = {
+	'de': {
+		// Facets
+		'gefiltert': 'gefiltert',
+		'Filter aufheben': 'Filter aufheben',
+		'Filter # aufheben': 'Filter # aufheben',
+		'Facetten': 'Facetten',
+		'facet-title-xtargets': 'Kataloge',
+		'facet-title-medium': 'Art',
+		'facet-title-author': 'Autoren',
+		'facet-title-language': 'Sprache',
+		'facet-title-subject': 'Themengebiete',
+		'facet-title-filterDate': 'Jahre',
+		'# weitere anzeigen': '# weitere anzeigen',
+		// Detail display
+		'Im Katalog ansehen': 'Im Katalog ansehen.',
+		'enthaltendes Werk im Katalog ansehen': 'Alle zugehörigen Publikationen im Katalog ansehen.',
+		'enthaltendes Werk': 'zugehörige Publikationen',
+		'detail-label-title': 'Titel',
+		'detail-label-author': 'Autor',
+		'detail-label-author-plural': 'Autoren',
+		'detail-label-author-clean': 'Autor',
+		'detail-label-author-clean-plural': 'Autoren',
+		'detail-label-other-person': 'Person',
+		'detail-label-other-person-plural': 'Personen',
+		'detail-label-other-person-clean': 'Person',
+		'detail-label-other-person-clean-plural': 'Personen',
+		'detail-label-medium': 'Art',
+		'detail-label-description': 'Information',
+		'detail-label-description-plural': 'Informationen',
+		'detail-label-abstract': 'Abstract',
+		'detail-label-series-title': 'Reihe',
+		'detail-label-issn': 'ISSN',
+		'detail-label-acronym-issn': 'Internationale Standardseriennummer',
+		'detail-label-acronym-isbn': 'Internationale Standardbuchnummer',
+		'detail-label-doi': 'DOI',
+		'detail-label-acronym-doi': 'Document Object Identifier: Mit dem Link zu dieser Nummer kann das Dokument im Netz gefunden werden.',
+		'detail-label-doi-plural': 'DOIs',
+		'detail-label-keyword': 'Schlagwort',
+		'detail-label-keyword-plural': 'Schlagwörter',
+		'detail-label-classification-msc': 'MSC',
+		'detail-label-acronym-classification-msc': 'Mathematics Subject Classification',
+		'detail-label-map': 'Ort',
+		'detail-label-mapscale': 'Maßstab',
+		'detail-label-creator': 'erfasst von',
+		'detail-label-verfügbarkeit': 'Verfügbarkeit',
+		'elektronisch': 'digital',
+		'gedruckt': 'gedruckt',
+		'gemäß': 'gemäß',
+		'nach Schlagwort "#" suchen': 'nach Schlagwort \u201e#\u201c suchen',
+		'Ausgabe': 'Ausgabe',
+		/* Google Books status Strings from
+			http://code.google.com/intl/de-DE/apis/books/examples/translated-branding-elements.html	*/
+		'Google Books: Vollständige Ansicht': 'Google Books: Vollständige Ansicht',
+		'Google Books: Eingeschränkte Vorschau': 'Google Books: Eingeschränkte Vorschau',
+		'Vorschau schließen': 'Vorschau schließen',
+		'Umschlagbild': 'Umschlagbild',
+		// Download/Extra Links
+		'mehr Links': 'mehr Links',
+		'download-label-format-simple': 'Bibliographische Daten für diesen Treffer als * laden',
+		'download-label-format-all': 'Alle Ausgaben als * laden',
+		'download-label-submenu-format': 'Einzelne als * laden',
+		'download-label-submenu-index-format': 'Ausgabe *',
+		'download-label-ris': 'RIS',
+		'download-label-bibtex': 'BibTeX',
+		'KVK': 'KVK',
+		'deutschlandweit im KVK suchen': 'deutschlandweit im KVK suchen',
+		'&lang=de': '&lang=de',
+		// Short Display
+		'von': 'von',
+		'In': 'In',
+		// General Information
+		'Suche...': 'Suche\u2026',
+		'keine Suchabfrage': 'keine Suchabfrage',
+		'keine Treffer gefunden': 'keine Treffer',
+		'+': '+',
+		'Es können nicht alle # Treffer geladen werden.': '+: Es können nicht alle # Treffer geladen werden. Bitte verwenden Sie einen spezifischeren Suchbegriff, um die Trefferzahl zu reduzieren.',
+		'...': '\u2026',
+		'Error indicator': '\u2022',
+		'Bei der Übertragung von Daten aus # der abgefragten Kataloge ist ein Fehler aufgetreten.': '\u2022: Bei der Übertragung von Daten aus # der abgefragten Kataloge ist ein Fehler aufgetreten.',
+		'In diesem Katalog gibt es noch # weitere Treffer.': 'In diesem Katalog gibt es noch # weitere Treffer, die wir nicht herunterladen und hier anzeigen können. Bitte verwenden Sie einen spezifischeren Suchbegriff, um die Trefferzahl zu reduzieren. Oder suchen Sie direkt im Katalog.',
+		'Nicht alle Datenbanken verfügbar.': 'Von Ihrem aktuellen Internetzugang haben sie nicht Zugriff auf alle Datenbanken.\nBei Zugriff aus einem deutschen Universitätsnetzwerk umfaßt Ihre Abfrage zusätzliche Datenbanken.',
+		'Zugang über:': 'Zugang über:',
+		'Gastzugang': 'Gastzugang',
+		// Pager
+		'Vorige Trefferseite anzeigen': 'Vorige Trefferseite anzeigen',
+		'Nächste Trefferseite anzeigen': 'Nächste Trefferseite anzeigen',
+		// Histogram Tooltip
+		'Treffer': 'Treffer',
+		// ZDB-JOP status labels
+		'frei verfügbar': 'frei verfügbar',
+		'teilweise frei verfügbar': 'teilweise frei verfügbar',
+		'verfügbar': 'verfügbar',
+		'teilweise verfügbar': 'teilweise verfügbar',
+		'nicht verfügbar': 'nicht verfügbar',
+		'diese Ausgabe nicht verfügbar': 'diese Ausgabe nicht verfügbar',
+		'Informationen bei der Zeitschriftendatenbank': 'Verfügbarkeitsinformationen bei der Zeitschriftendatenbank ansehen',
+		'[neuere Bände im Lesesaal 2]': '[neuere Bände im Lesesaal 2]',
+		// Link tooltip
+		'Erscheint in separatem Fenster.': 'Erscheint in separatem Fenster.',
+		// Search Form
+		'erweiterte Suche': 'erweiterte Suche',
+		'einfache Suche': 'einfache Suche',
+		// Status display
+		'Übertragungsstatus': 'Übertragungsstatus',
+		'Status:': 'Status:',
+		'Aktive Abfragen:': 'Aktive Abfragen:',
+		'Geladene Datensätze:': 'Geladene Datensätze:',
+		'Datenbank': 'Datenbank',
+		'Code': 'Statuscode',
+		'Status': 'Status',
+		'Geladen': 'Geladen',
+		'Client_Working': 'arbeitet',
+		'Client_Idle': 'fertig',
+		'Client_Error': 'Fehler',
+		'Client_Disconnected': 'Verbindungsabbruch'
+	},
+	
+	'en': {
+		// Facets
+		'gefiltert': 'filtered',
+		'Filter aufheben': 'Remove filter',
+		'Filter # aufheben': 'Remove filter #',
+		'Facetten': 'Facets',
+		'facet-title-xtargets': 'Catalogues',
+		'facet-title-medium': 'Type',
+		'facet-title-author': 'Authors',
+		'facet-title-language': 'Languages',
+		'facet-title-subject': 'Subjects',
+		'facet-title-filterDate': 'Years',
+		'# weitere anzeigen': 'Show # more items',
+		// Detail display
+		'Im Katalog ansehen': 'View in catalogue.',
+		'enthaltendes Werk im Katalog ansehen': 'View all associated items in catalogue.',
+		'enthaltendes Werk': 'associated items',
+		'detail-label-title': 'Title',
+		'detail-label-author': 'Author',
+		'detail-label-author-plural': 'Authors',
+		'detail-label-author-clean': 'Author',
+		'detail-label-author-clean-plural': 'Authors',
+		'detail-label-other-person': 'Person',
+		'detail-label-other-person-plural': 'People',
+		'detail-label-other-person-clean': 'Person',
+		'detail-label-other-person-clean-plural': 'People',
+		'detail-label-medium': 'Type',
+		'detail-label-description': 'Information',
+		'detail-label-description-plural': 'Information',
+		'detail-label-abstract': 'Abstract',
+		'detail-label-series-title': 'Series',
+		'detail-label-issn': 'ISSN',
+		'detail-label-acronym-issn': 'International Standard Series Number',
+		'detail-label-acronym-isbn': 'International Standard Book Number',
+		'detail-label-doi': 'DOI',
+		'detail-label-acronym-doi': 'Document Object Identifier: Use the link to load the document.',
+		'detail-label-doi-plural': 'DOIs',
+		'detail-label-keyword': 'Keyword',
+		'detail-label-keyword-plural': 'Keywords',
+		'detail-label-classification-msc': 'MSC',
+		'detail-label-acronym-classification-msc': 'Mathematics Subject Classification',
+		'detail-label-map': 'Location',
+		'detail-label-mapscale': 'Scale',
+		'detail-label-creator': 'catalogued by',
+		'detail-label-verfügbarkeit': 'Availability',
+		'elektronisch': 'electronic',
+		'gedruckt': 'printed',
+		'gemäß': 'according to',
+		'nach Schlagwort "#" suchen': 'search for keyword \u201c#\u201d',
+		'Ausgabe': 'Edition',
+		/* Google Books status Strings from
+			http://code.google.com/intl/de-DE/apis/books/examples/translated-branding-elements.html	*/
+		'Google Books: Vollständige Ansicht': 'Google Books: Full view',
+		'Google Books: Eingeschränkte Vorschau': 'Google Books: Limited Preview',
+		'Vorschau schließen': 'Close Preview',
+		'Umschlagbild': 'Book Cover',
+		// Short Display
+		'von': 'of',
+		'In': 'In',
+		// Download/Extra Links
+		'mehr Links': 'additional Links',
+		'download-label-format-simple': 'Load bibliographic data for this result as *',
+		'download-label-format-all': 'Load all Editions as *',
+		'download-label-submenu-format': 'Load as *',
+		'download-label-submenu-index-format': 'Record *',
+		'download-label-ris': 'RIS',
+		'download-label-bibtex': 'BibTeX',
+		'KVK': 'KVK',
+		'deutschlandweit im KVK suchen': 'search for this title in union catalogues throughout Germany (KVK)',
+		'&lang=de': '&lang=en',
+		// General Information
+		'Suche...': 'Searching\u2026',
+		'keine Treffer gefunden': 'no matching records',
+		'keine Suchabfrage': 'no search query',
+		'+': '+',
+		'Es können nicht alle # Treffer geladen werden.': '+: There are # results, not all of which can be loaded. Please use a more specific search query to reduce the number of results.',
+		'...': '\u2026',
+		'Error indicator': '\u2022',
+		'In diesem Katalog gibt es noch # weitere Treffer.': 'There are # additional results available in this catalogue which we cannot download and display. Please use a more specific search query.',
+		'Nicht alle Datenbanken verfügbar.': 'You do not have permission to access all catalogues from your current location.\n\
+	Please run the search from a German university network for more complete results.',
+		'Zugang über:': 'Access provided by:',
+		'Gastzugang': 'Guest Access',
+		// Pager
+		'Vorige Trefferseite anzeigen': 'Show next page of results',
+		'Nächste Trefferseite anzeigen': 'Show previous page of results',
+		// Histogram Tooltip
+		'Treffer': 'Treffer',
+		// ZDB-JOP status labels
+		'frei verfügbar': 'accessible for all',
+		'teilweise frei verfügbar': 'partially accessible for all',
+		'verfügbar': 'accessible',
+		'teilweise verfügbar': 'partially accessible',
+		'nicht verfügbar': 'not accessible',
+		'diese Ausgabe nicht verfügbar': 'this issue not accessible',
+		'Informationen bei der Zeitschriftendatenbank': 'View availability information at Zeitschriftendatenbank',
+		'[neuere Bände im Lesesaal 2]': '[current volumes in Lesesaal 2]',
+		// Link tooltip
+		'Erscheint in separatem Fenster.': 'Link opens in a new window.',
+		// Search Form
+		'erweiterte Suche': 'Extended Search',
+		'einfache Suche': 'Basic Search',
+		// Status display
+		'Übertragungsstatus': 'Status Information',
+		'Status:': 'Status:',
+		'Aktive Abfragen:': 'Active Queries:',
+		'Geladene Datensätze:': 'Loaded Records:',
+		'Datenbank': 'Database',
+		'Code': 'Status Code',
+		'Status': 'Status',
+		'Gesamt': 'Loaded',
+		'Client_Working': 'working',
+		'Client_Idle': 'done',
+		'Client_Error': 'Error',
+		'Client_Disconnected': 'disconnected'
+	}
+};
+
+
+/* Localised Media Types
+*/
+var mediaNames = {
+	'de': {
+		'article': 'Aufsatz',
+		'audio-visual': 'Film',
+		'book': 'Buch',
+		'electronic': 'Datei',
+		'letter': 'Brief',
+		'journal': 'Zeitschrift',
+		'map': 'Karte',
+		'microform': 'Mikroform',
+		'multivolume': 'Mehrere Bände',
+		'music-score': 'Noten',
+		'manuscript': 'Manuskript',
+		'other': 'Andere',
+		'recording': 'Tonaufnahme',
+		'website': 'Website',
+		'multiple': 'Verschiedene Medien',
+		'image': 'Bild'
+	},
+
+	'en': {
+		'article': 'Article',
+		'audio-visual': 'Film',
+		'book': 'Book',
+		'electronic': 'Computer file',
+		'journal': 'Journal',
+		'map': 'Map',
+		'microform': 'Microform',
+		'music-score': 'Music score',
+		'manuscript': 'Manuscript',
+		'multivolume': 'Multiple volumes',
+		'other': 'Other',
+		'recording': 'Recording',
+		'website': 'Website',
+		'multiple': 'Mixed media types',
+		'image': 'Image'
+	}
+};
+
+
+
+/*	Localised Catalogue names
+*/
+var catalogueNames = {
+	'de': {
+	},
+
+	'en': {
+		'Geschichte Aufsätze': 'Essays: History',
+		'Anglistik Aufsätze': 'Essays: Literature',
+		'Alte Karten': 'Old Maps'
+	}
+}
+
+
+
+/*	Localised Link Descriptions
+	For link terminology found in:
+	* GVK Catalogue records
+	* Repository stylesheets
+*/
+var linkDescriptions = {
+	'de': {
+		'Book review (H-Net)': 'Rezension',
+		'Buchrezension (H-Soz-u-Kult)': 'Rezension',
+		'Contributor biographical information': 'Biographische Informationen',
+		'Deutschlandweit zugänglich': 'deutschlandweit zugänglich',
+		'Document': 'Volltext',
+		'Gesamtes Dokument': 'Volltext',
+		'Inhaltsverzeichnis': 'Inhaltsverzeichnis',
+		'kostenfrei': 'kostenfrei',
+		'Leseprobe': 'Leseprobe',
+		'Link': 'Link',
+		'Publisher Description': 'Verlagsbeschreibung',
+		'Repository': 'Repository',
+		'Rezension': 'Rezension',
+		'Table of Contents': 'Inhaltsverzeichnis',
+		'Table of contents': 'Inhaltsverzeichnis',
+		'Table of contents only': 'Inhaltsverzeichnis',
+		'TOC': 'Inhaltsverzeichnis',
+		'Volltext': 'Volltext'
+	},
+
+	'en': {
+		'Book review (H-Net)': 'Review',
+		'Buchrezension (H-Soz-u-Kult)': 'Review',
+		'Contributor biographical information': 'Biographical Information',
+		'Deutschlandweit zugänglich': 'accessible in Germany',
+		'Document': 'Full Text',
+		'Gesamtes Dokument': 'Full Text',
+		'Inhaltsverzeichnis': 'Table of Contents',
+		'kostenfrei': 'free',
+		'Leseprobe': 'Excerpt',
+		'Link': 'Link',
+		'Publisher Description': 'Publisher Description',
+		'Repository': 'Repository',
+		'Rezension': 'Review',
+		'Table of Contents': 'Table of Contents',
+		'Table of contents': 'Table of Contents',
+		'Table of contents only': 'Table of Contents',
+		'TOC': 'Table of Contents',
+		'Volltext': 'Full text'
+	}
+}
