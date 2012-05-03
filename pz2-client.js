@@ -79,12 +79,15 @@ var germanTerms = {
 	'detail-label-doi-plural': 'DOIs',
 	'detail-label-keyword': 'Schlagwort',
 	'detail-label-keyword-plural': 'Schlagwörter',
+	'detail-label-classification-msc': 'MSC',
+	'detail-label-acronym-classification-msc': 'Mathematics Subject Classification',
 	'detail-label-map': 'Ort',
 	'detail-label-mapscale': 'Maßstab',
 	'detail-label-creator': 'erfasst von',
 	'detail-label-verfügbarkeit': 'Verfügbarkeit',
 	'elektronisch': 'digital',
 	'gedruckt': 'gedruckt',
+	'gemäß': 'gemäß',
 	'nach Schlagwort "#" suchen': 'nach Schlagwort \u201e#\u201c suchen',
 	'Ausgabe': 'Ausgabe',
 	/* Google Books status Strings from
@@ -194,12 +197,15 @@ var englishTerms = {
 	'detail-label-doi-plural': 'DOIs',
 	'detail-label-keyword': 'Keyword',
 	'detail-label-keyword-plural': 'Keywords',
+	'detail-label-classification-msc': 'MSC',
+	'detail-label-acronym-classification-msc': 'Mathematics Subject Classification',
 	'detail-label-map': 'Location',
 	'detail-label-mapscale': 'Scale',
 	'detail-label-creator': 'catalogued by',
 	'detail-label-verfügbarkeit': 'Availability',
 	'elektronisch': 'electronic',
 	'gedruckt': 'printed',
+	'gemäß': 'according to',
 	'nach Schlagwort "#" suchen': 'search for keyword \u201c#\u201d',
 	'Ausgabe': 'Edition',
 	/* Google Books status Strings from
@@ -2442,7 +2448,7 @@ function renderDetails(recordID) {
 	/*	detailLineBasic
 		input:	titleElement - DOM element containing the title
 				dataElement - DOMElement with the information to be displayed
-				attributes - associative array if attributes added to the resulting elements (optional)
+				attributes - associative array of attributes added to the resulting elements (optional)
 		output: Array of DOM elements containing
 				0:	DT element with the titleElement
 				1:	DD element with the informationElement
@@ -2677,6 +2683,56 @@ function renderDetails(recordID) {
 
 		return detailLine(labelString, infoElements);
 	}
+
+
+
+	var MSCDetailLine = function () {
+		var infoElements;
+		var MSCInfo = {};
+		var notes = {};
+
+		// Gather MSC data on the location level. The fields can contain
+		// a 'accordingto' attribute. Gather those strings as well.
+		for (var locationIndex in data.location) {
+			var location = data.location[locationIndex];
+			if (location['md-classification-msc']) {
+				for (var MSCIndex in location['md-classification-msc']) {
+					var MSC = location['md-classification-msc'][MSCIndex];
+					if (typeof(MSC) === 'object') {
+						MSCInfo[MSC['#text']] = true;
+						if (MSC['@accordingto']) {
+							notes[MSC['@accordingto']] = true;
+						}
+					}
+					else {
+						MSCInfo[MSC] = true;
+					}
+				}
+			}
+		}
+
+		var MSCStrings = [];
+		for (var MSCIndex in MSCInfo) {
+			MSCStrings.push(MSCIndex);
+		}
+
+		if (MSCStrings.length > 0) {
+			var MSCString = MSCStrings.join(', ');
+
+			var MSCNotes = [];
+			for (var noteIndex in notes) {
+				MSCNotes.push(noteIndex);
+			}
+			if (MSCNotes.length > 0) {
+				MSCString += ' (' + localise('gemäß') + ' ' + MSCNotes.join(', ') + ')';
+			}
+
+			infoElements = [document.createTextNode(MSCString)]
+		}
+
+		return detailLine('classification-msc', infoElements);
+	}
+
 
 
 	/*	ZDBQuery
@@ -4194,6 +4250,7 @@ function renderDetails(recordID) {
 		appendInfoToContainer( detailLineAuto('doi'), detailsList );
 		appendInfoToContainer( detailLineAuto('creator'), detailsList );
 		appendInfoToContainer( detailLineAuto('mapscale'), detailsList );
+		appendInfoToContainer( MSCDetailLine(), detailsList );
 		appendInfoToContainer( keywordsDetailLine(), detailsList);
 
 		appendInfoToContainer( locationDetails(), detailsList );
