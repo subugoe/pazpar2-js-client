@@ -1288,6 +1288,13 @@ function facetListForType (type, preferOriginalFacets) {
 			else if (type === 'medium') {
 				facetDisplayName = localise(facet.name, mediaTypeNames);
 			}
+			else if (type === 'country') {
+				facetDisplayName = localise(facet.name, countryNames);
+			}
+			else if (type === 'source-type') {
+				facetDisplayName = localise(facet.name, sourceTypeNames);
+			}
+
 			var textSpan = document.createElement('span');
 			link.appendChild(textSpan);
 			jQuery(textSpan).addClass('pz2-facetName');
@@ -5582,6 +5589,8 @@ var localisations = {
 		'facet-title-medium': 'Art',
 		'facet-title-author': 'Autoren',
 		'facet-title-language': 'Sprache',
+		'facet-title-country': 'Land',
+		'facet-title-source-type': 'Quellenart',
 		'facet-title-subject': 'Themengebiete',
 		'facet-title-filterDate': 'Jahre',
 		'# weitere anzeigen': '# weitere anzeigen',
@@ -5699,6 +5708,8 @@ var localisations = {
 		'facet-title-medium': 'Type',
 		'facet-title-author': 'Authors',
 		'facet-title-language': 'Languages',
+		'facet-title-country': 'Countries',
+		'facet-title-source-type': 'Source Type',
 		'facet-title-subject': 'Subjects',
 		'facet-title-filterDate': 'Years',
 		'# weitere anzeigen': 'Show # more items',
