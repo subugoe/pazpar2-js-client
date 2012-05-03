@@ -1168,7 +1168,7 @@ function facetListForType (type, preferOriginalFacets) {
 			// Loop through data ourselves to gather facet information.
 			var termArray = {};
 			var recordList = displayHitList;
-			if (type == 'filterDate') {
+			if (type === 'filterDate') {
 				recordList = displayHitListUpToDate;
 			}
 			for (var recordIndex in recordList) {
