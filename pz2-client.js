@@ -1210,7 +1210,7 @@ function facetListForType (type, preferOriginalFacets) {
 				if (type === 'filterDate' && !useHistogramForYearFacets) {
 					// Special treatment for dates when displaying them as a list:
 					// take the most frequent items and sort by date if we are not using the histogram.
-					var maximumDateFacetCount = termLists['filterDate'].maxFetch;
+					var maximumDateFacetCount = parseInt(termLists['filterDate'].maxFetch);
 					if (termList.length > maximumDateFacetCount) {
 						termList.splice(maximumDateFacetCount, termList.length - maximumDateFacetCount);
 					}
@@ -1243,7 +1243,7 @@ function facetListForType (type, preferOriginalFacets) {
 
 		// Determine whether facets need to be hidden.
 		// Avoid hiding less than 3 facets.
-		var needToHideFacets = (terms.length > termLists[type].maxFetch + 2)
+		var needToHideFacets = (terms.length > parseInt(termLists[type].maxFetch) + 2)
 								&& (termLists[type].showAll !== true);
 		var invisibleCount = 0;
 
@@ -1258,7 +1258,7 @@ function facetListForType (type, preferOriginalFacets) {
 			// Make items beyond the display limit invisible unless otherwise
 			// requested. Be a bit wiggly about this to avoid hiding less than 3
 			// items
-			if (needToHideFacets && facetIndex >= termLists[type].maxFetch
+			if (needToHideFacets && facetIndex >= parseInt(termLists[type].maxFetch)
 					&& !(type === 'language' && facet.name === 'zzz')) {
 				jItem.addClass('pz2-facet-hidden');
 				invisibleCount++;
@@ -1522,7 +1522,7 @@ function facetListForType (type, preferOriginalFacets) {
 	jQuery(container).addClass('pz2-termList pz2-termList-' + type);
 
 	var terms = facetInformationForType(type);
-	if (terms.length >= termLists[type].minDisplay || filterArray[type]) {
+	if (terms.length >= parseInt(termLists[type].minDisplay) || filterArray[type]) {
 		// Always display facet list if it is filtered. Otherwise require
 		// at least .minDisplay facet elements.
 		var heading = document.createElement('h5')
