@@ -881,7 +881,7 @@ function display () {
 			}
 
 			jQuery(iconElement).addClass('pz2-mediaIcon ' + mediaClass);
-			iconElement.title = localise(mediaClass, mediaNames);
+			iconElement.title = localise(mediaClass, mediaTypeNames);
 
 			appendInfoToContainer(titleInfo(), linkElement);
 			var authors = authorInfo();
@@ -1286,7 +1286,7 @@ function facetListForType (type, preferOriginalFacets) {
 				facetDisplayName = localise(facet.name, languageNames);
 			}
 			else if (type === 'medium') {
-				facetDisplayName = localise(facet.name, mediaNames);
+				facetDisplayName = localise(facet.name, mediaTypeNames);
 			}
 			var textSpan = document.createElement('span');
 			link.appendChild(textSpan);
@@ -5810,7 +5810,7 @@ var localisations = {
 
 /* Localised Media Types
 */
-var mediaNames = {
+var mediaTypeNames = {
 	'de': {
 		'article': 'Aufsatz',
 		'audio-visual': 'Film',
