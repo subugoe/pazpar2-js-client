@@ -2665,10 +2665,10 @@ function renderDetails(recordID) {
 								infoText += period.textContent + ': ';
 
 							}
-							var location = jQuery('Location', ZDBResult)[0];
+							var jLocation = jQuery('Location', ZDBResult);
 							var locationText = '';
-							if (location) {
-								locationText = location.textContent;
+							if (jLocation.length > 0) {
+								locationText = jLocation.text();
 								infoText += locationText;
 							}
 
