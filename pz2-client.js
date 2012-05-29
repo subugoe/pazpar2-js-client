@@ -4305,7 +4305,10 @@ var countryNames = {
 		'YT': 'Mayotte',
 		'ZA': 'Südafrika',
 		'ZM': 'Sambia',
-		'ZW': 'Simbabwe'
+		'ZW': 'Simbabwe',
+		// Non-Standard codes
+		'EU': 'Europa',
+		'II': 'International'
 	},
 
 	'en': {
@@ -4557,7 +4560,10 @@ var countryNames = {
 		'YT': 'Mayotte',
 		'ZA': 'South Africa',
 		'ZM': 'Zambia',
-		'ZW': 'Zimbabwe'
+		'ZW': 'Zimbabwe',
+		// Non-Standard codes
+		'EU': 'Europe',
+		'II': 'International'
 	}
 }
 
