@@ -5651,8 +5651,8 @@ var localisations = {
 		'download-label-submenu-index-format': 'Ausgabe *',
 		'download-label-ris': 'RIS',
 		'download-label-bibtex': 'BibTeX',
-		'KVK': 'KVK',
-		'deutschlandweit im KVK suchen': 'deutschlandweit im KVK suchen',
+		'KVK': 'deutschlandweit suchen',
+		'deutschlandweit im KVK suchen': 'Suche in deutschen Verbundkatalogen (KVK)',
 		'&lang=de': '&lang=de',
 		// Short Display
 		'von': 'von',
@@ -5773,8 +5773,8 @@ var localisations = {
 		'download-label-submenu-index-format': 'Record *',
 		'download-label-ris': 'RIS',
 		'download-label-bibtex': 'BibTeX',
-		'KVK': 'KVK',
-		'deutschlandweit im KVK suchen': 'search for this title in union catalogues throughout Germany (KVK)',
+		'KVK': 'search throughout Germany',
+		'deutschlandweit im KVK suchen': 'search for this item in German union catalogues (KVK)',
 		'&lang=de': '&lang=en',
 		// General Information
 		'Suche...': 'Searching\u2026',
