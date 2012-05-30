@@ -3109,7 +3109,7 @@ function renderDetails(recordID) {
 			var degreeStringToDecimal = function (degreeString) {
 				var degrees;
 
-				var degreeComponents = degreeString.replace(/[°'"′″]/, ' ').replace('  ', ' ').split(' ');
+				var degreeComponents = degreeString.replace(/[°'"′″]/g, ' ').replace(/^([EWNS])(\d)/, '$1 $2').replace(/  /g, ' ').split(' ');
 				if (degreeComponents.length >= 2) {
 					degrees = parseInt(degreeComponents[1], 10);
 					if (degreeComponents.length >= 3 && !isNaN(degrees)) {
