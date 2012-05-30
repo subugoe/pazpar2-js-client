@@ -3578,9 +3578,9 @@ function renderDetails(recordID) {
 				appendInfoToContainer( detailInfoItem('publication-place'), detailsData );
 				appendInfoToContainer( detailInfoItem('date'), detailsData );
 				appendInfoToContainer( detailInfoItem('physical-extent'), detailsData );
-				cleanISBNs();
-				appendInfoToContainer( detailInfoItem('isbn'), detailsData );
 			}
+			cleanISBNs();
+			appendInfoToContainer( detailInfoItem('isbn'), detailsData );
 			appendInfoToContainer( electronicURLs(), detailsData );
 			appendInfoToContainer( parentLink(), detailsData )
 			appendInfoToContainer( catalogueLink(), detailsData );
