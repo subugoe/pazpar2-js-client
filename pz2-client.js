@@ -150,6 +150,8 @@ var useMaps = false;
 // or /zdb-local/ (passing on the server’s IP) depending on ZDBUseClientIP.
 var useZDB = false;
 var ZDBUseClientIP = true;
+// The maximum number of authors to display in the short result.
+var maxAuthors = 3;
 // Display year facets using a histogram graphic?
 var useHistogramForYearFacets = true;
 // Name of the site that can be used, e.g. for file names of downloaded files.
@@ -690,8 +692,14 @@ function display () {
 			// otherwise try to fall back to author fields
 			var authors = [];
 			for (var index = 0; index < hit['md-author'].length; index++) {
-				var authorname = hit['md-author'][index];
-				authors.push(authorname);
+				if (index < maxAuthors) {
+					var authorname = hit['md-author'][index];
+					authors.push(authorname);
+				}
+				else {
+					authors.push(localise('et al.'));
+					break;
+				}
 			}
 
 			outputText = authors.join('; ');
@@ -3976,11 +3984,11 @@ function renderDetails(recordID) {
 		jQuery(clearSpan).addClass('pz2-clear');
 
 		/*	A somewhat sloppy heuristic to create cleaned up author and other-person
-			lists to avoid duplicating names listed in title-responsiblity already:
+			lists to avoid duplicating names listed in the short title display already:
 			* Do _not_ separately display authors and other-persons whose apparent
 				surname appears in the title-reponsibility field to avoid duplication.
-			* Completely omit the author list if no title-responsibility field is present
-				as author fields are used in its place then.
+			* If no title-responsibility field is present,omit the first maxAuthors
+				authors as they are displayed in the short title.
 		*/
 		var allResponsibility = '';
 		if (data['md-title-responsibility']) {
@@ -3992,6 +4000,9 @@ function renderDetails(recordID) {
 					data['md-author-clean'].push(data['md-author'][authorIndex]);
 				}
 			}
+		}
+		else if (data['md-author'] && data['md-author'].length > maxAuthors) {
+			data['md-author-clean'] = data['md-author'].slice(maxAuthors);
 		}
 		data['md-other-person-clean'] = [];
 		for (var personIndex in data['md-other-person']) {
@@ -5657,6 +5668,7 @@ var localisations = {
 		// Short Display
 		'von': 'von',
 		'In': 'In',
+		'et al.': 'et al.',
 		// General Information
 		'Suche...': 'Suche\u2026',
 		'keine Suchabfrage': 'keine Suchabfrage',
@@ -5765,6 +5777,7 @@ var localisations = {
 		// Short Display
 		'von': 'of',
 		'In': 'In',
+		'et al.': 'et al.',
 		// Download/Extra Links
 		'mehr Links': 'additional Links',
 		'download-label-format-simple': 'Load bibliographic data for this result as *',
