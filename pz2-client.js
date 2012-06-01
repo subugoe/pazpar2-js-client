@@ -910,6 +910,7 @@ function display () {
 				appendInfoToContainer(COinSInfo(), LI);
 			}
 			hit.li = LI;
+			runMathJax(LI);
 		}
 		
 		OL.appendChild(LI);
@@ -1993,6 +1994,17 @@ function trackPiwik (action, info) {
 
 
 
+/*	runMathJax
+	Tells MathJax to process the passed element, if it is loaded.
+*/
+function runMathJax (element) {
+	if (typeof(MathJax) !== 'undefined') {
+		MathJax.Hub.Queue(["Typeset", MathJax.Hub, element]);
+	}
+}
+
+
+
 /*	limitResults
 	Adds a filter for term for the data of type kind. Then redisplays.
 	input:	* kind - string with name of facet type
@@ -2125,6 +2137,7 @@ function toggleDetails (prefixRecId) {
 		// Create detail view if it doesn’t exist yet.
 		if (!record.detailsDiv) {
 			record.detailsDiv = renderDetails(recordID);
+			runMathJax(record.detailsDiv);
 		}
 
 		// Append the detail view if it is not in the DOM.
