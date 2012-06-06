@@ -124,8 +124,10 @@ var pz2 = function ( paramArray )
     }
     // else, auto init session or wait for a user init?
     if (this.useSessions && paramArray.autoInit !== false) {
-        this.init(this.sessionId, this.serviceId);
+        this.init(this.sessionID, this.serviceId);
     }
+    // Version parameter
+    this.version = paramArray.version || null;
 };
 
 pz2.prototype = 
@@ -199,6 +201,9 @@ pz2.prototype =
                         context.sessionID = 
                             data.getElementsByTagName("session")[0]
                                 .childNodes[0].nodeValue;
+                        if (data.getElementsByTagName("keepAlive").length > 0) {
+                            context.keepAlive = data.getElementsByTagName("keepAlive")[0].childNodes[0].nodeValue;
+                        }
                         context.pingTimer =
                             setTimeout(
                                 function () {
@@ -381,18 +386,21 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         var requestParameters = {
-            "command": "show", 
-            "session": this.sessionID, 
-            "start": this.currentStart,
-            "num": this.currentNum, 
-            "sort": this.currentSort, 
-            "block": 1,
-            "type": this.showResponseType,
-            "windowid" : window.name
+              "command": "show",
+              "session": this.sessionID,
+              "start": this.currentStart,
+              "num": this.currentNum,
+              "sort": this.currentSort,
+              "block": 1,
+              "type": this.showResponseType,
+              "windowid": window.name
           };
         if (query_state) {
-          requestParameters["query-state"] = query_state;
+            requestParameters["query-state"] = query_state;
         }
+		if (this.version && this.version > 0) {
+	        requestParameters["version"] = this.version;
+		}
         request.safeGet(
           requestParameters,
           function(data, type) {
@@ -438,6 +446,14 @@ pz2.prototype =
               context.throwError('Show failed. Malformed WS resonse.',
                   114);
             }
+            var approxNode = data.getElementsByTagName('approximation');
+            if (approxNode
+				&& approxNode[0]
+                && approxNode[0].childNodes[0]
+                && approxNode[0].childNodes[0].nodeValue) {
+                show['approximation'] = Number(approxNode[0].childNodes[0].nodeValue);
+			}
+
             context.activeClients = activeClients; 
             context.showCounter++;
             var delay = context.showTime;
