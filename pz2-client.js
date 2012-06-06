@@ -1613,6 +1613,11 @@ function my_onbytarget(data) {
 	var caption = document.createElement('caption');
 	table.appendChild(caption);
 	caption.appendChild(document.createTextNode(localise('Übertragungsstatus')))
+	var closeLink = document.createElement('a');
+	caption.appendChild(closeLink);
+	closeLink.setAttribute('href', '#');
+	closeLink.setAttribute('onclick', 'toggleStatus();');
+	closeLink.appendChild(document.createTextNode(localise('[ausblenden]')));
 
 	var thead = document.createElement('thead');
 	table.appendChild(thead);
@@ -5716,6 +5721,7 @@ var localisations = {
 		'einfache Suche': 'einfache Suche',
 		// Status display
 		'Übertragungsstatus': 'Übertragungsstatus',
+		'[ausblenden]': '[ausblenden]',
 		'Status:': 'Status:',
 		'Aktive Abfragen:': 'Aktive Abfragen:',
 		'Geladene Datensätze:': 'Geladene Datensätze:',
@@ -5836,6 +5842,7 @@ var localisations = {
 		'einfache Suche': 'Basic Search',
 		// Status display
 		'Übertragungsstatus': 'Status Information',
+		'[ausblenden]': '[hide]',
 		'Status:': 'Status:',
 		'Aktive Abfragen:': 'Active Queries:',
 		'Geladene Datensätze:': 'Loaded Records:',
