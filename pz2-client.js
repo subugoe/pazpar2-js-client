@@ -28,7 +28,8 @@ var termLists = {
 	// 'author': {'maxFetch': 10, 'minDisplay': 1},
 	'filterDate': {'maxFetch': 10, 'minDisplay': 5}
 };
-
+var termListNames = [];
+jQuery.each(termLists, function(index, value){termListNames.push(index)});
 
 if (document.location.hash === '#useproxy') {
 	usesessions = false;
@@ -100,10 +101,8 @@ my_paz = new pz2( {"onshow": my_onshow,
 					"pazpar2path": pazpar2path,
 					"oninit": my_oninit,
 					"onstat": my_onstat,
-/* We are not using pazpar2’s termlists but create our own.
 					"onterm": my_onterm,
 					"termlist": termListNames.join(","),
-*/
 					"onbytarget": my_onbytarget,
 	 				"usesessions" : usesessions,
 					"showResponseType": showResponseType,
@@ -1170,7 +1169,7 @@ function facetListForType (type, preferOriginalFacets) {
 
 
 		var termList = [];
-		if (!isFiltered() && preferOriginalFacets) {
+		if (preferOriginalFacets) {
 			termList = facetData[type]
 		}
 		else {
@@ -1537,7 +1536,7 @@ function facetListForType (type, preferOriginalFacets) {
 	var container = document.createElement('div');
 	jQuery(container).addClass('pz2-termList pz2-termList-' + type);
 
-	var terms = facetInformationForType(type);
+	var terms = facetInformationForType(type, true);
 	if (terms.length >= parseInt(termLists[type].minDisplay) || filterArray[type]) {
 		// Always display facet list if it is filtered. Otherwise require
 		// at least .minDisplay facet elements.
