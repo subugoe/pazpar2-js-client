@@ -3534,16 +3534,16 @@ function renderDetails(recordID) {
 
 
 		/*	parentLink
-			Returns DOM elements linking to the catalogue page of the current
-			record’s parent record, plus spacing.
+			For non-article records, returns DOM elements linking to the
+			catalogue page of the current record’s parent record, plus spacing.
 
-			output: DOM anchor element pointing to the catalogue page.
+			output: DOM anchor element pointing to the catalogue page|None
 		*/
 		var parentLink = function () {
 			var result;
 			var URL = contentOfFirstFieldWithName('parent-catalogue-url');
 
-			if (URL) {
+			if (URL && data['md-medium'][0] !== 'article') {
 				var linkElement = document.createElement('a');
 				linkElement.setAttribute('href', URL);
 				linkElement.title = localise('enthaltendes Werk im Katalog ansehen');
