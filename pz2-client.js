@@ -2911,15 +2911,29 @@ function renderDetails(recordID) {
 
 					// Add link to Google Books if there is a selected book.
 					if (selectedBook !== undefined) {
+						/*	createGoogleBooksLink
+							Returns a link to open the Google Books Preview.
+							Depending on the features of the Preview, it opens interactively
+							on top of our view or in a new window.
+
+							output: DOMElement - a Element with href and possibly onclick
+						*/
+
+						var createGoogleBooksLink = function () {
+							var bookLink = document.createElement('a');
+							bookLink.setAttribute('href', selectedBook.preview_url);
+							turnIntoNewWindowLink(bookLink);
+							if (selectedBook.embeddable === true) {
+								bookLink.onclick = openPreview;
+							}
+							return bookLink;
+						}
+
 						var dt = document.createElement('dt');
 						var dd = document.createElement('dd');
 
-						var bookLink = document.createElement('a');
+						var bookLink = createGoogleBooksLink();
 						dd.appendChild(bookLink);
-						bookLink.setAttribute('href', selectedBook.preview_url);
-						if (selectedBook.embeddable === true) {
-							bookLink.onclick = openPreview;
-						}
 
 						var language = jQuery('html').attr('lang');
 						if (language === undefined) {
@@ -2940,7 +2954,7 @@ function renderDetails(recordID) {
 						bookLink.appendChild(buttonImage);
 
 						if (selectedBook.thumbnail_url !== undefined) {
-							bookLink = bookLink.cloneNode(false);
+							bookLink = createGoogleBooksLink();
 							dt.appendChild(bookLink);
 							var coverArtImage = document.createElement('img');
 							bookLink.appendChild(coverArtImage);
