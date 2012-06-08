@@ -3598,8 +3598,8 @@ function renderDetails(recordID) {
 			jQuery(detailsData).addClass('pz2-location');
 			location.element = detailsData;
 
+			appendInfoToContainer( detailInfoItem('edition'), detailsData );
 			if (location['md-medium'] != 'article') {
-				appendInfoToContainer( detailInfoItem('edition'), detailsData );
 				appendInfoToContainer( detailInfoItem('publication-name'), detailsData );
 				appendInfoToContainer( detailInfoItem('publication-place'), detailsData );
 				appendInfoToContainer( detailInfoItem('date'), detailsData );
