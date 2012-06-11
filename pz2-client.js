@@ -5969,12 +5969,16 @@ var sourceTypeNames = {
 */
 var catalogueNames = {
 	'de': {
+		'OLC Mathematik': 'Artikel'
 	},
 
 	'en': {
 		'Geschichte Aufsätze': 'Essays: History',
 		'Anglistik Aufsätze': 'Essays: Literature',
-		'Alte Karten': 'Old Maps'
+		'Alte Karten': 'Old Maps',
+		'OLC Mathematik': 'Articles',
+		'Dissertationen': 'Dissertations',
+		'Jahrbuch-Datenbank': 'Jahrbuch-Database'
 	}
 }
 
