@@ -26,7 +26,8 @@ var termLists = {
 	'medium': {'maxFetch': 12, 'minDisplay': 1},
 	'language': {'maxFetch': 5, 'minDisplay': 1}, // excluding the unknown item and with +2 'wiggle room'
 	// 'author': {'maxFetch': 10, 'minDisplay': 1},
-	'filterDate': {'maxFetch': 10, 'minDisplay': 5}
+	//'filterDate': {'maxFetch': 10, 'minDisplay': 5},
+	'date': {'maxFetch': 500, 'minDisplay': 3}
 };
 var termListNames = [];
 jQuery.each(termLists, function(index, value){termListNames.push(index)});
@@ -151,6 +152,8 @@ var useZDB = false;
 var ZDBUseClientIP = true;
 // The maximum number of authors to display in the short result.
 var maxAuthors = 3;
+// Use the termlist information by provided by pazpar2 or build our own?
+var useOriginalFacets = true
 // Display year facets using a histogram graphic?
 var useHistogramForYearFacets = true;
 // Name of the site that can be used, e.g. for file names of downloaded files.
@@ -513,7 +516,9 @@ function updateAndDisplay () {
 	displayHitList = filterResults[0];
 	displayHitListUpToDate = filterResults[1];
 	display();
-	updateFacetLists();
+	if (!useOriginalFacets) {
+		updateFacetLists();
+	}
 }
 
 
@@ -1126,11 +1131,9 @@ function my_onstat(data) {
 	Creates DOM elements for the facet list of the requested type.
 		Uses facet information stored in facetData.
 	input:	type - string giving the facet type
-			preferOriginalFacets (optional) - boolean that triggers using
-				the facet information sent by pazpar2
 	output:	DOM elements for displaying the list of faces
 */
-function facetListForType (type, preferOriginalFacets) {
+function facetListForType (type) {
 	/*	isFilteredForType
 		Returns whether there is a filter for the given type.
 		input:	type - string with the type's name
@@ -1169,7 +1172,7 @@ function facetListForType (type, preferOriginalFacets) {
 
 
 		var termList = [];
-		if (preferOriginalFacets) {
+		if (useOriginalFacets) {
 			termList = facetData[type]
 		}
 		else {
@@ -1536,8 +1539,9 @@ function facetListForType (type, preferOriginalFacets) {
 	var container = document.createElement('div');
 	jQuery(container).addClass('pz2-termList pz2-termList-' + type);
 
-	var terms = facetInformationForType(type, true);
-	if (terms.length >= parseInt(termLists[type].minDisplay) || filterArray[type]) {
+	var terms = facetInformationForType(type);
+	if (terms &&
+			(terms.length >= parseInt(termLists[type].minDisplay) || filterArray[type])) {
 		// Always display facet list if it is filtered. Otherwise require
 		// at least .minDisplay facet elements.
 		var heading = document.createElement('h5')
@@ -1549,7 +1553,7 @@ function facetListForType (type, preferOriginalFacets) {
 		heading.appendChild(document.createTextNode(headingText));
 
 		// Display histogram if set up and able to do so.
-		if (useHistogramForYearFacets && type == 'filterDate'
+		if (useHistogramForYearFacets && (type === 'filterDate' || type === 'date')
 			&& (!jQuery.browser.msie || jQuery.browser.version >= 9)) {
 			appendFacetHistogramForDatesTo(terms, container);
 		}
@@ -1590,6 +1594,7 @@ function updateFacetLists () {
 */
 function my_onterm (data) {
 	facetData = data;
+	updateFacetLists();
 }
 
 
@@ -1677,7 +1682,9 @@ function my_onbytarget(data) {
 	if (my_paz.activeClients === 0) {
 		// Update the facet when no more clients are active, to ensure result
 		// counts and overflow indicators are up to date.
-		updateFacetLists();
+		if (!useOriginalFacets) {
+			updateFacetLists();
+		}
 		// Update result count
 		updatePagers();
 	}
@@ -2024,9 +2031,7 @@ function limitResults(kind, term) {
 		filterArray[kind] = [term];
 	}
 
-	curPage = 1;
-	updateAndDisplay();
-	updateFacetLists();
+	updateLimits();
 
 	trackPiwik('facet/limit', kind);
 }
@@ -2057,11 +2062,41 @@ function delimitResults(kind, term) {
 			filterArray[kind] = undefined;
 		}
 
-		updateAndDisplay();
-		updateFacetLists();
+		updateLimits();
 
 		trackPiwik('facet/delimit', kind);
 	}
+}
+
+
+function updateLimits () {
+	curPage = 1;
+	
+	if (useOriginalFacets) {
+		my_paz.search(curSearchTerm, fetchRecords, curSort, curFilter, undefined, {'limit': makeFilterString()});
+	}
+	else {
+		updateAndDisplay();
+	}
+}
+
+
+function makeFilterString () {
+	var filterComponents = [];
+	for (var filterType in filterArray) {
+		var filterList = filterArray[filterType];
+		var filterListEscaped = [];
+		for (var filterIndex in filterList) {
+			var filterString = filterList[filterIndex];
+			// Escape \,| characters.
+			filterString = filterString.replace('\\', '\\\\').replace(',', '\\,').replace('|', '\\|');
+			filterListEscaped.push(filterString);
+		}
+		if (filterListEscaped.length > 0) {
+			filterComponents.push(filterType + '=' + filterListEscaped.join('|'));
+		}
+	}
+	return filterComponents.join(',');
 }
 
 
