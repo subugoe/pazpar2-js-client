@@ -722,25 +722,31 @@ function display () {
 
 
 
-	/*	appendJournalInfo
-		Appends DOM SPAN element with the current hit's journal information to linkElement.
+	/*	journalInfo
+		Returns a DOM SPAN element with the current hit’s journal information.
+		output: DOM SPAN element
 	*/
-	var appendJournalInfo = function () {
-		var output = document.createElement('span');
-		jQuery(output).addClass('pz2-journal');
+	var journalInfo = function () {
+		var result = document.createElement('span');
+		jQuery(result).addClass('pz2-journal');
 
-		var journalTitle = markupForField('journal-title', linkElement, ' ' + localise('In') + ': ');
+		var journalTitle = markupForField('journal-title', result, ' ' + localise('In') + ': ');
 		if (journalTitle) {
 			markupForField('journal-subpart', journalTitle, ', ')
 			journalTitle.appendChild(document.createTextNode('.'));
 		}
+		else {
+			result = undefined;
+		}
+
+		return result;
 	}
 
 
 
 	/*	COinSInfo
 		Creates an array of COinS spans, to be used by Zotero.
-		ouput:	array of SPAN DOM elements with COinS data.
+		output:	array of SPAN DOM elements with COinS data.
 	*/
 	var COinSInfo = function () {
 
@@ -895,10 +901,11 @@ function display () {
 			var authors = authorInfo();
 			appendInfoToContainer(authors, linkElement);
 
-			if (hit['md-medium'] == 'article') {
-				appendJournalInfo();
-			}
-			else {
+			var journal = journalInfo();
+			appendInfoToContainer(journal, linkElement);
+
+			// The text in journal will contain a date. If it does not exist, append the date.
+			if (!journal) {
 				var spaceBefore = ' ';
 				if (authors) {
 					spaceBefore = ', ';
