@@ -1,5 +1,5 @@
 # pazpar2-js-client
-A JavaScript client to interact with [Indexdata’s pazpar2](http://www.indexdata.com/pazpar2) metasearch software and to display its search results.
+A JavaScript client to interact with [Index Data’s pazpar2](http://www.indexdata.com/pazpar2) metasearch software and to display its search results.
 
 2010-2012 by [Sven-S. Porst](http://earthlingsoft.net/ssp/), [SUB Göttingen](http://www.sub.uni-goettingen.de) [<porst@sub.uni-goettingen.de](mailto:porst@sub.uni-goettingen.de?subject=pz2-client)
 
@@ -171,4 +171,4 @@ The markup consists of the following blocks inside the div#pazpar2:
 ## Acknowledgements
 
 * The button and media type graphics included with the scripts were created by [Henrik Cederblad](http://cederbladdesign.com/).
-* The included »pz2.js« script for handling the communication with pazpar2 [is a part of](http://git.indexdata.com/?p=pazpar2.git;a=blob_plain;f=js/pz2.js) Indexdata’s [pazpar2](http://www.indexdata.com/pazpar2) software.
+* The included »pz2.js« script for handling the communication with pazpar2 [is a part of](http://git.indexdata.com/?p=pazpar2.git;a=blob_plain;f=js/pz2.js) Indexdata’s [pazpar2](http://www.indexdata.com/pazpar2) software with tiny modifications added.

@@ -2564,9 +2564,17 @@ function renderDetails(recordID) {
 		if (data['md-eissn'] && data['md-eissn'].length > 0) {
 			eISSN = data['md-eissn'][0];
 		}
-		
+		var ZDBID;
+		if (data['md-zdb-number'] && data['md-zdb-number'].length > 0) {
+			ZDBID = data['md-zdb-number'][0];
+			// ZDB-JOP expects the ZDB-ID to be of the form XXXXXXX-Y: Insert the »-« if it is not there.
+			if (ZDBID[ZDBID.length - 2] !== '-') {
+				ZDBID = ZDBID.slice(0, ZDBID.length - 1) + '-' + ZDBID[ZDBID.length - 1];
+			}
+		}
+
 		// Do nothing if there are no ISSNs or we do not want to use ZDB-JOP.
-		if ( !(ISSN || eISSN) || !useZDB ) { return; }
+		if ( !(ISSN || eISSN || ZDBID) || !useZDB ) { return; }
 
 		var parameters = '';
 
@@ -2576,6 +2584,11 @@ function renderDetails(recordID) {
 		
 		if ( eISSN ) {
 			parameters += '&eissn=' + eISSN;
+		}
+
+		if ( !(ISSN || eISSN) && ZDBID ) {
+			// Need to escape the = here, thus use the escape() function.
+			parameters += '&pid=' + escape('zdbid=' + ZDBID);
 		}
 
 		if (data['md-medium'] == 'article') {
