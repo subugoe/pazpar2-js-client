@@ -1,7 +1,7 @@
 /* 
  * pz2-client.js
  * 
- * Mildly based on Indexdata’s js-client.js.
+ * Inspired by and mildly based on Index Data’s js-client.js.
  * 2010-2012 Sven-S. Porst, SUB Göttingen <porst@sub.uni-goettingen.de>
  *
  * JavaScript for running pazpar2 queries and displaying their results.
@@ -2437,12 +2437,22 @@ function renderDetails(recordID) {
 			for (var subjectIndex = 0; subjectIndex < data['md-subject'].length; subjectIndex++) {
 				var subject = data['md-subject'][subjectIndex];
 				var linkElement = document.createElement('a');
-				var parameters = {'tx_pazpar2_pazpar2[extended]': 1,
-									'tx_pazpar2_pazpar2[controller]': 'Pazpar2',
-									'tx_pazpar2_pazpar2[action]': 'index',
-									'tx_pazpar2_pazpar2[queryStringSubject]': '"' + subject + '"',
-									'tx_pazpar2_pazpar2[useJS]': 'no'
+
+				var parameters = {
+					'tx_pazpar2_pazpar2[controller]': 'Pazpar2',
+					'tx_pazpar2_pazpar2[action]': 'index',
+					'tx_pazpar2_pazpar2[useJS]': 'no'
+				};
+				if (jQuery('.pz2-field-subject').length > 0) {
+					// The subject field is available: switch to extended search and use it.
+					parameters['tx_pazpar2_pazpar2[extended]'] =  1;
+					parameters['tx_pazpar2_pazpar2[queryStringKeyword]'] = '"' + subject + '"';
 				}
+				else {
+					// The subject field is not available: use "subject=XXX" in the general search field.
+					parameters['tx_pazpar2_pazpar2[queryString]'] = 'subject="' + subject + '"';
+				}
+
 				var linkURL = document.location.href.split('?')[0] + '?' + jQuery.param(parameters);
 				linkElement.setAttribute('href', linkURL);
 				var titleString = localise('nach Schlagwort "#" suchen').replace('#', subject);
@@ -2450,11 +2460,18 @@ function renderDetails(recordID) {
 
 				var searchForSubject = function () {
 					jForm = jQuery('form.pz2-searchForm');
-					if (!jForm.hasClass('pz2-extended')) {
-						addExtendedSearch(null, true);
+					if (jQuery('.pz2-field-subject').length > 0) {
+						// The subject field is available: switch to extended search and use it.
+						if (!jForm.hasClass('pz2-extended')) {
+							addExtendedSearch(null, true);
+						}
+						jQuery('.pz2-searchField', jForm).val('');
+						jQuery('input#pz2-field-subject', jForm).val('"' + this.textContent + '"');
 					}
-					jQuery(".pz2-searchField", jForm).val("");
-					jQuery("input#pz2-field-subject", jForm).val('"' + this.textContent + '"');
+					else {
+						// The subject field is not available: use "subject=XXX" in the general search field.
+						jQuery('.pz2-searchField', jForm).val('subject="' + this.textContent + '"');
+					}
 					triggerSearchForForm();
 					return false;
 				}
