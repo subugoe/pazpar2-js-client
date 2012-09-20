@@ -365,6 +365,7 @@
 	position: absolute;
 	top: 20px;
 	right: 0px;
+	text-align: left;
 }
 
 .pz2-recordCount:hover {
@@ -376,6 +377,11 @@
 	cursor: auto;
 }
 
+.pz2-noResults {
+	font-size: 166%;
+	white-space: nowrap;
+	-webkit-transition: all 0.2s ease;
+}
 
 /* RESULT ITEMS */
 

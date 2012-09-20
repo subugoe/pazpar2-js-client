@@ -1012,6 +1012,8 @@ function updatePagers () {
 			pageNumbersContainer.appendChild(nextLink);
 
 			var jRecordCount = jQuery('.pz2-recordCount');
+			jRecordCount.removeClass('pz2-noResults');
+
 			// Add record count information
 			var infoString;
 			if (displayHitList.length > 0) {
@@ -1083,6 +1085,8 @@ function updatePagers () {
 				}
 				else if (my_paz.activeClients == 0) {
 					infoString = localise('keine Treffer gefunden');
+					jRecordCount.addClass('pz2-noResults');
+					updateProgressBar(100);
 				}
 				else {
 					infoString = localise('Suche...');
@@ -1097,21 +1101,36 @@ function updatePagers () {
 
 
 
+/*	updateProgressBar
+	Sets the progress bar to the passed percentage.
+	Ensures a minimum width, animates changes, hides the progress bar quickly
+		when finished.
+	input:	percentage - number
+*/
+function updateProgressBar(percentage) {
+	// Display progress bar, with a minimum of 5% progress.
+	var progress = Math.max(percentage, 5);
+	var finished = (progress === 100);
+	var opacityValue = (finished ? 0 : 1);
+	var duration = 500 * (finished ? 0.2 : 1);
+	
+	jQuery('.pz2-pager .pz2-progressIndicator').animate({'width': progress + '%', 'opacity': opacityValue}, duration);
+}
+
+
+
 /*	my_onstat
-	Callback for pazpar2 status information. Updates status display.
+	Callback for pazpar2 status information. Updates the progress bar, pagers and
+		and status information.
 	input:	data - object with status information from pazpar2
 */
 function my_onstat(data) {
-	// Display progress bar, with a minimum of 5% progress.
 	var progress = (data.clients[0] - data.activeclients[0]) / data.clients[0] * 100;
-	progress = Math.max(progress, 5);
-	var opacityValue = (progress === 100) ? 0 : 1;
-	jQuery('.pz2-pager .pz2-progressIndicator').animate({'width': progress + '%', 'opacity': opacityValue}, 'slow');
+	updateProgressBar(progress);
 
-	// Update result count
 	updatePagers();
 
-	// Write out status information.
+	// Create markup with status information.
 	var statDiv = document.getElementById('pz2-stat');
 	if (statDiv) {
 		jQuery(statDiv).empty();
