@@ -2053,7 +2053,6 @@ function limitResults(kind, term) {
 
 	curPage = 1;
 	updateAndDisplay();
-	updateFacetLists();
 
 	trackPiwik('facet/limit', kind);
 }
@@ -2085,7 +2084,6 @@ function delimitResults(kind, term) {
 		}
 
 		updateAndDisplay();
-		updateFacetLists();
 
 		trackPiwik('facet/delimit', kind);
 	}
