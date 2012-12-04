@@ -1410,7 +1410,7 @@ function facetListForType (type, preferOriginalFacets) {
 				return false;
 			}
 			showLink.onclick = showAllFacetsOfType;
-			var showLinkText = localise('# weitere anzeigen').replace('#', terms.length - invisibleCount);
+			var showLinkText = localise('# weitere anzeigen').replace('#', invisibleCount);
 			showLink.appendChild(document.createTextNode(showLinkText));
 		}
 
