@@ -3439,6 +3439,10 @@ function renderDetails(recordID) {
 					}
 				}
 				location['md-isbn'] = newISBNs;
+				if (newISBNs.length > 0) {
+					var minimalISBN = newISBNs[0].split(' ')[0];
+					location['md-isbn-minimal'] = [minimalISBN];
+				}
 			}
 		}
 
@@ -3674,7 +3678,7 @@ function renderDetails(recordID) {
 				appendInfoToContainer( detailInfoItem('physical-extent'), detailsData );
 			}
 			cleanISBNs();
-			appendInfoToContainer( detailInfoItem('isbn'), detailsData );
+			appendInfoToContainer( detailInfoItem('isbn-minimal'), detailsData );
 			appendInfoToContainer( electronicURLs(), detailsData );
 			appendInfoToContainer( parentLink(), detailsData )
 			appendInfoToContainer( catalogueLink(), detailsData );
@@ -5717,7 +5721,8 @@ var localisations = {
 		'detail-label-series-title': 'Reihe',
 		'detail-label-issn': 'ISSN',
 		'detail-label-acronym-issn': 'Internationale Standardseriennummer',
-		'detail-label-acronym-isbn': 'Internationale Standardbuchnummer',
+		'detail-label-isbn-minimal': 'ISBN',
+		'detail-label-acronym-isbn-minimal': 'Internationale Standardbuchnummer',
 		'detail-label-doi': 'DOI',
 		'detail-label-acronym-doi': 'Document Object Identifier: Mit dem Link zu dieser Nummer kann das Dokument im Netz gefunden werden.',
 		'detail-label-doi-plural': 'DOIs',
@@ -5838,7 +5843,8 @@ var localisations = {
 		'detail-label-series-title': 'Series',
 		'detail-label-issn': 'ISSN',
 		'detail-label-acronym-issn': 'International Standard Series Number',
-		'detail-label-acronym-isbn': 'International Standard Book Number',
+		'detail-label-isbn-minimal': 'ISBN',
+		'detail-label-acronym-isbn-minimal': 'International Standard Book Number',
 		'detail-label-doi': 'DOI',
 		'detail-label-acronym-doi': 'Document Object Identifier: Use the link to load the document.',
 		'detail-label-doi-plural': 'DOIs',
