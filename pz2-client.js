@@ -686,7 +686,7 @@ function display () {
 
 		if (hit['md-title-responsibility'] !== undefined) {
 			// use responsibility field if available
-		 	outputText = hit['md-title-responsibility'];
+		 	outputText = hit['md-title-responsibility'].join('; ');
 		}
 		else if (hit['md-author'] !== undefined) {
 			// otherwise try to fall back to author fields
@@ -706,15 +706,9 @@ function display () {
 		}
 
 		if (outputText) {
-			// ensure the author designation ends with a single full stop
-			var extraFullStop = '';
-			if (outputText.length > 1 && outputText[outputText.length - 1] != '.') {
-				extraFullStop = '.';
-			}
-		
 			var output = document.createElement('span');
 			jQuery(output).addClass('pz2-item-responsibility');
-			output.appendChild(document.createTextNode(outputText + extraFullStop))
+			output.appendChild(document.createTextNode(outputText))
 		}
 		
 		return output;
@@ -730,7 +724,7 @@ function display () {
 		var result = document.createElement('span');
 		jQuery(result).addClass('pz2-journal');
 
-		var journalTitle = markupForField('journal-title', result, ' ' + localise('In') + ': ');
+		var journalTitle = markupForField('journal-title', result, ' – ' + localise('In') + ': ');
 		if (journalTitle) {
 			markupForField('journal-subpart', journalTitle, ', ')
 			journalTitle.appendChild(document.createTextNode('.'));
