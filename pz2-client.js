@@ -6032,7 +6032,8 @@ var catalogueNames = {
 		'Alte Karten': 'Old Maps',
 		'OLC Mathematik': 'Articles',
 		'Dissertationen': 'Dissertations',
-		'Jahrbuch-Datenbank': 'Jahrbuch-Database'
+		'Jahrbuch-Datenbank': 'Jahrbuch-Database',
+		'SUB Onlineressourcen': 'SUB Online Resources'
 	}
 }
 
