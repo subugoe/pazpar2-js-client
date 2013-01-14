@@ -3456,33 +3456,43 @@ function renderDetails(recordID) {
 				output:	array of URL strings or URL objects (with #text and other properties)
 			*/
 			var cleanURLList = function () {
-				var URLs = location['md-electronic-url'];
+				var originalURLs = location['md-electronic-url'];
+				var URLs = [];
+
+				if (originalURLs) {
+					// Turn each item into an object so we can store its original index.
+					for (var originalURLIndex = 0; originalURLIndex < originalURLs.length; originalURLIndex++) {
+						var originalURL = originalURLs[originalURLIndex];
+						if (typeof(originalURL) === 'object') {
+							originalURL.hasLabelInformation = true;
+						}
+						else {
+							originalURL = {'#text': originalURL};
+							originalURL.hasLabelInformation = false;
+						}
+						originalURL.originalPosition = originalURLIndex;
+						URLs.push(originalURL);
+					}
+				
 	
-				if (URLs) {
 					// Figure out which URLs are duplicates and collect indexes of those to remove.
 					var indexesToRemove = {};
 					for (var URLIndex = 0; URLIndex < URLs.length; URLIndex++) {
 						var URLInfo = URLs[URLIndex];
 						URLInfo.originalPosition = URLIndex;
-						var URL = URLInfo;
-						if (typeof(URLInfo) === 'object' && URLInfo['#text']) {
-							URL = URLInfo['#text'];
-						}
+						var URL = URLInfo['#text'];
 
 						// Check for duplicates in the electronic-urls field.
 						for (var remainingURLIndex = URLIndex + 1; remainingURLIndex < URLs.length; remainingURLIndex++) {
 							var remainingURLInfo = URLs[remainingURLIndex];
-							var remainingURL = remainingURLInfo;
-							if (typeof(remainingURLInfo) === 'object' && remainingURLInfo['#text']) {
-								remainingURL = remainingURLInfo['#text'];
-							}
+							var remainingURL = remainingURLInfo['#text'];
 
-							if (URL == remainingURL) {
+							if (URL === remainingURL) {
 								// Two of the URLs are identical.
 								// Keep the one with the title if only one of them has one,
 								// keep the first one otherwise.
 								var URLIndexToRemove = URLIndex + remainingURLIndex;
-								if (typeof(URLInfo) !== 'object' && typeof(remainingURLInfo) === 'object') {
+								if (!URLInfo.hasLabelInformation && !remainingURLInfo.hasLabelInformation) {
 									URLIndexToRemove = URLIndex;
 								}
 								indexesToRemove[URLIndexToRemove] = true;
@@ -3513,10 +3523,10 @@ function renderDetails(recordID) {
 
 					// Re-order URLs so those with explicit labels appear at the beginning.
 					URLs.sort( function(a, b) {
-							if (typeof(a) === 'object' && typeof(b) !== 'object') {
+						if (a.hasLabelInformation && !b.hasLabelInformation) {
 								return -1;
 							}
-							else if (typeof(a) !== 'object' && typeof(b) === 'object') {
+							else if (!a.hasLabelInformation && b.hasLabelInformation) {
 								return 1;
 							}
 							else {
