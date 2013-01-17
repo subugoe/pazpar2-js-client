@@ -75,12 +75,34 @@ function localise (term, externalDictionary) {
 }
 
 
+function initialisePazpar2 () {
+	if (pz2InitTimeout !== undefined) {
+		clearTimeout(pz2InitTimeout);
+		pz2InitTimeout = undefined;
+	}
+	my_paz.init(undefined, my_paz.serviceId);
+}
+
 
 function my_errorHandler (error) {
 	if (error.code == 1 && this.request.status == 417) {
-		// session has expired, create a new one
-		my_paz.init(undefined, my_paz.serviceId);
+		// The session has expired: create a new one.
+		initialisePazpar2();
 	}
+	else if (this.request.status == 503) {
+		// The service is unavailable: Disable the search form.
+		var jRecordCount = jQuery('.pz2-recordCount');
+		jRecordCount.empty();
+		var message = localise('Suche momentan nicht verfügbar.');
+		jRecordCount.text(message);
+		jRecordCount.addClass('pz2-noResults');
+
+		if (pz2InitTimeout !== undefined) {
+			clearTimeout(pz2InitTimeout);
+		}
+		pz2InitTimeout = setTimeout(initialisePazpar2, 15000);
+	}
+
 
 	// If  the error happens while loading, clear the current search term,
 	// to allow restarting the search.
@@ -116,6 +138,7 @@ my_paz = new pz2( {"onshow": my_onshow,
 // Status variables
 var domReadyFired = false;
 var pz2Initialised = false;
+var pz2InitTimeout = undefined;
 var pageLanguage = undefined;
 var institutionName = undefined;
 var allTargetsActive = true;
@@ -178,6 +201,13 @@ function my_oninit(data) {
 	my_paz.stat();
 	my_paz.bytarget();
 	pz2Initialised = true;
+
+	// Clean up potentially existing error messages from previously failed intialisations.
+	var jRecordCount = jQuery('.pz2-recordCount');
+	jRecordCount.empty();
+	jRecordCount.removeClass('pz2-noResults');
+
+	// Process Information from pazpar2-access if it is available.
 	if (data) {
 		var accessRightsTags = data.getElementsByTagName('accessRights');
 		if (accessRightsTags.length > 0) {
@@ -222,6 +252,7 @@ function my_oninit(data) {
 				});
 		}
 	}
+	
 	triggerSearchFunction(null);
 }
 
@@ -1874,6 +1905,9 @@ function triggerSearchForForm (form, additionalQueryTerms) {
 			resetPage();
 			trackPiwik('search', searchTerm);
 		}
+	}
+	else if (!pz2Initialised) {
+		initialisePazpar2();
 	}
 }
 
@@ -5767,6 +5801,7 @@ var localisations = {
 		// General Information
 		'Suche...': 'Suche\u2026',
 		'keine Suchabfrage': 'keine Suchabfrage',
+		'Suche momentan nicht verfügbar.': 'Suche momentan nicht verfügbar.',
 		'keine Treffer gefunden': 'keine Treffer',
 		'+': '+',
 		'Es können nicht alle # Treffer geladen werden.': '+: Es können nicht alle # Treffer geladen werden. Bitte verwenden Sie einen spezifischeren Suchbegriff, um die Trefferzahl zu reduzieren.',
@@ -5888,6 +5923,7 @@ var localisations = {
 		'&lang=de': '&lang=en',
 		// General Information
 		'Suche...': 'Searching\u2026',
+		'Suchdienst momentan nicht verfügbar.': 'Search is temporarily unavailable.',
 		'keine Treffer gefunden': 'no matching records',
 		'keine Suchabfrage': 'no search query',
 		'+': '+',

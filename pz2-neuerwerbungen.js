@@ -190,6 +190,9 @@ function neuerwerbungenRunSearchForForm (form) {
 
 		resetPage();
 	}
+	else if (!pz2Initialised) {
+		initialisePazpar2();
+	}
 }
 
 
