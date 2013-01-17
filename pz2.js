@@ -832,84 +832,99 @@ pzHttpRequest.prototype =
 
     _handleResponse: function (savedUrlForErrorReporting)
     {
-        if ( this.request.readyState == 4 ) { 
-            // pick up appplication errors first
-            var errNode = null;
-            if (this.request.responseXML &&
-                (errNode = this.request.responseXML.documentElement)
-                && errNode.nodeName == 'error') {
-                var errMsg = errNode.getAttribute("msg");
-                var errCode = errNode.getAttribute("code");
-                var errAddInfo = '';
-                if (errNode.childNodes.length)
-                    errAddInfo = ': ' + errNode.childNodes[0].nodeValue;
-                           
-                var err = new Error(errMsg + errAddInfo);
-                err.code = errCode;
-	    
-                if (this.errorHandler) {
-                    this.errorHandler(err);
-                }
-                else {
-                    throw err;
-                }
-            } else if (this.request.status == 200 && 
-                       this.request.responseXML == null) {
-              if (this.request.responseText != null) {
-                //assume JSON
-		
-		var json = null; 
-		var text = this.request.responseText;
-		if (typeof window.JSON == "undefined") 
-		    json = eval("(" + text + ")");
-		else { 
-		    try	{
-		    	json = JSON.parse(text);
-		    }
-		    catch (e) {
-			// Safari: eval will fail as well. Considering trying JSON2 (non-native implementation) instead
-			/* DEBUG only works in mk2-mobile
-			if (document.getElementById("log")) 
-			    document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
-			*/
-			try {
-			    json = eval("(" + text + ")");
+		if ( this.request.readyState == 4 ) {
+			if (this.request.status != 200) {
+				// Handle replys with error codes.
+				var errorMessage;
+				var errorCode;
+				var errorInformation = '';
+				var errNode = null;
+				if (this.request.responseXML
+					&& (errNode = this.request.responseXML.documentElement)
+					&& errNode.nodeName == 'error') {
+					// Reply contains XML with an error Element (pazpar2 reply with error message).
+					errorMessage = errNode.getAttribute("msg");
+					errorCode = errNode.getAttribute("code");
+					if (errNode.childNodes.length) {
+						errorInformation = ': ' + errNode.childNodes[0].nodeValue;
+					}
+				}
+				else {
+					// The reply is not a pazpar2 error message (other server error? server down?).
+					errorMessage = "Did not receive pazpar2 answer."
+					errorCode = this.request.status;
+					errorInformation = ': ' + this.request.statusText;
+				}
+				err = new Error(errorMessage + errorInformation);
+				err.code = errorCode;
+				if (this.errorHandler) {
+					this.errorHandler(err);
+				}
+				else {
+					throw err;
+				}
 			}
-			catch (e) {
-			    /* DEBUG only works in mk2-mobile
-			    if (document.getElementById("log")) 
-				document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
-			    */
+			else if (this.request.status == 200 && this.request.responseXML == null) {
+				if (this.request.responseText != null) {
+					//assume JSON
+					var json = null;
+					var text = this.request.responseText;
+					if (typeof window.JSON == "undefined") {
+						json = eval("(" + text + ")");
+					}
+					else {
+						try	{
+							json = JSON.parse(text);
+						}
+						catch (e) {
+							// Safari: eval will fail as well. Considering trying JSON2 (non-native implementation) instead
+							/* DEBUG only works in mk2-mobile
+							if (document.getElementById("log"))
+								document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
+							*/
+							try {
+								json = eval("(" + text + ")");
+							}
+							catch (e) {
+								/* DEBUG only works in mk2-mobile
+								if (document.getElementById("log"))
+								document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
+								*/
+							}
+						}
+					}
+
+					this.callback(json, "json");
+					}
+				else {
+					var err = new Error("XML response is empty but no error " +
+				                         "for " + savedUrlForErrorReporting);
+					err.code = -1;
+					if (this.errorHandler) {
+						this.errorHandler(err);
+					}
+					else {
+						throw err;
+					}
+				}
 			}
-		    }
-		} 
-		this.callback(json, "json");
-              } else {
-                var err = new Error("XML response is empty but no error " +
-                                    "for " + savedUrlForErrorReporting);
-                err.code = -1;
-                if (this.errorHandler) {
-                    this.errorHandler(err);
-                } else {
-                    throw err;
+			else if (this.request.status == 200) {
+				this.callback(this.request.responseXML);
+			}
+			else {
+				var err = new Error("HTTP response not OK: "
+									+ this.request.status + " - "
+									+ this.request.statusText );
+				err.code = '00' + this.request.status;
+				if (this.errorHandler) {
+					this.errorHandler(err);
+				}
+				else {
+					throw err;
                 }
-              }
-            } else if (this.request.status == 200) {
-                this.callback(this.request.responseXML);
-            } else {
-                var err = new Error("HTTP response not OK: " 
-                            + this.request.status + " - " 
-                            + this.request.statusText );
-                err.code = '00' + this.request.status;        
-                if (this.errorHandler) {
-                    this.errorHandler(err);
-                }
-                else {
-                    throw err;
-                }
-            }
-        }
-    }
+			}
+		}
+	}
 };
 
 /*
