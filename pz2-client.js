@@ -969,7 +969,7 @@ function display () {
 	updatePagers();
 	
 	// Let Zotero know about updated content
-	if (!jQuery.browser.msie) {
+	if (!MSIEVersion()) {
 		var zoteroNotification = document.createEvent('HTMLEvents');
 		zoteroNotification.initEvent('ZoteroItemUpdated', true, true);
 		document.dispatchEvent(zoteroNotification);
@@ -1602,7 +1602,7 @@ function facetListForType (type, preferOriginalFacets) {
 
 		// Display histogram if set up and able to do so.
 		if (useHistogramForYearFacets && type == 'filterDate'
-			&& (!jQuery.browser.msie || jQuery.browser.version >= 9)) {
+			&& (!MSIEVersion() || MSIEVersion() >= 9)) {
 			appendFacetHistogramForDatesTo(terms, container);
 		}
 		else {
@@ -2204,7 +2204,7 @@ function toggleDetails (prefixRecId) {
 		}
 
 		extraLinks.hide();
-		if (!jQuery.browser.msie || jQuery.browser.version > 7) {
+		if (!MSIEVersion() || MSIEVersion() >= 8) {
 			jQuery(record.detailsDiv).slideDown('fast');
 			extraLinks.fadeIn('fast');
 		}
@@ -2903,7 +2903,7 @@ function renderDetails(recordID) {
 				var jInfoLineElements = jQuery(infoLineElements);
 				jInfoLineElements.hide();
 				appendInfoToContainer(infoLineElements, element);
-				if (!jQuery.browser.msie || jQuery.browser.version > 7) {
+				if (!MSIEVersion() || MSIEVersion() >= 8) {
 					jInfoLineElements.slideDown('fast');
 				}
 				else {
@@ -3050,7 +3050,7 @@ function renderDetails(recordID) {
 						jElements.hide();
 						container.appendChild(dt);
 						container.appendChild(dd);
-						if (!jQuery.browser.msie || jQuery.browser.version > 7) {
+						if (!MSIEVersion() || MSIEVersion() >= 8) {
 							jElements.slideDown('fast');
 						}
 						else {
@@ -4190,6 +4190,27 @@ function HTMLIDForRecordData (recordData) {
 function recordIDForHTMLID (HTMLID) {
 	return HTMLID.replace(/-pd-/g, ' ').replace(/-pe-/g, '/').replace(/-pf-/g, '.');
 }
+
+
+
+/*	MSIEVersion
+	Function to remove the dependence on jQuery.browser (removed in jQuery 1.9)
+	Takes the only part of the jQuery code we need from:
+		https://github.com/jquery/jquery-migrate/blob/master/src/core.js
+	output: number of the IE version we are running in | undefined if not running in IE
+*/
+function MSIEVersion () {
+	var MSIEVersion;
+
+	var agentString = navigator.userAgent.toLowerCase();
+	var IEAgentMatch = /(msie) ([\w.]+)/.exec(agentString);
+	if (IEAgentMatch) {
+		MSIEVersion = parseFloat(IEAgentMatch[2]);
+	}
+
+	return MSIEVersion;
+}
+
 
 
 /*	Localised ISO 3166-1 alpha-2 Country Codes
