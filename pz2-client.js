@@ -2,11 +2,11 @@
  * pz2-client.js
  * 
  * Inspired by and mildly based on Index Data’s js-client.js.
- * 2010-2012 Sven-S. Porst, SUB Göttingen <porst@sub.uni-goettingen.de>
+ * 2010-2013 Sven-S. Porst, SUB Göttingen <porst@sub.uni-goettingen.de>
  *
  * JavaScript for running pazpar2 queries and displaying their results.
  *
- * Please refer to the readme in the repository:
+ * Please refer to the Readme in the repository:
  *
  * https://github.com/ssp/pazpar2-js-client
  */
@@ -61,12 +61,12 @@ function localise (term, externalDictionary) {
 	}
 
 	var languageCode = pageLanguage;
-	if (dictionary[pageLanguage] == null) {
+	if (dictionary[pageLanguage] === null) {
 		languageCode = 'de';
 	}
 
 	var localised = dictionary[languageCode][term];
-	if (localised == undefined) {
+	if (localised === undefined) {
 		localised = term;
 		// console.log('No localisation for: "' + term + '"');
 	}
@@ -85,11 +85,13 @@ function initialisePazpar2 () {
 
 
 function my_errorHandler (error) {
-	if (error.code == 1 && this.request.status == 417) {
+	var errorCode = parseInt(error.code);
+
+	if (errorCode === 1 && this.request.status === 417) {
 		// The session has expired: create a new one.
 		initialisePazpar2();
 	}
-	else if (this.request.status == 503) {
+	else if (this.request.status === 503) {
 		// The service is unavailable: Disable the search form.
 		var jRecordCount = jQuery('.pz2-recordCount');
 		jRecordCount.empty();
@@ -224,7 +226,7 @@ function my_oninit(data) {
 			var allTargetsActiveTags = accessRights.getElementsByTagName('allTargetsActive');
 			var allTargetsActive = undefined;
 			if (allTargetsActiveTags.length > 0) {
-				allTargetsActive = (allTargetsActiveTags[0].textContent == 1);
+				allTargetsActive = (parseInt(allTargetsActiveTags[0].textContent) === 1);
 			}
 
 		}
@@ -263,8 +265,8 @@ function my_oninit(data) {
 	input:	* info - the DOM element to insert
 			* container - the DOM element to insert info to
 */
-var appendInfoToContainer = function (info, container) {
-	if (info != undefined && container != undefined ) {
+function appendInfoToContainer (info, container) {
+	if (info !== undefined && container !== undefined ) {
 		if (info.constructor !== Array) {
 			// info is a single item
 			container.appendChild(info);
@@ -386,11 +388,11 @@ function displayLists (list) {
 					var filterValue = filterArray[facetType][filterIndex];
 					if (facetType === 'xtargets') {
 						for (var locationIndex in record.location) {
-							matches = (record.location[locationIndex]['@name'] == filterValue);
+							matches = (record.location[locationIndex]['@name'] === filterValue);
 							if (matches) {break;}
 						}
 					}
-					else if (facetType === 'filterDate' && filterValue.constructor == Object) {
+					else if (facetType === 'filterDate' && filterValue.constructor === Object) {
 						matchesEverythingNotTheDate = true;
 						for (var dateIndex in record['md-filterDate']) {
 							var recordDate = record['md-filterDate'][dateIndex];
@@ -404,7 +406,7 @@ function displayLists (list) {
 					else {
 						var contents = fieldContentsInRecord(facetType, record);
 						for (var index in contents) {
-							matches = (String(contents[index]).toLowerCase() == filterValue.toLowerCase());
+							matches = (String(contents[index]).toLowerCase() === filterValue.toLowerCase());
 							if (matches) {break;}
 						}
 					}
@@ -418,7 +420,7 @@ function displayLists (list) {
 			var result = (matches) ? 1 : 0;
 			if (!matches && matchesEverythingNotTheDate) result = 2;
 			return result;
-		}
+		};
 
 
 		var filteredList = [];
@@ -426,7 +428,7 @@ function displayLists (list) {
 		for (var index in listToFilter) {
 			var item = listToFilter[index];
 			var matchState = matchesFilters(item);
-			if (matchState == 1) {
+			if (matchState === 1) {
 				filteredList.push(item);
 			}
 			if (matchState >= 1) {
@@ -435,7 +437,7 @@ function displayLists (list) {
 		}
 		
 		return [filteredList, filteredUpToDateList];
-	}
+	};
 
 
 
@@ -497,7 +499,7 @@ function displayLists (list) {
 			var fieldName = displaySort[sortCriterionIndex].fieldName;
 			var direction = (displaySort[sortCriterionIndex].direction === 'ascending') ? 1 : -1;
 
-			if (fieldName == 'date') {
+			if (fieldName === 'date') {
 				var date1 = dateForRecord(record1);
 				var date2 = dateForRecord(record2);
 				
@@ -507,13 +509,13 @@ function displayLists (list) {
 				var string1 = fieldContentForSorting(fieldName, record1);
 				var string2 = fieldContentForSorting(fieldName, record2);
 				
-				if (string1 == string2) {
+				if (string1 === string2) {
 					result = 0;
 				}
-				else if (string1 == undefined) {
+				else if (string1 === undefined) {
 					result = 1;
 				}
-				else if (string2 == undefined) {
+				else if (string2 === undefined) {
 					result = -1;
 				}
 				else {
@@ -521,18 +523,18 @@ function displayLists (list) {
 				}
 			}
 
-			if (result != 0) {
+			if (result !== 0) {
 				break;
 			}
 		}
 
 		return result;
-	}
+	};
 	
 
 	var result = filteredLists(list);
-	result[0] = result[0].sort(sortFunction)
-	return result
+	result[0] = result[0].sort(sortFunction);
+	return result;
 }
 
 
@@ -580,7 +582,7 @@ function my_onshow (data) {
 			}
 		}
 		return result;
-	}
+	};
 
 
 	for (var hitNumber in data.hits) {
@@ -590,7 +592,7 @@ function my_onshow (data) {
 			var oldHit = hitList[hitID];
 			if (oldHit) {
 				hit.detailsDivVisible = oldHit.detailsDivVisible;
-				if (oldHit.location.length == hit.location.length) {
+				if (oldHit.location.length === hit.location.length) {
 					// preserve old details Div, if the location info hasn't changed
 					hit.detailsDiv = hitList[hitID].detailsDiv;
 				}
@@ -628,7 +630,7 @@ function my_onshow (data) {
 						return -1;
 					}
 					else if (aDates.length === 0 && bDates.length > 0) {
-						return -1
+						return -1;
 					}
 					else {
 						return 0;
@@ -678,7 +680,7 @@ function display () {
 		}
 
 		return span;
-	}
+	};
 
 
 
@@ -702,7 +704,7 @@ function display () {
 		titleCompleteElement.appendChild(document.createTextNode('. '));
 
 		return titleCompleteElement;
-	}
+	};
 
 
 
@@ -739,11 +741,11 @@ function display () {
 		if (outputText) {
 			var output = document.createElement('span');
 			jQuery(output).addClass('pz2-item-responsibility');
-			output.appendChild(document.createTextNode(outputText))
+			output.appendChild(document.createTextNode(outputText));
 		}
 		
 		return output;
-	}
+	};
 
 
 
@@ -757,7 +759,7 @@ function display () {
 
 		var journalTitle = markupForField('journal-title', result, ' – ' + localise('In') + ': ');
 		if (journalTitle) {
-			markupForField('journal-subpart', journalTitle, ', ')
+			markupForField('journal-subpart', journalTitle, ', ');
 			journalTitle.appendChild(document.createTextNode('.'));
 		}
 		else {
@@ -765,7 +767,7 @@ function display () {
 		}
 
 		return result;
-	}
+	};
 
 
 
@@ -792,7 +794,7 @@ function display () {
 				}
 			}
 			return infoList.join('&');
-		}
+		};
 		
 
 		var coinsSpans = [];
@@ -814,7 +816,7 @@ function display () {
 			}
 			
 			// format info
-			if (location['md-medium'] && location['md-medium'][0] == 'article') {
+			if (location['md-medium'] && location['md-medium'][0] === 'article') {
 				coinsData['rft_val_fmt'] = ['info:ofi/fmt:kev:mtx:journal'];
 				coinsData['rft.genre'] = ['article'];
 				coinsData['rft.atitle'] = [title];
@@ -839,7 +841,7 @@ function display () {
 			else {
 				coinsData['rft_val_fmt'] = ['info:ofi/fmt:kev:mtx:book'];
 				coinsData['rft.btitle'] = [title];
-				if (location['md-medium'] && location['md-medium'][0] == 'book')  {
+				if (location['md-medium'] && location['md-medium'][0] === 'book')  {
 					coinsData['rft.genre'] = ['book'];
 				}
 				else {
@@ -882,7 +884,7 @@ function display () {
 		}
 
 		return coinsSpans;
-	}
+	};
 
 
 
@@ -912,7 +914,7 @@ function display () {
 			var iconElement = document.createElement('span');
 			linkElement.appendChild(iconElement);
 			var mediaClass = 'unknown';
-			if (hit['md-medium'].length == 1) {
+			if (hit['md-medium'].length === 1) {
 				mediaClass = hit['md-medium'][0];
 			}
 			else if (hit['md-medium'].length > 1) {
@@ -1012,7 +1014,7 @@ function updatePagers () {
 			for(var pageNumber = 1; pageNumber <= pages; pageNumber++) {
 				var pageItem = document.createElement('li');
 				pageList.appendChild(pageItem);
-				if(pageNumber != curPage) {
+				if(pageNumber !== curPage) {
 					var linkElement = document.createElement('a');
 					linkElement.setAttribute('href', '#');
 					linkElement.onclick = new Function('showPage(' + pageNumber + ', this);return false;');
@@ -1105,10 +1107,10 @@ function updatePagers () {
 				}
 			}
 			else {
-				if (my_paz.currQuery == undefined) {
+				if (my_paz.currQuery === undefined) {
 					infoString = localise('keine Suchabfrage');
 				}
-				else if (my_paz.activeClients == 0) {
+				else if (my_paz.activeClients === 0) {
 					infoString = localise('keine Treffer gefunden');
 					jRecordCount.addClass('pz2-noResults');
 					updateProgressBar(100);
@@ -1118,7 +1120,7 @@ function updatePagers () {
 				}
 			}
 
-			jRecordCount.empty()
+			jRecordCount.empty();
 			jRecordCount.append(infoString);
 		}
 	);
@@ -1194,7 +1196,7 @@ function facetListForType (type, preferOriginalFacets) {
 			result = (filterArray[type].length > 0);
 		}
 		return result;
-	}
+	};
 
 
 	/*	facetInformationForType
@@ -1217,12 +1219,12 @@ function facetListForType (type, preferOriginalFacets) {
 				if (isFiltered) {break;}
 			}
 			return isFiltered;
-		}
+		};
 
 
 		var termList = [];
 		if (!isFiltered() && preferOriginalFacets) {
-			termList = facetData[type]
+			termList = facetData[type];
 		}
 		else {
 			// Loop through data ourselves to gather facet information.
@@ -1234,7 +1236,7 @@ function facetListForType (type, preferOriginalFacets) {
 			for (var recordIndex in recordList) {
 				var record = recordList[recordIndex];
 				var dataArray = fieldContentsInRecord(type, record);
-				var countsToIncrement = {}
+				var countsToIncrement = {};
 				for (var index in dataArray) {
 					var data = dataArray[index];
 					countsToIncrement[data] = true;
@@ -1256,7 +1258,7 @@ function facetListForType (type, preferOriginalFacets) {
 			if (termList.length > 0) {
 				termList.sort( function(term1, term2) {
 						if (term1.freq < term2.freq) {return 1;}
-						else if (term1.freq == term2.freq) {
+						else if (term1.freq === term2.freq) {
 							if (term1.name < term2.name) {return -1;}
 							else {return 1;}
 						}
@@ -1293,7 +1295,7 @@ function facetListForType (type, preferOriginalFacets) {
 		}
 
 		return termList;
-	}
+	};
 
 
 
@@ -1433,14 +1435,15 @@ function facetListForType (type, preferOriginalFacets) {
 				var facetType = containingList.getAttribute('facetType');
 				termLists[facetType].showAll = true;
 				return false;
-			}
+			};
+
 			showLink.onclick = showAllFacetsOfType;
 			var showLinkText = localise('# weitere anzeigen').replace('#', invisibleCount);
 			showLink.appendChild(document.createTextNode(showLinkText));
 		}
 
 		return list;
-	}
+	};
 
 
 	var appendFacetHistogramForDatesTo = function (terms, container) {
@@ -1451,7 +1454,7 @@ function facetListForType (type, preferOriginalFacets) {
 			jQuery(cancelLink).addClass('pz2-facetCancel pz2-activeFacet');
 			cancelLink.onclick = new Function('delimitResults("filterDate"); return false;');
 			var yearString = filterArray['filterDate'][0].from;
-			if (filterArray['filterDate'][0].from != filterArray['filterDate'][0].to - 1) {
+			if (filterArray['filterDate'][0].from !== filterArray['filterDate'][0].to - 1) {
 				yearString += '-' + (filterArray['filterDate'][0].to - 1);
 			}
 			var cancelLinkText = localise('Filter # aufheben').replace('#', yearString);
@@ -1481,7 +1484,7 @@ function facetListForType (type, preferOriginalFacets) {
 		*/
 		var xaxisTicks = function (axis) {
 			return [[axis.datamin, '      ' + axis.datamin], [axis.datamax, axis.datamax + '      ']];
-		}
+		};
 
 		// Use the colour of term list titles for the histogram.
 		var graphColour = jQuery('.pz2-termList-xtargets a').css('color');
@@ -1504,7 +1507,7 @@ function facetListForType (type, preferOriginalFacets) {
 			'yaxis': {
 				'position': 'right',
 				'tickDecimals': 0,
-				'tickFormatter': function(val, axis) {return (val != 0) ? (val) : ('');},
+				'tickFormatter': function(val, axis) {return (val !== 0) ? (val) : ('');},
 				'labelWidth': 30
 			},
 			'grid': {
@@ -1523,7 +1526,7 @@ function facetListForType (type, preferOriginalFacets) {
 
 		var removeTooltip = function () {
 			jQuery("#pz2-histogram-tooltip").remove();
-		}
+		};
 
 		var selectRanges = function (ranges) {
 			ranges.xaxis.from = Math.floor(ranges.xaxis.from);
@@ -1532,7 +1535,7 @@ function facetListForType (type, preferOriginalFacets) {
 			filterArray['filterDate'] = undefined;
 			limitResults('filterDate', ranges.xaxis);
 			removeTooltip();
-		}
+		};
 
 		jGraphDiv.bind("plotclick", function (event, pos, item) {
 			if (item) {
@@ -1563,13 +1566,13 @@ function facetListForType (type, preferOriginalFacets) {
 					'top': y + 5,
 					'left': x + 5
 				}).appendTo('body').fadeIn(200);
-			}
+			};
 		
 			removeTooltip();
 			var year = Math.floor(ranges.x);
 			for (termIndex in terms) {
-				var term = terms[termIndex].name;
-				if (term == year) {
+				var term = parseInt(terms[termIndex].name);
+				if (term === year) {
 					var hitCount = terms[termIndex].freq;
 					var displayString = year + ': ' + hitCount + ' ' + localise('Treffer');
 					tooltipY = jGraphDiv.offset().top + canvasHeight - 20;
@@ -1581,7 +1584,7 @@ function facetListForType (type, preferOriginalFacets) {
 		for (filterIndex in filterArray['filterDate']) {
 			plot.setSelection({'xaxis': filterArray['filterDate'][filterIndex]}, true);
 		}					
-	}
+	};
 
 
 	// Create container and heading.
@@ -1592,7 +1595,7 @@ function facetListForType (type, preferOriginalFacets) {
 	if (terms.length >= parseInt(termLists[type].minDisplay) || filterArray[type]) {
 		// Always display facet list if it is filtered. Otherwise require
 		// at least .minDisplay facet elements.
-		var heading = document.createElement('h5')
+		var heading = document.createElement('h5');
 		container.appendChild(heading);
 		var headingText = localise('facet-title-'+type);
 		if (isFilteredForType(type)) {
@@ -1601,7 +1604,7 @@ function facetListForType (type, preferOriginalFacets) {
 		heading.appendChild(document.createTextNode(headingText));
 
 		// Display histogram if set up and able to do so.
-		if (useHistogramForYearFacets && type == 'filterDate'
+		if (useHistogramForYearFacets && type === 'filterDate'
 			&& (!MSIEVersion() || MSIEVersion() >= 9)) {
 			appendFacetHistogramForDatesTo(terms, container);
 		}
@@ -1663,7 +1666,7 @@ function my_onbytarget(data) {
 
 	var caption = document.createElement('caption');
 	table.appendChild(caption);
-	caption.appendChild(document.createTextNode(localise('Übertragungsstatus')))
+	caption.appendChild(document.createTextNode(localise('Übertragungsstatus')));
 	var closeLink = document.createElement('a');
 	caption.appendChild(closeLink);
 	closeLink.setAttribute('href', '#');
@@ -1710,7 +1713,7 @@ function my_onbytarget(data) {
 		td = document.createElement('td');
 		tr.appendChild(td);
 		var hitCount = data[i].hits;
-		if (hitCount == -1) {
+		if (hitCount === -1) {
 			hitCount = '?';
 		}
 		td.appendChild(document.createTextNode(hitCount));
@@ -1718,7 +1721,7 @@ function my_onbytarget(data) {
 		td = document.createElement('td');
 		tr.appendChild(td);
 		td.appendChild(document.createTextNode(localise(data[i].state)));
-		if (data[i].diagnostic != 0) {
+		if (parseInt(data[i].diagnostic) !== 0) {
 			td.setAttribute('title', localise('Code') + ': ' + data[i].diagnostic);
 		}
 		td.setAttribute('headers', 'pz2-target-status');
@@ -1748,7 +1751,7 @@ function pz2ClientDomReady ()  {
 	domReadyFired = true;
 
 	jQuery('.pz2-searchForm').each( function(index, form) {
-			form.onsubmit = onFormSubmitEventHandler
+			form.onsubmit = onFormSubmitEventHandler;
 			if (jQuery('form.pz2-searchForm').hasClass('pz2-extended')) {
 				jQuery('.pz2-extendedLink', form).click(removeExtendedSearch);
 			}
@@ -1843,13 +1846,13 @@ function triggerSearchForForm (form, additionalQueryTerms) {
 			}
 
 			return search;
-		}
+		};
 
 
 		var searchString = jQuery('#pz2-field-' + fieldName, myForm).val();
 		var indexName = fieldName;
 
-		if (searchString && searchString != '') {
+		if (searchString && searchString !== '') {
 			searchString = jQuery.trim(searchString);
 			if (fieldName === 'all') {
 				if (jQuery('#pz2-checkbox-fulltext:checked', myForm).length > 0) {
@@ -1868,7 +1871,7 @@ function triggerSearchForForm (form, additionalQueryTerms) {
 
 			array.push(createSearchString(indexName, searchString));
 		}
-	}
+	};
 
 
 	var myForm = form;
@@ -1895,10 +1898,10 @@ function triggerSearchForForm (form, additionalQueryTerms) {
 			addSearchStringForFieldToArray('subject', searchChunks);
 			addSearchStringForFieldToArray('date', searchChunks);
 		}
-		searchChunks = searchChunks.concat(curAdditionalQueryTerms)
+		searchChunks = searchChunks.concat(curAdditionalQueryTerms);
 		var searchTerm = searchChunks.join(' and ');
-		searchTerm = searchTerm.replace('*', '?')
-		if ( searchTerm != '' && searchTerm != curSearchTerm ) {
+		searchTerm = searchTerm.replace('*', '?');
+		if ( searchTerm !== '' && searchTerm !== curSearchTerm ) {
 			loadSelectsFromForm(myForm);
 			my_paz.search(searchTerm, fetchRecords, curSort, curFilter);
 			curSearchTerm = searchTerm;
@@ -1996,12 +1999,12 @@ function setSortCriteriaFromString (sortString) {
 
 		for (var criterionIndex in sortCriteria) {
 			var criterionParts = sortCriteria[criterionIndex].split('-');
-			if (criterionParts.length == 2) {
+			if (criterionParts.length === 2) {
 				var fieldName = criterionParts[0];
 				var direction = criterionParts[1];
 				displaySort.push({'fieldName': fieldName,
-									'direction': ((direction == 'd') ? 'descending' : 'ascending')});
-				curSortArray.push(fieldName + ':' + ((direction == 'd') ? '0' : '1') );
+									'direction': ((direction === 'd') ? 'descending' : 'ascending')});
+				curSortArray.push(fieldName + ':' + ((direction === 'd') ? '0' : '1') );
 			}
 		}
 	}
@@ -2009,7 +2012,7 @@ function setSortCriteriaFromString (sortString) {
 		// Use the default sort order set in displaySort.
 		for (var displaySortIndex in displaySort) {
 			var sortCriterion = displaySort[displaySortIndex];
-			curSortArray.push(sortCriterion.fieldName + ':' + ((sortCriterion.direction == 'descending') ? '0' : '1'));
+			curSortArray.push(sortCriterion.fieldName + ':' + ((sortCriterion.direction === 'descending') ? '0' : '1'));
 		}
 	}
 
@@ -2098,11 +2101,11 @@ function delimitResults(kind, term) {
 		if (term) {
 			// if a term is given only delete occurrences of 'term' from the filter
 			for (var index = filterArray[kind].length -1; index >= 0; index--) {
-				if (filterArray[kind][index] == term) {
+				if (filterArray[kind][index] === term) {
 					filterArray[kind].splice(index,1);
 				}
 			}
-			if (filterArray[kind].length == 0) {
+			if (filterArray[kind].length === 0) {
 				filterArray[kind] = undefined;
 			}
 		}
@@ -2227,14 +2230,14 @@ function toggleDetails (prefixRecId) {
 	This function works in place and alters the original array.
 	input:	information - array to remove duplicate entries from.
 */
-var deduplicate = function (information) {
+function deduplicate (information) {
 	if (information) {
 		for (var i = 0; i < information.length; i++) {
 			var item = information[i].toLowerCase();
 			var isDuplicate = false;
 			for (var j = 0; j < i; j++) {
 				var jtem = information[j].toLowerCase();
-				if (item == jtem) {
+				if (item === jtem) {
 					isDuplicate = true;
 					information.splice(i, 1);
 					i--;
@@ -2265,7 +2268,7 @@ function renderDetails(recordID) {
 	var markupInfoItems = function (infoItems) {
 		var result;
 
-		if (infoItems.length == 1) {
+		if (infoItems.length === 1) {
 			result = infoItems[0];
 		}
 		else if (infoItems.length > 1) {
@@ -2279,7 +2282,7 @@ function renderDetails(recordID) {
 		}
 
 		return result;
-	}
+	};
 
 
 
@@ -2310,7 +2313,7 @@ function renderDetails(recordID) {
 		}
 		
 		return line;
-	}
+	};
 
 
 
@@ -2327,7 +2330,7 @@ function renderDetails(recordID) {
 		if (title && informationElements) {
 			var headingText;	
 
-			if (informationElements.length == 1) {
+			if (informationElements.length === 1) {
 				headingText = localise('detail-label-'+title);
 			}
 			else {
@@ -2358,7 +2361,7 @@ function renderDetails(recordID) {
 		}
 
 		return line;
-	}
+	};
 
 
 
@@ -2376,7 +2379,7 @@ function renderDetails(recordID) {
 		}
 
 		return result;
-	}
+	};
 
 
 	
@@ -2394,7 +2397,7 @@ function renderDetails(recordID) {
 		DOISpan.appendChild(linkElement);		
 
 		return DOISpan;
-	}
+	};
 
 
 
@@ -2424,7 +2427,7 @@ function renderDetails(recordID) {
 		}
 
 		return result;
-	}
+	};
 
 
 
@@ -2443,7 +2446,7 @@ function renderDetails(recordID) {
 			var fieldName = 'md-' + ISSNTypeIndex;
 			for (var ISSNIndex in data[fieldName]) {
 				var ISSN = data[fieldName][ISSNIndex].substr(0,9);
-				if (jQuery.inArray(ISSN, ISSNList) == -1) {
+				if (jQuery.inArray(ISSN, ISSNList) === -1) {
 					if (ISSNTypes[ISSNTypeIndex] !== '') {
 						ISSN += ' (' + localise(ISSNTypes[ISSNTypeIndex]) + ')';
 					}
@@ -2458,7 +2461,7 @@ function renderDetails(recordID) {
 		}
 
 		return detailLine('issn', infoElements);
-	}
+	};
 
 
 
@@ -2519,7 +2522,7 @@ function renderDetails(recordID) {
 					}
 					triggerSearchForForm();
 					return false;
-				}
+				};
 
 				linkElement.onclick = searchForSubject;
 
@@ -2537,7 +2540,7 @@ function renderDetails(recordID) {
 		}
 
 		return detailLine(labelString, infoElements);
-	}
+	};
 
 
 
@@ -2582,11 +2585,11 @@ function renderDetails(recordID) {
 				MSCString += ' (' + localise('gemäß') + ' ' + MSCNotes.join(', ') + ')';
 			}
 
-			infoElements = [document.createTextNode(MSCString)]
+			infoElements = [document.createTextNode(MSCString)];
 		}
 
 		return detailLine('classification-msc', infoElements);
-	}
+	};
 
 
 
@@ -2636,7 +2639,7 @@ function renderDetails(recordID) {
 			parameters += '&pid=' + escape('zdbid=' + ZDBID);
 		}
 
-		if (data['md-medium'] == 'article') {
+		if (data['md-medium'] === 'article') {
 			parameters += '&genre=article';
 
 			// Add additional information to request to get more precise result and better display.
@@ -2698,26 +2701,26 @@ function renderDetails(recordID) {
 					output:	DOM Element for displaying the information in ZDBResult that's relevant for us
 				*/
 				var ZDBInfoItemForResult = function (ZDBResult) {
-					var status = ZDBResult.getAttribute('state');
+					var status = parseInt(ZDBResult.getAttribute('state'));
 					var statusText;
 
 					// Determine the access status of the result.
-					if (status == 0) {
+					if (status === 0) {
 						statusText = localise('frei verfügbar');
 					}
-					else if (status == 1) {
+					else if (status === 1) {
 						statusText = localise('teilweise frei verfügbar');
 					}
-					else if (status == 2) {
+					else if (status === 2) {
 						statusText = localise('verfügbar');
 					}
-					else if (status == 3) {
+					else if (status === 3) {
 						statusText = localise('teilweise verfügbar');
 					}
-					else if (status == 4) {
+					else if (status === 4) {
 						statusText = localise('nicht verfügbar');
 					}
-					else if (status == 5) {
+					else if (status === 5) {
 						statusText = localise('diese Ausgabe nicht verfügbar');
 					}
 					else {
@@ -2756,7 +2759,7 @@ function renderDetails(recordID) {
 								}
 							);
 							if (additionals.length > 0) {
-								accessLink.appendChild(document.createTextNode(additionals.join('; ') + '. '))
+								accessLink.appendChild(document.createTextNode(additionals.join('; ') + '. '));
 							}
 							else {
 								accessLink.appendChild(document.createTextNode(linkTitle));
@@ -2785,7 +2788,7 @@ function renderDetails(recordID) {
 								infoText += ' ' + signature.textContent;
 							}
 							
-							if (locationText.search('Göttingen SUB') != -1 && locationText.search('LS2') != -1) {
+							if (locationText.search('Göttingen SUB') !== -1 && locationText.search('LS2') !== -1) {
 								infoText += ' ' + localise('[neuere Bände im Lesesaal 2]');
 							}
 
@@ -2797,7 +2800,7 @@ function renderDetails(recordID) {
 						}
 					}	
 					return statusElement;
-				}
+				};
 
 
 
@@ -2814,7 +2817,7 @@ function renderDetails(recordID) {
 						libraryNameSpan.appendChild(document.createTextNode(libraryName.textContent));
 						target.appendChild(libraryNameSpan);
 					}
-				}
+				};
 
 
 
@@ -2844,7 +2847,7 @@ function renderDetails(recordID) {
 					}
 
 					return infos;
-				}
+				};
 
 
 
@@ -2886,7 +2889,7 @@ function renderDetails(recordID) {
 					}
 
 					return container;
-				}
+				};
 
 
 
@@ -2911,7 +2914,7 @@ function renderDetails(recordID) {
 				}
 			}
 		);
-	}
+	};
 	
 
 
@@ -3009,7 +3012,7 @@ function renderDetails(recordID) {
 								bookLink.onclick = openPreview;
 							}
 							return bookLink;
-						}
+						};
 
 						var dt = document.createElement('dt');
 						var dd = document.createElement('dd');
@@ -3054,7 +3057,7 @@ function renderDetails(recordID) {
 							jElements.slideDown('fast');
 						}
 						else {
-							jElements.show()
+							jElements.show();
 						}
 					}
 				}
@@ -3109,9 +3112,9 @@ function renderDetails(recordID) {
 			trackPiwik('googlebooks/open');
 
 			return false;
-		}
+		};
 
-	} // end of addGoogleBooksLinkIntoElement
+	}; // end of addGoogleBooksLinkIntoElement
 
 
 
@@ -3186,7 +3189,7 @@ function renderDetails(recordID) {
 
 			map.fitBounds(containingBounds);
 			trackPiwik('map');
-		}
+		};
 
 
 
@@ -3198,14 +3201,14 @@ function renderDetails(recordID) {
 				var recordLocation = this.pz2Locations[itemID];
 				jQuery(recordLocation.element).addClass('pz2-highlight');
 			}
-		}
+		};
 
 		var rectMouseOut = function () {
 			for (var itemID in this.pz2Locations) {
 				var recordLocation = this.pz2Locations[itemID];
 				jQuery(recordLocation.element).removeClass('pz2-highlight');
 			}
-		}
+		};
 
 
 
@@ -3264,7 +3267,7 @@ function renderDetails(recordID) {
 				}
 
 				return degrees;
-			}
+			};
 
 			var result;
 			var components = borderString.replace(/[–-]/, '-').replace('--', '-').split('-');
@@ -3273,7 +3276,7 @@ function renderDetails(recordID) {
 			}
 
 			return result;
-		}
+		};
 
 
 
@@ -3288,7 +3291,7 @@ function renderDetails(recordID) {
 		var rectangleVerticesForCoordinatesString = function (coordinatesString) {
 			var coordinates = [];
 			var longLatArray = coordinatesString.split('/');
-			if (longLatArray.length == 2) {
+			if (longLatArray.length === 2) {
 				var longitudeNumbers = borderNumbersForString(longLatArray[0]);
 				var latitudeNumbers = borderNumbersForString(longLatArray[1]);
 				if (latitudeNumbers && longitudeNumbers) {
@@ -3300,7 +3303,7 @@ function renderDetails(recordID) {
 			}
 
 			return coordinates;
-		}
+		};
 
 		var line;
 		if (useMaps === true) {
@@ -3329,7 +3332,7 @@ function renderDetails(recordID) {
 		}
 
 		return line;
-	} // End of mapDetailLine
+	}; // End of mapDetailLine
 
 
 
@@ -3364,7 +3367,7 @@ function renderDetails(recordID) {
 				}
 			}			
 			return infoSpan;
-		}
+		};
 
 
 
@@ -3383,7 +3386,7 @@ function renderDetails(recordID) {
 				var labelID = 'detail-label-' + fieldName;
 				var localisedLabelString = localise(labelID);
 
-				if ( localisedLabelString != labelID ) {
+				if ( localisedLabelString !== labelID ) {
 					label = localisedLabelString;
 				}
 
@@ -3406,7 +3409,7 @@ function renderDetails(recordID) {
 			}
 
 			return infoItem;
-		}
+		};
 
 
 
@@ -3423,7 +3426,7 @@ function renderDetails(recordID) {
 			*/
 			var normaliseISBNsInString = function (ISBN) {
 				return ISBN.replace(/([0-9]*)-([0-9Xx])/g, '$1$2');
-			}
+			};
 
 
 			/*	pickISBN
@@ -3436,21 +3439,21 @@ function renderDetails(recordID) {
 				var numberRegexp = /([0-9]{9,12})[0-9xX].*/;
 				var numberPart1 = ISBN1.replace(numberRegexp, '$1');
 				var numberPart2 = ISBN2.replace(numberRegexp, '$1');
-				if (!(numberPart1 == numberPart2)) {
-					if (numberPart1.indexOf(numberPart2) != -1) {
+				if (!(numberPart1 === numberPart2)) {
+					if (numberPart1.indexOf(numberPart2) !== -1) {
 						result = ISBN1;
 					}
-					else if (numberPart2.indexOf(numberPart1) != -1) {
+					else if (numberPart2.indexOf(numberPart1) !== -1) {
 						result = ISBN2;
 					}
 				}
 				return result;
-			}
+			};
 
 
 
 			if (location['md-isbn'] !== undefined) {
-				var newISBNs = []
+				var newISBNs = [];
 				for (var index in location['md-isbn']) {
 					var normalisedISBN = normaliseISBNsInString(location['md-isbn'][index]);
 					for (var newISBNNumber in newISBNs) {
@@ -3472,7 +3475,7 @@ function renderDetails(recordID) {
 					location['md-isbn-minimal'] = [minimalISBN];
 				}
 			}
-		}
+		};
 
 
 
@@ -3535,7 +3538,7 @@ function renderDetails(recordID) {
 
 						// Check for duplicates among the DOIs.
 						for (var DOIIndex in data['md-doi']) {
-							if (URL.search(data['md-doi'][DOIIndex]) != -1) {
+							if (URL.search(data['md-doi'][DOIIndex]) !== -1) {
 								indexesToRemove[URLIndex] = true;
 								break;
 							}
@@ -3550,7 +3553,7 @@ function renderDetails(recordID) {
 							indexesToRemoveArray.push(i);
 						}
 					}
-					indexesToRemoveArray.sort( function(a, b) {return b - a;} )
+					indexesToRemoveArray.sort( function(a, b) {return b - a;} );
 					for (var j in indexesToRemoveArray) {
 						URLs.splice(indexesToRemoveArray[j], 1);
 					}
@@ -3571,14 +3574,14 @@ function renderDetails(recordID) {
 				}
 				
 				return URLs;
-			}
+			};
 
 
 
 			var electronicURLs = cleanURLList();
 
 			var URLsContainer;
-			if (electronicURLs && electronicURLs.length != 0) {
+			if (electronicURLs && electronicURLs.length !== 0) {
 				URLsContainer = document.createElement('span');
 
 				for (var URLNumber in electronicURLs) {
@@ -3619,7 +3622,7 @@ function renderDetails(recordID) {
 			}
 
 			return URLsContainer;		
-		}
+		};
 
 
 
@@ -3639,7 +3642,7 @@ function renderDetails(recordID) {
 			}
 			
 			return URL;
-		}
+		};
 
 
 
@@ -3664,7 +3667,7 @@ function renderDetails(recordID) {
 			}
 
 			return result;
-		}
+		};
 
 
 
@@ -3683,12 +3686,12 @@ function renderDetails(recordID) {
 				linkElement.setAttribute('href', URL);
 				linkElement.title = localise('Im Katalog ansehen');
 				turnIntoNewWindowLink(linkElement);
-				jQuery(linkElement).addClass('pz2-detail-catalogueLink')
+				jQuery(linkElement).addClass('pz2-detail-catalogueLink');
 				linkElement.appendChild(document.createTextNode(targetName));
 			}
 
 			return linkElement;
-		}
+		};
 
 
 
@@ -3709,7 +3712,7 @@ function renderDetails(recordID) {
 			location.element = detailsData;
 
 			appendInfoToContainer( detailInfoItem('edition'), detailsData );
-			if (location['md-medium'] != 'article') {
+			if (location['md-medium'] !== 'article') {
 				appendInfoToContainer( detailInfoItem('publication-name'), detailsData );
 				appendInfoToContainer( detailInfoItem('publication-place'), detailsData );
 				appendInfoToContainer( detailInfoItem('date'), detailsData );
@@ -3718,14 +3721,14 @@ function renderDetails(recordID) {
 			cleanISBNs();
 			appendInfoToContainer( detailInfoItem('isbn-minimal'), detailsData );
 			appendInfoToContainer( electronicURLs(), detailsData );
-			appendInfoToContainer( parentLink(), detailsData )
+			appendInfoToContainer( parentLink(), detailsData );
 			appendInfoToContainer( catalogueLink(), detailsData );
 
-			if (detailsData.childNodes.length == 0) {locationDetails = [];}
+			if (detailsData.childNodes.length === 0) {locationDetails = [];}
 		}
 
 		return locationDetails;
-	}
+	};
 
 
 
@@ -3767,12 +3770,12 @@ function renderDetails(recordID) {
 							}
 						}
 						else {
-							targetChild.appendChild(target.ownerDocument.createTextNode(child))
+							targetChild.appendChild(target.ownerDocument.createTextNode(child));
 						}
 					}
 				}
 			}
-		}
+		};
 
 
 
@@ -3810,7 +3813,7 @@ function renderDetails(recordID) {
 					var prefix = "";
 					var tagname = rootTagName;
 					var p = rootTagName.indexOf(':');
-					if (p != -1) {
+					if (p !== -1) {
 						prefix = rootTagName.substring(0, p);
 						tagname = rootTagName.substring(p+1);
 					}
@@ -3868,7 +3871,7 @@ function renderDetails(recordID) {
 					}
 				}
 				return result;
-			}
+			};
 
 
 			// Convert location data to XML and serialise it to a string.
@@ -3887,7 +3890,7 @@ function renderDetails(recordID) {
 				form = document.createElement('form');
 				form.method = 'POST';
 				var scriptPath = 'typo3conf/ext/pazpar2/Resources/Public/pz2-client/converter/convert-pazpar2-record.php';
-				var scriptGetParameters = {'format': exportFormat}
+				var scriptGetParameters = {'format': exportFormat};
 				if (pageLanguage !== undefined) {
 					scriptGetParameters.language = pageLanguage;
 				}
@@ -3915,12 +3918,12 @@ function renderDetails(recordID) {
 				var trackOnSubmit = function () {
 					setTimeout('trackPiwik("export/' + exportFormat + '");', 500);
 					return true;
-				}
+				};
 				form.onsubmit = trackOnSubmit;
 			}
 
 			return form;
-		}
+		};
 
 
 
@@ -3942,7 +3945,7 @@ function renderDetails(recordID) {
 			}
 
 			return item;
-		}
+		};
 
 		
 		
@@ -3956,7 +3959,7 @@ function renderDetails(recordID) {
 			for (var formatIndex in exportFormats) {
 				container.appendChild(exportItem(locations, exportFormats[formatIndex], labelFormat));
 			}
-		}
+		};
 
 
 
@@ -3980,7 +3983,7 @@ function renderDetails(recordID) {
 			}
 			
 			return submenuContainer;
-		}
+		};
 
 
 
@@ -4056,17 +4059,17 @@ function renderDetails(recordID) {
 			}
 
 			return KVKItem;
-		}
+		};
 
 
 
 		var extraLinkList = document.createElement('ul');
 
-		if (showKVKLink == 1) {
+		if (showKVKLink) {
 			appendInfoToContainer(KVKItem(data), extraLinkList);
 		}
 
-		if (data.location.length == 1) {
+		if (data.location.length === 1) {
 			var labelFormat = localise('download-label-format-simple');
 			appendExportItemsTo(data.location, labelFormat, extraLinkList);
 		}
@@ -4093,7 +4096,7 @@ function renderDetails(recordID) {
 		}
 
 		return exportLinks;
-	}
+	};
 
 
 
@@ -4124,7 +4127,7 @@ function renderDetails(recordID) {
 			data['md-author-clean'] = [];
 			for (var authorIndex in data['md-author']) {
 				var authorName = jQuery.trim(data['md-author'][authorIndex].split(',')[0]);
-				if (allResponsibility.match(authorName) == null) {
+				if (allResponsibility.match(authorName) === null) {
 					data['md-author-clean'].push(data['md-author'][authorIndex]);
 				}
 			}
@@ -4135,14 +4138,14 @@ function renderDetails(recordID) {
 		data['md-other-person-clean'] = [];
 		for (var personIndex in data['md-other-person']) {
 			var personName = jQuery.trim(data['md-other-person'][personIndex].split(',')[0]);
-			if (allResponsibility.match(personName) == null) {
+			if (allResponsibility.match(personName) === null) {
 				data['md-other-person-clean'].push(data['md-other-person'][personIndex]);
 			}
 		}
 		
 		appendInfoToContainer( detailLineAuto('author-clean'), detailsList );
-		appendInfoToContainer( detailLineAuto('other-person-clean'), detailsList )
-		appendInfoToContainer( detailLineAuto('abstract'), detailsList )
+		appendInfoToContainer( detailLineAuto('other-person-clean'), detailsList );
+		appendInfoToContainer( detailLineAuto('abstract'), detailsList );
 		appendInfoToContainer( detailLineAuto('description'), detailsList );
 		appendInfoToContainer( detailLineAuto('series-title'), detailsList );
 		appendInfoToContainer( ISSNsDetailLine(), detailsList );
@@ -4725,7 +4728,7 @@ var countryNames = {
 		'EU': 'Europe',
 		'II': 'International'
 	}
-}
+};
 
 
 /*	Localised ISO 639-2/B Language Codes
@@ -6102,7 +6105,7 @@ var catalogueNames = {
 		'Jahrbuch-Datenbank': 'Jahrbuch-Database',
 		'SUB Onlineressourcen': 'SUB Online Resources'
 	}
-}
+};
 
 
 
@@ -6153,4 +6156,4 @@ var linkDescriptions = {
 		'TOC': 'Table of Contents',
 		'Volltext': 'Full text'
 	}
-}
+};
