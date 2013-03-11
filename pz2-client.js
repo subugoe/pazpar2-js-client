@@ -3752,6 +3752,9 @@ function renderDetails(recordID) {
 					// We are dealing with an attribute.
 					target.setAttribute(fieldName.substr(1), object[fieldName]);
 				}
+				else if (fieldName === '#text') {
+					target.appendChild(target.ownerDocument.createTextNode(child));
+				}
 				else {
 					// We are dealing with a sub-element.
 					var fieldArray = object[fieldName];
