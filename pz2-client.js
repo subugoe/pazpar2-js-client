@@ -3142,7 +3142,7 @@ function renderDetails(recordID) {
 			var map = new google.maps.Map(mapContainer, options);
 
 			var containingBounds = new google.maps.LatLngBounds();
-			var rectanglesOnMap = [];
+			var markersOnMap = [];
 			var highlightColour = jQuery('.pz2-termList-xtargets a').css('color');
 
 			for (var markerID in markers) {
@@ -3152,20 +3152,20 @@ function renderDetails(recordID) {
 					new google.maps.LatLng(rect[1][0], rect[1][1]),
 					new google.maps.LatLng(rect[3][0], rect[3][1])
 				);
-				var drawThisRect = true;
 				
 				// Determine whether this rectangle has already been added to the map
 				// and avoid drawing duplicates.
-				for (var rectangleOnMapID in rectanglesOnMap) {
-					var rectangleOnMap = rectanglesOnMap[rectangleOnMapID];
-					if (newBounds.equals(rectangleOnMap.getBounds())) {
-						drawThisRect = false;
-						rectangleOnMap.pz2Locations.push(marker.location);
+				var drawThisMarker = true;
+				for (var markerOnMapID in markersOnMap) {
+					var markerOnMap = markersOnMap[markerOnMapID];
+					if (newBounds.equals(markerOnMap.getBounds())) {
+						drawThisMarker = false;
+						markerOnMap.pz2Locations.push(marker.location);
 						break;
 					}
 				}
 
-				if (drawThisRect) {
+				if (drawThisMarker) {
 					containingBounds.union(newBounds);
 					// Use zIndexes to avoid smaller rects being covered by larger ones.
 					// Ideally events would be passed on to all rects beneath the cursor,
@@ -3173,17 +3173,30 @@ function renderDetails(recordID) {
 					var areaSpan = newBounds.toSpan();
 					var zIndex = 1 / (areaSpan.lat() + areaSpan.lng());
 
-					var mapRectangle = new google.maps.Rectangle({
-						'map': map,
-						'bounds': newBounds,
-						'strokeColor': highlightColour,
-						'fillColor': highlightColour,
-						'zIndex': zIndex
-					});
-					mapRectangle.pz2Locations = [marker.location];
-					google.maps.event.addListener(mapRectangle, 'mouseover', rectMouseOver);
-					google.maps.event.addListener(mapRectangle, 'mouseout', rectMouseOut);
-					rectanglesOnMap.push(mapRectangle);
+					var mapMarker;
+					if (Math.abs(rect[1][1] - rect[3][1]) > 1/60) {
+						// Rect is wider than 1″: display as a rectangle.
+						mapMarker = new google.maps.Rectangle({
+							'map': map,
+							'bounds': newBounds,
+							'strokeColor': highlightColour,
+							'fillColor': highlightColour,
+							'zIndex': zIndex
+						});
+					}
+					else {
+						// Rect is narrower than 1″: display as a point.
+						var markerLatitude = rect[3][0] + (rect[3][0] - rect[1][0]) / 2;
+						var markerLongitude = rect[1][1] + (rect[1][1] - rect[3][1]) / 2;
+						mapMarker = new google.maps.Marker({
+							'map': map,
+							'position': new google.maps.LatLng(markerLatitude, markerLongitude)
+						});
+					}
+					mapMarker.pz2Locations = [marker.location];
+					google.maps.event.addListener(mapMarker, 'mouseover', markerMouseOver);
+					google.maps.event.addListener(mapMarker, 'mouseout', markerMouseOut);
+					markersOnMap.push(mapMarker);
 				}
 			}
 
@@ -3193,17 +3206,17 @@ function renderDetails(recordID) {
 
 
 
-		/*	rectMouseOver, rectMouseOut
-			Handlers for rectangle mouse events.
+		/*	markerMouseOver, markerMouseOut
+			Handlers for marker mouse events.
 		*/
-		var rectMouseOver = function (event) {
+		var markerMouseOver = function (event) {
 			for (var itemID in this.pz2Locations) {
 				var recordLocation = this.pz2Locations[itemID];
 				jQuery(recordLocation.element).addClass('pz2-highlight');
 			}
 		};
 
-		var rectMouseOut = function () {
+		var markerMouseOut = function () {
 			for (var itemID in this.pz2Locations) {
 				var recordLocation = this.pz2Locations[itemID];
 				jQuery(recordLocation.element).removeClass('pz2-highlight');
@@ -3213,8 +3226,10 @@ function renderDetails(recordID) {
 
 
 		/*	borderNumbersForString
-			Takes ISBD-style geographical range string and converts it into an
-			array of floating point numbers.
+			Converts a ISBD-style geographical range string (e.g.
+			»E 009 30--E 009 40/N 051 42--N 051 36« or
+			»E 9°30'00"-E 9°40'00"/N 51°42'00"-N 51°36'00"«)
+			into an array of floating point numbers.
 
 			input:	ISBD-style coordinate range string
 			output:	Array of floating point numbers
@@ -3236,9 +3251,9 @@ function renderDetails(recordID) {
 
 				var degreeComponents = degreeString.replace(/[°'"′″]/g, ' ').replace(/^([EWNS])(\d)/, '$1 $2').replace(/  /g, ' ').split(' ');
 				if (degreeComponents.length >= 2) {
-					degrees = parseInt(degreeComponents[1], 10);
+					degrees = parseFloat(degreeComponents[1], 10);
 					if (degreeComponents.length >= 3 && !isNaN(degrees)) {
-						var minutes = parseInt(degreeComponents[2], 10);
+						var minutes = parseFloat(degreeComponents[2], 10);
 						if (!isNaN(minutes)) {
 							degrees += minutes / 60;
 						}
@@ -3272,7 +3287,12 @@ function renderDetails(recordID) {
 			var result;
 			var components = borderString.replace(/[–-]/, '-').replace('--', '-').split('-');
 			if (components.length === 2) {
-				result = [degreeStringToDecimal(components[0]), degreeStringToDecimal(components[1])];
+				var component0 = degreeStringToDecimal(components[0]);
+				var component1 = degreeStringToDecimal(components[1]);
+
+				if (!isNaN(component0) && !isNaN(component1)) {
+					result = [component0, component1];
+				}
 			}
 
 			return result;
@@ -3289,16 +3309,17 @@ function renderDetails(recordID) {
 			output:	Array containing the [top-left, bottom-left, bottom-right, top-right] coordinate pairs
 		*/
 		var rectangleVerticesForCoordinatesString = function (coordinatesString) {
-			var coordinates = [];
+			var coordinates;;
 			var longLatArray = coordinatesString.split('/');
 			if (longLatArray.length === 2) {
 				var longitudeNumbers = borderNumbersForString(longLatArray[0]);
 				var latitudeNumbers = borderNumbersForString(longLatArray[1]);
 				if (latitudeNumbers && longitudeNumbers) {
-					coordinates.push([latitudeNumbers[0], longitudeNumbers[0]]);
-					coordinates.push([latitudeNumbers[1], longitudeNumbers[0]]);
-					coordinates.push([latitudeNumbers[1], longitudeNumbers[1]]);
-					coordinates.push([latitudeNumbers[0], longitudeNumbers[1]]);
+					coordinates = [
+						[latitudeNumbers[0], longitudeNumbers[0]],
+						[latitudeNumbers[1], longitudeNumbers[0]],
+						[latitudeNumbers[1], longitudeNumbers[1]],
+						[latitudeNumbers[0], longitudeNumbers[1]]];
 				}
 			}
 
@@ -3315,7 +3336,9 @@ function renderDetails(recordID) {
 						var mapscale = location['md-mapscale'][mapscaleID];
 						if (mapscale['@coordinates']) {
 							var rect = rectangleVerticesForCoordinatesString(mapscale['@coordinates']);
-							markers.push({'rect': rect, 'location': location});
+							if (rect) {
+								markers.push({'rect': rect, 'location': location});
+							}
 						}
 					}
 				}
