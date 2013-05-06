@@ -4047,7 +4047,7 @@ function renderDetails(recordID) {
 
 			if (query !== '') {
 				var KVKLink = document.createElement('a');
-				var KVKLinkURL = 'http://kvk.ubka.uni-karlsruhe.de/hylib-bin/kvk/nph-kvk2.cgi?input-charset=utf-8&Timeout=120';
+				var KVKLinkURL = 'http://kvk.ubka.uni-karlsruhe.de/hylib-bin/kvk/nph-kvk2.cgi?maske=kvk-last&input-charset=utf-8&Timeout=120';
 				KVKLinkURL += localise('&lang=de');
 				KVKLinkURL += '&kataloge=SWB&kataloge=BVB&kataloge=NRW&kataloge=HEBIS&kataloge=KOBV_SOLR&kataloge=GBV';
 				KVKLink.href = KVKLinkURL + query;
