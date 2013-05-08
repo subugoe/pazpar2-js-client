@@ -1,7 +1,7 @@
 # pazpar2-js-client
 A JavaScript client to interact with [Index Data’s pazpar2](http://www.indexdata.com/pazpar2) metasearch software and to display its search results.
 
-2010-2012 by [Sven-S. Porst](http://earthlingsoft.net/ssp/), [SUB Göttingen](http://www.sub.uni-goettingen.de) [<porst@sub.uni-goettingen.de](mailto:porst@sub.uni-goettingen.de?subject=pz2-client)
+2010-2013 by [Sven-S. Porst](http://earthlingsoft.net/ssp/), [SUB Göttingen](http://www.sub.uni-goettingen.de) [<porst@sub.uni-goettingen.de](mailto:porst@sub.uni-goettingen.de?subject=pz2-client)
 
 
 
@@ -27,6 +27,7 @@ For the scripts to operate successfully, you will need:
 A number of parameters can be set for the scripts. To be set after including »pz2.js« but before including »pz2-client.js«:
 
 * my_serviceID (string): the pazpar2 service to use
+* pazpar2Path (string, default: /pazpar2/search.pz2): set the path of the pazpar2 service
 
 To be set after including »pz2-client.js« if you want to override the default values:
 

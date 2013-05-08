@@ -12,7 +12,11 @@
  */
 
 var usesessions = true;
-var pazpar2path = '/pazpar2/search.pz2';
+var actualPazpar2Path = '/pazpar2/search.pz2';
+if (typeof(pazpar2Path) !== 'undefined') {
+	actualPazpar2Path = pazpar2Path;
+}
+
 var showResponseType = '';
 
 /*	Maintain a list of all facet types so we can loop over it.
@@ -32,7 +36,7 @@ var termLists = {
 
 if (document.location.hash === '#useproxy') {
 	usesessions = false;
-	pazpar2path = '/service-proxy/';
+	actualPazpar2Path = '/service-proxy/';
 	showResponseType = 'json';
 }
 
@@ -121,7 +125,7 @@ function my_errorHandler (error) {
 */
 my_paz = new pz2( {"onshow": my_onshow,
 					"showtime": 1000,//each timer (show, stat, term, bytarget) can be specified this way
-					"pazpar2path": pazpar2path,
+					"pazpar2path": actualPazpar2Path,
 					"oninit": my_oninit,
 					"onstat": my_onstat,
 /* We are not using pazpar2’s termlists but create our own.
