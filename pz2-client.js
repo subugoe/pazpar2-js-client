@@ -11,7 +11,8 @@
  * https://github.com/ssp/pazpar2-js-client
  */
 
-var usesessions = true;
+var usesessions = (typeof(useServiceProxy) !== 'undefined' && useServiceProxy ? false: true);
+
 var actualPazpar2Path = '/pazpar2/search.pz2';
 if (typeof(pazpar2Path) !== 'undefined') {
 	actualPazpar2Path = pazpar2Path;
@@ -32,13 +33,6 @@ var termLists = {
 	// 'author': {'maxFetch': 10, 'minDisplay': 1},
 	'filterDate': {'maxFetch': 10, 'minDisplay': 5}
 };
-
-
-if (document.location.hash === '#useproxy') {
-	usesessions = false;
-	actualPazpar2Path = '/service-proxy/';
-	showResponseType = 'json';
-}
 
 
 /*	localise
@@ -85,6 +79,13 @@ function initialisePazpar2 () {
 		pz2InitTimeout = undefined;
 	}
 	my_paz.init(undefined, my_paz.serviceId);
+}
+
+
+function initialiseServiceProxy () {
+	jQuery.get(serviceProxyAuthPath, function () {
+		pz2Initialised = true;
+	});
 }
 
 
@@ -135,7 +136,7 @@ my_paz = new pz2( {"onshow": my_onshow,
 					"onbytarget": my_onbytarget,
 	 				"usesessions" : usesessions,
 					"showResponseType": showResponseType,
-					"serviceId": my_serviceID,
+					"serviceId": (typeof(my_serviceID) !== 'undefined') ? my_serviceID : null,
 					"errorhandler": my_errorHandler
 } );
 
@@ -1767,6 +1768,10 @@ function pz2ClientDomReady ()  {
 
 	jQuery('.pz2-sort, .pz2-perPage').attr('onchange', 'onSelectDidChange');
 	jQuery('#pazpar2').removeClass('pz2-noJS');
+
+	if (!usesessions) {
+		initialiseServiceProxy();
+	}
 
 	triggerSearchFunction(null);
 }

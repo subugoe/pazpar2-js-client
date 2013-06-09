@@ -17,7 +17,8 @@ Include »pz2.js«, »pz2-client.js« and »pz2.css« in your HTML file to load 
 
 For the scripts to operate successfully, you will need:
 
-* your pazpar2 server (or a reverse-proxy forwarding to it) set up at the path /pazpar2/search.pz2 [[example apache configuration]](https://raw.github.com/ssp/pazpar2-extras/blob/master/fileadmin/apache/pazpar2.conf)
+* '''for direct pazpar2 use:''' a pazpar2 server (or a reverse proxy forwarding to it) set up at the path `/pazpar2/search.pz2` of your web server [[example apache configuration]](https://raw.github.com/ssp/pazpar2-extras/blob/master/fileadmin/apache/pazpar2.conf). This can be overriden by setting the JavaScript variable `pazpar2Path` before loading pz2-client.js.
+* '''for pazpar2 use through Service Proxy:''' Service Proxy (or a reverse proxy forwarding to it) set up at the path `/service-proxy/` and Service Proxy Authentication set up at the path `/service-proxy-auth`. This can be overriden by setting the JavaScript variables `serviceProxyPath` and `serviceProxyAuthPath` before loading pz2-client.js.
 * your results will be best if you use the same metadata fields we do. These are based on the ones provided by tmarc.xsl and augmented with additional fields in a few areas. The full list of fields can be found in the Readme of our [TYPO3 Extension](https://github.com/ssp/typo3-pazpar2).
 * [jQuery 1.7.1](http://jquery.com/) or higher included in your site
 * [flot](http://code.google.com/p/flot/) with its selection module included in your site if you set the useHistogramForYearFacets option to true; the script is included in the repository as a submodule
@@ -26,20 +27,24 @@ For the scripts to operate successfully, you will need:
 
 A number of parameters can be set for the scripts. To be set after including »pz2.js« but before including »pz2-client.js«:
 
-* `my_serviceID` (string): the pazpar2 service to use
-* `pazpar2Path` (string, default: /pazpar2/search.pz2): set the path of the pazpar2 service
+* when querying pazpar2 directly:
+** `my_serviceID` (string): the pazpar2 service to use
+** `pazpar2Path` (string, default: `/pazpar2/search.pz2): the path of the pazpar2 service on the web server
+* when querying pazpar2 through Service Proxy:
+** `serviceProxyPath` (string, default: `/service-proxy`): the path of Service Proxy on the web server
+** `serviceProxyAuthPath` (string, default: `/service-proxy-auth`): the path of Service Proxy’s authentication URL on the server`
 
 To be set after including »pz2-client.js« if you want to override the default values:
 
-* `useGoogleBooks` (boolean, default: false): whether to use Google Books cover art and preview for items with ISBN or OCLC number; if set to true, you also need to include Google’s script for Google Books
-* `useMaps` (boolean, default: false): whether to use Google Maps to display a map with a highlight for the region covered by the item; if set to true, you also need to load Google loader
-* `useZDB` (boolean, default: false): whether to look up journal availability at the user’s IP (in German university networks) using ZDB’s Journals Online and Print service
-* `ZDBUseClientIP` (boolean, default: true): if true, the ZDB-JOP proxy is expected to be a /zdb/, if false, the ZDB-JOP proxy is expected to be at /zdb-local/
-* `useHistogramForYearFacets` (boolean, default: true): if true, year facets are displayed as a histogram rather than as a list
-* `provideCOinSExport` (boolean, default: true): if true, COinS tags are embedded with the results (for Zotero 3 and above)
-* `showKVKLink` (boolean, default: true): if true, a link to [Karlsruher Virtueller Katalog](http://www.ubka.uni-karlsruhe.de/kvk.html) for searching German union catalogues is included with the export links
-* `exportFormats` (array of strings, default: ['ris', 'bibtex']): format names for export links
-* `displaySort (array of objects, default: []): sort order
+* `useGoogleBooks` (boolean, default: `false`): whether to use Google Books cover art and preview for items with ISBN or OCLC number; if set to true, you also need to include Google’s script for Google Books
+* `useMaps` (boolean, default: `false`): whether to use Google Maps to display a map with a highlight for the region covered by the item; if set to true, you also need to load Google loader
+* `useZDB` (boolean, default: `false`): whether to look up journal availability at the user’s IP (in German university networks) using ZDB’s Journals Online and Print service
+* `ZDBUseClientIP` (boolean, default: `true`): if true, the ZDB-JOP proxy is expected to be at `/zdb/`, if false, the ZDB-JOP proxy is expected to be at `/zdb-local/`
+* `useHistogramForYearFacets` (boolean, default: `true`): if true, year facets are displayed as a histogram rather than as a list
+* `provideCOinSExport` (boolean, default: `true`): if true, COinS tags are embedded with the results (for Zotero 3 and above)
+* `showKVKLink` (boolean, default: `true`): if true, a link to [Karlsruher Virtueller Katalog](http://www.ubka.uni-karlsruhe.de/kvk.html) for searching German union catalogues is included with the export links
+* `exportFormats` (array of strings, default: `['ris', 'bibtex']): format names for export links
+* `displaySort (array of objects, default: `[]`): sort order
 
 The configuration of the [Lib AAC](http://aac.sub.uni-goettingen.de/) site can be used as an example:
 
@@ -159,9 +164,9 @@ The markup consists of the following blocks inside the div#pazpar2:
 * `.pz2-recordView`: The dynamic results appear in here:
 	* `.pz2-pager.pz2-top`: Status information
 		* `.pz2-progressIndicator`: An element that expands from nearly zero width to full width to reflect the process of the pazpar2 search
-		* `.pz2-pageNumbers`: Links for paging appear in here
+		* `.pz2-pageNumbers`: Links for paging appear in here`
 		* `.pz2-recordCount`: The number of results with a hint of status information appear in here
-		* `#pz2-targetView`: Extended status infomration that is revealed/hidden by clicking .pz2-recordCount
+		* `#pz2-targetView`: Extended status infomration that is revealed/hidden by clicking `.pz2-recordCount`
 	* `#pz2-termLists`: Facets will appear in here
 	* `#pz2-results`: The result list will appear in here
 	* `.pz2-pager.pz2-bottom`: The pager is repeated at the bottom of the page
