@@ -200,6 +200,10 @@ var showExportLinksForEachLocation = false;
 var triggerSearchFunction = triggerSearchForForm;
 // Show keywords field in extended search and display linked keywords in detail view?
 var useKeywords = false;
+// Object of URLs for form field autocompletion.
+var autocompleteURLs = [];
+// Function called to set up autocomplete for form fields.
+var setupAutocompleteFunction = undefined;
 
 
 /*	my_oninit
@@ -1772,6 +1776,10 @@ function pz2ClientDomReady ()  {
 
 	if (!usesessions) {
 		initialiseServiceProxy();
+	}
+
+	if (typeof(autocompleteSetupFunction) === 'function') {
+		autocompleteSetupFunction(autocompleteURLs);
 	}
 
 	triggerSearchFunction(null);
