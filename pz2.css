@@ -177,7 +177,6 @@
 
 #pz2-results ol.pz2-resultList {
 	padding-left: 35px;
-	list-style-type: none;
 	float: left; /* required so we don't clear the sidebar/faceting when clearing our <li>s */
 }
 
@@ -186,6 +185,7 @@
 	padding-left: 5px;
 	position: relative;
 	clear: both;
+	list-style-type: none;
 	border-left: 1px solid transparent;
 }
 
@@ -230,9 +230,12 @@
 }
 
 .pz2-termList ol {
-	list-style-type: none;
 	margin-bottom: 1em;
 	padding: 0;
+}
+
+.pz2-termList li {
+	list-style-type: none;
 }
 
 .pz2-termList li a {
@@ -343,13 +346,13 @@
 }
 
 .pz2-pager ol {
-	list-style-type: none;
 	padding: 0px;
 	display: inline;
 }
 
 .pz2-pager li {
 	display: inline;
+	list-style-type: none;
 }
 
 .pz2-pager a, .pz2-prev, .pz2-next {
@@ -505,12 +508,12 @@ a.pz2-detail-parentCatalogueLink:hover {
 
 #pz2-results .pz2-extraLinks ul {
 	text-align: right;
-	list-style-type: none;
 }
 
 #pz2-results .pz2-extraLinks ul li {
 	display: inline;
 	padding: 0px;
+	list-style-type: none;
 }
 
 #pz2-results .pz2-extraLinks form,
