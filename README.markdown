@@ -42,8 +42,8 @@ To be set after including »pz2-client.js« if you want to override the default 
 * `ZDBUseClientIP` (boolean, default: `true`): if true, the ZDB-JOP proxy is expected to be at `/zdb/`, if false, the ZDB-JOP proxy is expected to be at `/zdb-local/`
 * `useHistogramForYearFacets` (boolean, default: `true`): if true, year facets are displayed as a histogram rather than as a list
 * `provideCOinSExport` (boolean, default: `true`): if true, COinS tags are embedded with the results (for Zotero 3 and above)
-* `showKVKLink` (boolean, default: `true`): if true, a link to [Karlsruher Virtueller Katalog](http://www.ubka.uni-karlsruhe.de/kvk.html) for searching German union catalogues is included with the export links
-* `exportFormats` (array of strings, default: `['ris', 'bibtex']): format names for export links
+* `showKVKLink` (boolean, default: `false`): if true, a link to [Karlsruher Virtueller Katalog](http://www.ubka.uni-karlsruhe.de/kvk.html) for searching German union catalogues is included with the export links
+* `exportFormats` (array of strings, default: `[]`): format names for export links, allowed values are `ris`, `bibtex`, `ris-inline` and `bibtex-inline`.
 * `displaySort (array of objects, default: `[]`): sort order
 
 The configuration of the [Lib AAC](http://aac.sub.uni-goettingen.de/) site can be used as an example:
