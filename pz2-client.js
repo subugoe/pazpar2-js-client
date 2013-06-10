@@ -3695,6 +3695,7 @@ function renderDetails(recordID) {
 					}
 					var link = document.createElement('a');
 					URLsContainer.appendChild(link);
+					link.setAttribute('class', 'pz2-electronic-url');
 					link.setAttribute('href', linkURL);
 					turnIntoNewWindowLink(link);
 					link.appendChild(document.createTextNode(linkText));
