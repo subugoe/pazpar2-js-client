@@ -85,6 +85,7 @@ function initialisePazpar2 () {
 function initialiseServiceProxy () {
 	jQuery.get(serviceProxyAuthPath, function () {
 		pz2Initialised = true;
+		my_oninit();
 	});
 }
 
@@ -93,8 +94,12 @@ function my_errorHandler (error) {
 	var errorCode = parseInt(error.code);
 
 	if (errorCode === 1 && this.request.status === 417) {
-		// The session has expired: create a new one.
+		// The Pazpar2 session has expired: create a new one.
 		initialisePazpar2();
+	}
+	else if (errorCode === 100 && this.request.status === 417) {
+		// The Service Proxy session has expired / cookie got lost: create a new one.
+		initialiseServiceProxy();
 	}
 	else if (this.request.status === 503) {
 		// The service is unavailable: Disable the search form.
