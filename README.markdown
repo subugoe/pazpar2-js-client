@@ -44,6 +44,8 @@ To be set after including »pz2-client.js« if you want to override the default 
 * `provideCOinSExport` (boolean, default: `true`): if true, COinS tags are embedded with the results (for Zotero 3 and above)
 * `showKVKLink` (boolean, default: `false`): if true, a link to [Karlsruher Virtueller Katalog](http://www.ubka.uni-karlsruhe.de/kvk.html) for searching German union catalogues is included with the export links
 * `exportFormats` (array of strings, default: `[]`): format names for export links, allowed values are `ris`, `bibtex`, `ris-inline` and `bibtex-inline`.
+* `autocompleteURLs` (object, default: `{}`): keys are search field names (e.g. all, title, person), values are URLs that can be queried for autocomplete terms
+* `autocompleteSetupFunction` (function, default: `undefined`): function (URL, fieldName) that is run when setting up the autocomplete feature. Returns an object for configuring [jQuery UI’s autocomplete widget](http://api.jqueryui.com/autocomplete/). Functions `autocompleteSetupArray` for sources that return JSON arrays and `autocompleteSolrSpellcheck` for querying a Solr spellcheck component are predefined.
 * `displaySort (array of objects, default: `[]`): sort order
 
 The configuration of the [Lib AAC](http://aac.sub.uni-goettingen.de/) site can be used as an example:

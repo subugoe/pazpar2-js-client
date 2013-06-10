@@ -201,9 +201,9 @@ var triggerSearchFunction = triggerSearchForForm;
 // Show keywords field in extended search and display linked keywords in detail view?
 var useKeywords = false;
 // Object of URLs for form field autocompletion.
-var autocompleteURLs = [];
+var autocompleteURLs = {};
 // Function called to set up autocomplete for form fields.
-var setupAutocompleteFunction = undefined;
+var autocompleteSetupFunction = autocompleteSetupArray;
 
 
 /*	my_oninit
@@ -1778,11 +1778,51 @@ function pz2ClientDomReady ()  {
 		initialiseServiceProxy();
 	}
 
-	if (typeof(autocompleteSetupFunction) === 'function') {
-		autocompleteSetupFunction(autocompleteURLs);
+	// Add autocomplete to input fields.
+	if (jQuery.ui && jQuery.ui.autocomplete && typeof(autocompleteSetupFunction) === 'function') {
+		for (var fieldName in autocompleteURLs) {
+			var URL = autocompleteURLs[fieldName];
+			var autocompleteConfiguration = autocompleteSetupFunction(URL, fieldName);
+			jQuery('#pz2-field-' + fieldName).autocomplete(autocompleteConfiguration);
+		}
 	}
 
 	triggerSearchFunction(null);
+}
+
+
+
+/*	autocompleteSetupArray
+	Most basic function for handling autocomplete: Configures jQuery autocomplete
+	to load terms from the given URL on the host which is expected to return
+	a JSON array.
+
+	Set autocompleteSetupFunction = autocompleteSetupArray to use it.
+*/
+function autocompleteSetupArray (URL, fieldName) {
+	return {'source': URL};
+}
+
+
+
+/*	autocompleteSetupSolrSpellcheck
+	Autocomplete setup function for using a Solr spellchecker.
+	Uses JSONP, so it may be on a different host.
+
+	Set autocompleteSetupFunction = autocompleteSetupSolrSpellcheck to use it.
+*/
+function autocompleteSetupSolrSpellcheck (URL, fieldName) {
+	return {
+		'source': function(request, response) {
+			console.log(request);
+			jQuery.getJSON(URL + request.term + '&wt=json&json.wrf=?', request, function (data) {
+				var suggestions = data.spellcheck.suggestions;
+				if (suggestions.length > 0) {
+					response(data.spellcheck.suggestions[1].suggestion);
+				}
+			});
+		}
+	};
 }
 
 
