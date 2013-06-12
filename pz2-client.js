@@ -73,6 +73,42 @@ function localise (term, externalDictionary) {
 }
 
 
+
+/*	overrideLocalisation
+	Overwrites localisations in the appropriate localisation dictionaries.
+	Exists for easy overriding of localisations from TYPO3.
+	input:	languageCode - string ISO 639-1 localisation language code or 'default' (which is mapped to 'en')
+			key - key in the localisation dictionary to override
+			localisedString - string
+*/
+function overrideLocalisation (languageCode, key, localisedString) {
+	// First figure out the correct object to override the localisation in.
+	var localisationObject = localisations;
+	var match = key.match(/^(link-description|media-type|catalogue-name)-(.*)/);
+	if (match) {
+		if (match[1] === 'link-description') {
+			localisationObject = linkDescriptions;
+		}
+		else if (match[1] === 'media-type') {
+			localisationObject = mediaTypeNames;
+		}
+		else if (match[1] === 'catalogue-name') {
+			localisationObject = catalogueNames;
+		}
+		key = match[2];
+	}
+
+	// Then override the localisation if the language exists.
+	if (languageCode === 'default') {
+		languageCode = 'en';
+	}
+	if (localisationObject[languageCode]) {
+		localisationObject[languageCode][key] = localisedString;
+	}
+}
+
+
+
 function initialisePazpar2 () {
 	if (pz2InitTimeout !== undefined) {
 		clearTimeout(pz2InitTimeout);
