@@ -3725,7 +3725,15 @@ function renderDetails(recordID) {
 
 
 
-			var electronicURLs = cleanURLList();
+			var electronicURLs;
+			if (usesessions || !typeof(choose_url) === 'function') {
+				// Using plain pazpar2: display cleaned URL list.
+				electronicURLs = cleanURLList();
+			}
+			else {
+				// Using Service Proxy: pick the right URL.
+				electronicURLs = [choose_url(location)];
+			}
 
 			var URLsContainer;
 			if (electronicURLs && electronicURLs.length !== 0) {
