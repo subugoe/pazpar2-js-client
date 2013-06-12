@@ -1831,16 +1831,28 @@ function pz2ClientDomReady ()  {
 		initialiseServiceProxy();
 	}
 
-	// Add autocomplete to input fields.
+	setupAutocomplete();
+
+	triggerSearchFunction(null);
+}
+
+
+
+/*	setupAutocomplete
+	Hooks jQuery autocomplete up to the search fields that have autocompleteURLs set up.
+*/
+function setupAutocomplete () {
 	if (jQuery.ui && jQuery.ui.autocomplete && typeof(autocompleteSetupFunction) === 'function') {
 		for (var fieldName in autocompleteURLs) {
 			var URL = autocompleteURLs[fieldName];
 			var autocompleteConfiguration = autocompleteSetupFunction(URL, fieldName);
-			jQuery('#pz2-field-' + fieldName).autocomplete(autocompleteConfiguration);
+			var jField = jQuery('#pz2-field-' + fieldName);
+			jField.autocomplete(autocompleteConfiguration);
+			jField.on('autocompleteselect', function(event, ui) {
+				triggerSearchFunction(null);
+			});
 		}
 	}
-
-	triggerSearchFunction(null);
 }
 
 
@@ -1884,6 +1896,7 @@ function autocompleteSetupSolrSpellcheck (URL, fieldName) {
 	Called when the search button is pressed.
 */
 function onFormSubmitEventHandler () {
+	jQuery('.ui-autocomplete-input').autocomplete('close');
 	triggerSearchFunction(this);
 	return false;
 }
