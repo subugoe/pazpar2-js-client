@@ -355,7 +355,7 @@
 	list-style-type: none;
 }
 
-.pz2-pager a, .pz2-prev, .pz2-next {
+.pz2-pager a, .pz2-prev, .pz2-next, .pz2-pagerGap {
 	padding: 0 0.3em;
 }
 

@@ -1059,22 +1059,34 @@ function updatePagers () {
 			jQuery(pageList).addClass('pz2-pages');
 			pageNumbersContainer.appendChild(pageList);
 
-			var dotsItem = document.createElement('li');
-			dotsItem.appendChild(document.createTextNode('…'));
+			var blockSize = 4;
+			var inBlockGap = false;
 
 			for(var pageNumber = 1; pageNumber <= pages; pageNumber++) {
-				var pageItem = document.createElement('li');
-				pageList.appendChild(pageItem);
-				if(pageNumber !== curPage) {
-					var linkElement = document.createElement('a');
-					linkElement.setAttribute('href', '#');
-					linkElement.onclick = new Function('showPage(' + pageNumber + ', this);return false;');
-					linkElement.appendChild(document.createTextNode(pageNumber));
-					pageItem.appendChild(linkElement);
+				if (pageNumber < 5 || Math.abs(pageNumber - curPage) < 3 || pages < pageNumber + 4) {
+					var pageItem = document.createElement('li');
+					pageList.appendChild(pageItem);
+					if(pageNumber !== curPage) {
+						var linkElement = document.createElement('a');
+						linkElement.setAttribute('href', '#');
+						linkElement.onclick = new Function('showPage(' + pageNumber + ', this);return false;');
+						linkElement.appendChild(document.createTextNode(pageNumber));
+						pageItem.appendChild(linkElement);
+					}
+					else {
+						jQuery(pageItem).addClass('pz2-currentPage');
+						pageItem.appendChild(document.createTextNode(pageNumber));
+					}
+					inBlockGap = false;
 				}
 				else {
-					jQuery(pageItem).addClass('pz2-currentPage');
-					pageItem.appendChild(document.createTextNode(pageNumber));
+					if (!inBlockGap) {
+						var dotsItem = document.createElement('li');
+						pageList.appendChild(dotsItem);
+						dotsItem.setAttribute('class', 'pz2-pagerGap');
+						dotsItem.appendChild(document.createTextNode('…'));
+						inBlockGap = true;
+					}
 				}
 			}
 
