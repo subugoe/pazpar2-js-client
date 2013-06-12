@@ -1044,16 +1044,16 @@ function updatePagers () {
 			jPageNumbersContainer.empty();
 			var pageNumbersContainer = jPageNumbersContainer[0];
 
-			var previous = document.createElement('span');
+			var previousLink = document.createElement('span');
 			if (curPage > 1) {
-				previous = document.createElement('a');
-				previous.setAttribute('href', '#');
-				previous.onclick = new Function('pagerPrev(this);return false;');
-				previous.title = localise('Vorige Trefferseite anzeigen');
+				previousLink = document.createElement('a');
+				previousLink.setAttribute('href', '#');
+				previousLink.onclick = new Function('pagerPrev(this);return false;');
+				previousLink.title = localise('Vorige Trefferseite anzeigen');
 			}
-			jQuery(previous).addClass('pz2-prev');
-			previous.appendChild(document.createTextNode('«'));
-			pageNumbersContainer.appendChild(previous);
+			jQuery(previousLink).addClass('pz2-prev');
+			previousLink.appendChild(document.createTextNode('«'));
+			pageNumbersContainer.appendChild(previousLink);
 
 			var pageList = document.createElement('ol');
 			jQuery(pageList).addClass('pz2-pages');
