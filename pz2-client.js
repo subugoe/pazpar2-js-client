@@ -108,6 +108,15 @@ function overrideLocalisation (languageCode, key, localisedString) {
 }
 
 
+function initialiseService () {
+	if (usesessions) {
+		initialisePazpar2();
+	}
+	else {
+		initialiseServiceProxy();
+	}
+}
+
 
 function initialisePazpar2 () {
 	if (pz2InitTimeout !== undefined) {
@@ -1170,7 +1179,7 @@ function updatePagers () {
 				}
 			}
 			else {
-				if (my_paz.currQuery === undefined) {
+				if (!my_paz.currQuery) {
 					infoString = localise('keine Suchabfrage');
 				}
 				else if (my_paz.activeClients === 0) {
@@ -1827,10 +1836,6 @@ function pz2ClientDomReady ()  {
 	jQuery('.pz2-sort, .pz2-perPage').attr('onchange', 'onSelectDidChange');
 	jQuery('#pazpar2').removeClass('pz2-noJS');
 
-	if (!usesessions) {
-		initialiseServiceProxy();
-	}
-
 	setupAutocomplete();
 
 	triggerSearchFunction(null);
@@ -2036,7 +2041,7 @@ function triggerSearchForForm (form, additionalQueryTerms) {
 		}
 	}
 	else if (!pz2Initialised) {
-		initialisePazpar2();
+		initialiseService();
 	}
 }
 
