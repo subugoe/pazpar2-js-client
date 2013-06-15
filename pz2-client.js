@@ -1896,7 +1896,9 @@ function autocompleteSetupSolrSpellcheck (URL, fieldName) {
 	Called when the search button is pressed.
 */
 function onFormSubmitEventHandler () {
-	jQuery('.ui-autocomplete-input').autocomplete('close');
+	if (jQuery.ui && jQuery.ui.autocomplete) {
+		jQuery('.ui-autocomplete-input').autocomplete('close');
+	}
 	triggerSearchFunction(this);
 	return false;
 }
