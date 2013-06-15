@@ -1594,7 +1594,12 @@ function facetListForType (type, preferOriginalFacets) {
 			}
 		};
 
-		var plot = jQuery.plot(jGraphDiv , [{'data': graphData, 'color': graphColour}], graphOptions);
+		try {
+			var plot = jQuery.plot(jGraphDiv , [{'data': graphData, 'color': graphColour}], graphOptions);
+		}
+		catch (exception){
+			// console.log(exception);
+		}
 
 		var removeTooltip = function () {
 			jQuery("#pz2-histogram-tooltip").remove();
