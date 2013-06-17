@@ -1859,6 +1859,7 @@ function setupAutocomplete () {
 			var jField = jQuery('#pz2-field-' + fieldName);
 			jField.autocomplete(autocompleteConfiguration);
 			jField.on('autocompleteselect', function(event, ui) {
+				event.target.value = ui.item.value;
 				triggerSearchFunction(null);
 			});
 		}
