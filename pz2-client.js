@@ -12,6 +12,7 @@
  */
 
 var usesessions = (typeof(useServiceProxy) !== 'undefined' && useServiceProxy ? false: true);
+var my_paz = undefined;
 
 var actualPazpar2Path = '/pazpar2/search.pz2';
 if (typeof(pazpar2Path) !== 'undefined') {
@@ -109,6 +110,29 @@ function overrideLocalisation (languageCode, key, localisedString) {
 
 
 function initialiseService () {
+	if (!my_paz) {
+		/*	Create a parameters array and pass it to the pz2’s constructor.
+			Then register the form submit event with the pz2.search function.
+			autoInit is set to true on default.
+		*/
+		my_paz = new pz2( {
+			'onshow': my_onshow,
+			'showtime': 1000, //each timer (show, stat, term, bytarget) can be specified this way
+			'pazpar2path': actualPazpar2Path,
+			'oninit': my_oninit,
+			'onstat': my_onstat,
+			/* We are not using pazpar2’s termlists but create our own.
+				'onterm': my_onterm,
+				'termlist': termListNames.join(","),
+			*/
+			'onbytarget': my_onbytarget,
+			'usesessions': usesessions,
+			'showResponseType': showResponseType,
+			'serviceId': (typeof(my_serviceID) !== 'undefined') ? my_serviceID : null,
+			'errorhandler': my_errorHandler
+		} );
+	}
+
 	if (usesessions) {
 		initialisePazpar2();
 	}
@@ -170,30 +194,7 @@ function my_errorHandler (error) {
 
 
 
-/*	Create a parameters array and pass it to the pz2's constructor.
-	Then register the form submit event with the pz2.search function.
-	autoInit is set to true on default.
-*/
-my_paz = new pz2( {"onshow": my_onshow,
-					"showtime": 1000,//each timer (show, stat, term, bytarget) can be specified this way
-					"pazpar2path": actualPazpar2Path,
-					"oninit": my_oninit,
-					"onstat": my_onstat,
-/* We are not using pazpar2’s termlists but create our own.
-					"onterm": my_onterm,
-					"termlist": termListNames.join(","),
-*/
-					"onbytarget": my_onbytarget,
-	 				"usesessions" : usesessions,
-					"showResponseType": showResponseType,
-					"serviceId": (typeof(my_serviceID) !== 'undefined') ? my_serviceID : null,
-					"errorhandler": my_errorHandler
-} );
-
-
-
 // Status variables
-var domReadyFired = false;
 var pz2Initialised = false;
 var pz2InitTimeout = undefined;
 var pageLanguage = undefined;
@@ -1825,8 +1826,6 @@ function my_onbytarget(data) {
 	Called when the page is loaded. Sets up JavaScript-based search mechanism.
 */
 function pz2ClientDomReady ()  {
-	domReadyFired = true;
-
 	jQuery('.pz2-searchForm').each( function(index, form) {
 			form.onsubmit = onFormSubmitEventHandler;
 			if (jQuery('form.pz2-searchForm').hasClass('pz2-extended')) {
@@ -1841,6 +1840,7 @@ function pz2ClientDomReady ()  {
 	jQuery('.pz2-sort, .pz2-perPage').attr('onchange', 'onSelectDidChange');
 	jQuery('#pazpar2').removeClass('pz2-noJS');
 
+	initialiseService();
 	setupAutocomplete();
 
 	triggerSearchFunction(null);
@@ -2047,7 +2047,7 @@ function triggerSearchForForm (form, additionalQueryTerms) {
 		curAdditionalQueryTerms = additionalQueryTerms;
 	}
 
-	if (domReadyFired && pz2Initialised) {
+	if (pz2Initialised) {
 		var searchChunks = [];
 		addSearchStringForFieldToArray('all', searchChunks);
 		var isExtendedSearch = jQuery(myForm).hasClass('pz2-extended');
