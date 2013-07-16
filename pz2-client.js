@@ -110,6 +110,8 @@ function overrideLocalisation (languageCode, key, localisedString) {
 
 
 function initialiseService () {
+	errorCount = 0;
+
 	if (!my_paz) {
 		/*	Create a parameters array and pass it to the pz2’s constructor.
 			Then register the form submit event with the pz2.search function.
@@ -160,17 +162,20 @@ function initialiseServiceProxy () {
 
 
 function my_errorHandler (error) {
+	errorCount++;
 	var errorCode = parseInt(error.code);
 
-	if (errorCode === 1 && this.request.status === 417) {
-		// The Pazpar2 session has expired: create a new one.
-		initialisePazpar2();
+	if (errorCount < 3 && this.request.status < 500) {
+		if (errorCode === 1 && this.request.status === 417) {
+			// The Pazpar2 session has expired: create a new one.
+			initialisePazpar2();
+		}
+		else if (errorCode === 100 && this.request.status === 417) {
+			// The Service Proxy session has expired / cookie got lost: create a new one.
+			initialiseServiceProxy();
+		}
 	}
-	else if (errorCode === 100 && this.request.status === 417) {
-		// The Service Proxy session has expired / cookie got lost: create a new one.
-		initialiseServiceProxy();
-	}
-	else if (this.request.status === 503) {
+	else {
 		// The service is unavailable: Disable the search form.
 		var jRecordCount = jQuery('.pz2-recordCount');
 		jRecordCount.empty();
@@ -181,9 +186,8 @@ function my_errorHandler (error) {
 		if (pz2InitTimeout !== undefined) {
 			clearTimeout(pz2InitTimeout);
 		}
-		pz2InitTimeout = setTimeout(initialisePazpar2, 15000);
+		pz2InitTimeout = setTimeout(initialiseService, 15000);
 	}
-
 
 	// If  the error happens while loading, clear the current search term,
 	// to allow restarting the search.
@@ -196,6 +200,7 @@ function my_errorHandler (error) {
 
 // Status variables
 var pz2Initialised = false;
+var errorCount = 0;
 var pz2InitTimeout = undefined;
 var pageLanguage = undefined;
 var institutionName = undefined;
@@ -315,7 +320,7 @@ function my_oninit(data) {
 				});
 		}
 	}
-	
+
 	triggerSearchFunction(null);
 }
 
@@ -379,7 +384,7 @@ function turnIntoNewWindowLink (link) {
 */
 function fieldContentsInRecord (fieldName, record) {
 	var result = [];
-	
+
 	if ( fieldName === 'xtargets' ) {
 		// special case xtargets: gather server names from location info for this
 		for (var locationNumber in record.location) {
@@ -420,20 +425,20 @@ function fieldContentsInRecord (fieldName, record) {
 	according to the setup in the displaySort and filterArray variables.
 */
 function displayLists (list) {
-	
+
 	/*	filter
 		Returns filtered lists of pazpar2 records according to the current 
 		filterArray. The first list are the results to display. The second list
 		are the results satisfying all filters except the date ones. It is used
 		for drawing the date histogram.
-	
+
 		input:	list - list of pazpar2 records
 		output:	list of 2 items:
 					* list of pazpar2 records matching all filters
 					* list of pazpar2 records matching all non-date filters
 	*/
 	var filteredLists = function (listToFilter) {
-		
+
 		/*	matchesFilters
 			Returns how the passed record passes the filters.
 			input:	record - pazpar2 record
@@ -496,7 +501,7 @@ function displayLists (list) {
 				filteredUpToDateList.push(item);
 			}
 		}
-		
+
 		return [filteredList, filteredUpToDateList];
 	};
 
@@ -563,13 +568,13 @@ function displayLists (list) {
 			if (fieldName === 'date') {
 				var date1 = dateForRecord(record1);
 				var date2 = dateForRecord(record2);
-				
+
 				result = (date1 - date2) * direction;
 			}
 			else {
 				var string1 = fieldContentForSorting(fieldName, record1);
 				var string2 = fieldContentForSorting(fieldName, record2);
-				
+
 				if (string1 === string2) {
 					result = 0;
 				}
@@ -591,7 +596,7 @@ function displayLists (list) {
 
 		return result;
 	};
-	
+
 
 	var result = filteredLists(list);
 	result[0] = result[0].sort(sortFunction);
@@ -658,12 +663,12 @@ function my_onshow (data) {
 					hit.detailsDiv = hitList[hitID].detailsDiv;
 				}
 			}
-			
+
 			// Make sure the 'medium' field exists by setting it to 'other' if necessary.
 			if (!hit['md-medium']) {
 				hit['md-medium'] = ['other'];
 			}
-			
+
 			// Create the integer 'filterDate' field for faceting.
 			hit['md-filterDate'] = extractNewestDates(hit);
 
@@ -697,7 +702,7 @@ function my_onshow (data) {
 						return 0;
 					}
 				});
-			
+
 			hitList[hitID] = hit;
 		}
 	}
@@ -728,7 +733,7 @@ function display () {
 			var span = document.createElement('span');
 			jQuery(span).addClass('pz2-' + fieldName);
 			span.appendChild(document.createTextNode(fieldContent.join('; ')));
-		
+
 			if (prepend) {
 				container.appendChild(document.createTextNode(prepend));
 			}
@@ -804,7 +809,7 @@ function display () {
 			jQuery(output).addClass('pz2-item-responsibility');
 			output.appendChild(document.createTextNode(outputText));
 		}
-		
+
 		return output;
 	};
 
@@ -856,7 +861,7 @@ function display () {
 			}
 			return infoList.join('&');
 		};
-		
+
 
 		var coinsSpans = [];
 
@@ -875,7 +880,7 @@ function display () {
 			if (location['md-title-remainder']) {
 				title += ' ' + location['md-title-remainder'][0];
 			}
-			
+
 			// format info
 			if (location['md-medium'] && location['md-medium'][0] === 'article') {
 				coinsData['rft_val_fmt'] = ['info:ofi/fmt:kev:mtx:journal'];
@@ -909,7 +914,7 @@ function display () {
 					coinsData['rft.genre'] = ['document'];
 				}
 			}
-			
+
 			// authors
 			var authors = [];
 			if (location['md-author']) {
@@ -919,7 +924,7 @@ function display () {
 				authors = authors.concat(location['md-other-person']);
 			}
 			coinsData['rft.au'] = authors;
-			
+
 			// further fields
 			coinsData['rft.date'] = location['md-date'];
 			coinsData['rft.isbn'] = location['md-isbn'];
@@ -959,7 +964,7 @@ function display () {
 	for (var i = 0; i < numberOfRecordsOnPage; i++) {
 		var hit = displayHitList[firstIndex + i];
 		var LI = hit.li;
-		
+
 		if (!LI) {
 			// The LI element does not exist: create it and store it with the data.
 			LI = document.createElement('li');
@@ -1007,7 +1012,7 @@ function display () {
 			hit.li = LI;
 			runMathJax(LI);
 		}
-		
+
 		OL.appendChild(LI);
 
 		if (hit.detailsDivVisible) {
@@ -1019,8 +1024,8 @@ function display () {
 			appendInfoToContainer(detailsDiv, LI);
 			jQuery(LI).addClass('pz2-detailsVisible');
 		}
-		
-		
+
+
 
 	}
 
@@ -1030,7 +1035,7 @@ function display () {
 	results.appendChild(OL);
 
 	updatePagers();
-	
+
 	// Let Zotero know about updated content
 	if (!MSIEVersion()) {
 		var zoteroNotification = document.createEvent('HTMLEvents');
@@ -1213,7 +1218,7 @@ function updateProgressBar(percentage) {
 	var finished = (progress === 100);
 	var opacityValue = (finished ? 0 : 1);
 	var duration = 500 * (finished ? 0.2 : 1);
-	
+
 	jQuery('.pz2-pager .pz2-progressIndicator').animate({'width': progress + '%', 'opacity': opacityValue}, duration);
 }
 
@@ -1322,7 +1327,7 @@ function facetListForType (type, preferOriginalFacets) {
 					termArray[term]++;
 				}
 			}
-			
+
 			// Sort by term frequency.
 			for (var term in termArray) {
 				termList.push({'name': term, 'freq': termArray[term]});
@@ -1338,7 +1343,7 @@ function facetListForType (type, preferOriginalFacets) {
 						else {return -1;}
 					}
 				);
-	
+
 				// Note the maximum number
 				termList['maximumNumber'] = termList[0].freq;
 
@@ -1487,7 +1492,7 @@ function facetListForType (type, preferOriginalFacets) {
 				}
 			}
 		}
-		
+
 		// If some facets are hidden, add a show all button at the very end.
 		if (needToHideFacets) {
 			var showAllItem = document.createElement('li');
@@ -1549,14 +1554,14 @@ function facetListForType (type, preferOriginalFacets) {
 				graphData.push([year, terms[termIndex].freq]);
 			}
 		}
-		
+
 		/*	Set up xaxis with two labelled ticks, one at each end.
 			Dodgy: Use whitespace to approximately position the labels in a way that they don’t
 			extend beyond the end of the graph (by default they are centered at the point of
 			their axis, thus extending beyond the width of the graph on one site.
 		*/
 		var xaxisTicks = function (axis) {
-			return [[axis.datamin, '      ' + axis.datamin], [axis.datamax, axis.datamax + '      ']];
+			return [[axis.datamin, '	  ' + axis.datamin], [axis.datamax, axis.datamax + '	  ']];
 		};
 
 		// Use the colour of term list titles for the histogram.
@@ -1632,7 +1637,7 @@ function facetListForType (type, preferOriginalFacets) {
 		jGraphDiv.bind('plotunselected', function() {
 			delimitResults('filterDate');
 		});
-		
+
 		jGraphDiv.bind('plothover', function(event, ranges, item) {
 			var showTooltip = function(x, y, contents) {
 				var tooltipDiv = document.createElement('div');
@@ -1645,7 +1650,7 @@ function facetListForType (type, preferOriginalFacets) {
 					'left': x + 5
 				}).appendTo('body').fadeIn(200);
 			};
-		
+
 			removeTooltip();
 			var year = Math.floor(ranges.x);
 			for (termIndex in terms) {
@@ -1690,7 +1695,7 @@ function facetListForType (type, preferOriginalFacets) {
 			container.appendChild(facetDisplayTermsForType(terms, type));
 		}
 	}
-		
+
 	return container;		
 }
 
@@ -1772,7 +1777,7 @@ function my_onbytarget(data) {
 	jQuery(td).addClass('pz2-target-status');
 	td.appendChild(document.createTextNode(localise('Status')));
 	td.id = 'pz2-target-status';
-	
+
 	var tbody = document.createElement('tbody');
 	table.appendChild(tbody);
 
@@ -1825,7 +1830,7 @@ function my_onbytarget(data) {
 /*	pz2ClientDomReady
 	Called when the page is loaded. Sets up JavaScript-based search mechanism.
 */
-function pz2ClientDomReady ()  {
+var pz2ClientDomReady = function ()  {
 	jQuery('.pz2-searchForm').each( function(index, form) {
 			form.onsubmit = onFormSubmitEventHandler;
 			if (jQuery('form.pz2-searchForm').hasClass('pz2-extended')) {
@@ -1844,7 +1849,7 @@ function pz2ClientDomReady ()  {
 	setupAutocomplete();
 
 	triggerSearchFunction(null);
-}
+};
 
 
 
@@ -2467,10 +2472,10 @@ function renderDetails(recordID) {
 				rowDataElement.setAttribute(attributeName, attributes[attributeName]);
 			}
 			rowDataElement.appendChild(dataElement);
-			
+
 			line = [rowTitleElement, rowDataElement];
 		}
-		
+
 		return line;
 	};
 
@@ -2541,7 +2546,7 @@ function renderDetails(recordID) {
 	};
 
 
-	
+
 	/*	linkForDOI
 		input:	DOI - string with DOI
 		output: DOM anchor element with link to the DOI at dx.doi.org
@@ -2613,7 +2618,7 @@ function renderDetails(recordID) {
 				}
 			}
 		}
-		
+
 		var infoElements;
 		if (ISSNList.length > 0) {
 			infoElements = [document.createTextNode(ISSNList.join(', '))];
@@ -2788,7 +2793,7 @@ function renderDetails(recordID) {
 		if ( ISSN ) {
 			parameters += '&issn=' + ISSN;
 		}
-		
+
 		if ( eISSN ) {
 			parameters += '&eissn=' + eISSN;
 		}
@@ -2888,7 +2893,7 @@ function renderDetails(recordID) {
 								status == 10: unknown
 						*/
 					}
-					
+
 					// Only display detail information if we do have access.
 					if (statusText) {
 						var statusElement = document.createElement('span');
@@ -2946,7 +2951,7 @@ function renderDetails(recordID) {
 							if (signature) {
 								infoText += ' ' + signature.textContent;
 							}
-							
+
 							if (locationText.search('Göttingen SUB') !== -1 && locationText.search('LS2') !== -1) {
 								infoText += ' ' + localise('[neuere Bände im Lesesaal 2]');
 							}
@@ -3025,7 +3030,7 @@ function renderDetails(recordID) {
 
 					var electronicInfos = ZDBInfoElement( jQuery('ElectronicData', data) );
 					var printInfos = ZDBInfoElement( jQuery('PrintData', data) );
-					
+
 					if (electronicInfos || printInfos) {
 						container = document.createElement('div');
 						if (ZDBUseClientIP) {
@@ -3074,7 +3079,7 @@ function renderDetails(recordID) {
 			}
 		);
 	};
-	
+
 
 
 
@@ -3111,10 +3116,10 @@ function renderDetails(recordID) {
 					/*	bookScore
 						Returns a score for given book to help determine which book
 						to use on the page if several results exist.
-					
+
 						Preference is given existing previews and books that are
 						embeddable are preferred if there is a tie.
-					
+
 						input: book - Google Books object
 						output: integer
 					*/
@@ -3252,8 +3257,8 @@ function renderDetails(recordID) {
 				titleBarDiv.appendChild(closeBoxLink);
 				jQuery(closeBoxLink).addClass('googlePreview-closeBox');
 				closeBoxLink.setAttribute('href', '#');
-				
-				
+
+
 				closeBoxLink.onclick = new Function('javascript:jQuery("#' + previewContainerDivName + '").hide(200); trackPiwik("googlebooks/close"); return false;');
 				closeBoxLink.appendChild(document.createTextNode(localise('Vorschau schließen')));
 
@@ -3311,7 +3316,7 @@ function renderDetails(recordID) {
 					new google.maps.LatLng(rect[1][0], rect[1][1]),
 					new google.maps.LatLng(rect[3][0], rect[3][1])
 				);
-				
+
 				// Determine whether this rectangle has already been added to the map
 				// and avoid drawing duplicates.
 				var drawThisMarker = true;
@@ -3401,7 +3406,7 @@ function renderDetails(recordID) {
 					* Degrees[/Minutes[/Seconds]] -> Decimal numbers
 					* Takes into account different Symbols for Degrees/Minutes/Seconds
 						(proper Unicode, ASCII equivalents, spaces)
-			
+
 				input:	ISBD-style coordinate string
 				output:	floating point number
 			*/
@@ -3614,7 +3619,7 @@ function renderDetails(recordID) {
 			/*	pickISBN
 				input: 2 ISBN number strings without dashes
 				output: if both are 'the same': the longer one (ISBN-13)
-				        if they aren't 'the same': undefined
+						if they aren't 'the same': undefined
 			*/
 			var pickISBN = function (ISBN1, ISBN2) {
 				var result = undefined;
@@ -3666,7 +3671,7 @@ function renderDetails(recordID) {
 			output:	DOM element containing URLs as links.
 		*/
 		var electronicURLs = function() {
-			
+
 			/*	cleanURLList
 				Returns a cleaned list of URLs for presentation.
 				1. Removes duplicates of URLs if they exist, preferring URLs with label
@@ -3692,8 +3697,8 @@ function renderDetails(recordID) {
 						originalURL.originalPosition = originalURLIndex;
 						URLs.push(originalURL);
 					}
-				
-	
+
+
 					// Figure out which URLs are duplicates and collect indexes of those to remove.
 					var indexesToRemove = {};
 					for (var URLIndex = 0; URLIndex < URLs.length; URLIndex++) {
@@ -3754,7 +3759,7 @@ function renderDetails(recordID) {
 						}
 					);
 				}
-				
+
 				return URLs;
 			};
 
@@ -3778,7 +3783,7 @@ function renderDetails(recordID) {
 					var URLInfo = electronicURLs[URLNumber];
 					var linkText = localise('Link', linkDescriptions); // default link name
 					var linkURL = URLInfo;
-	
+
 					if (typeof(URLInfo) === 'object' && URLInfo['#text'] !== undefined) {
 						// URLInfo is not just an URL but an array also containing the link name
 						if (URLInfo['@name'] !== undefined) {
@@ -3795,7 +3800,7 @@ function renderDetails(recordID) {
 						}
 						linkURL = URLInfo['#text'];
 					}
-					
+
 					linkText = '[' + linkText +  ']';
 
 					if (URLsContainer.childElementCount > 0) {
@@ -3831,7 +3836,7 @@ function renderDetails(recordID) {
 			if (catalogueURL && catalogueURL.length > 0) {
 				var URL = catalogueURL[0];
 			}
-			
+
 			return URL;
 		};
 
@@ -4141,8 +4146,8 @@ function renderDetails(recordID) {
 			return item;
 		};
 
-		
-		
+
+
 		/*	appendExportItemsTo
 			Appends list items with an export form for each exportFormat to the container.
 			inputs:	locations - pazpar2 location array
@@ -4175,7 +4180,7 @@ function renderDetails(recordID) {
 				var itemLabel = localise('download-label-submenu-index-format').replace(/\*/, parseInt(locationIndex, 10) + 1);
 				submenuList.appendChild(exportItem([locations[locationIndex]], exportFormat, itemLabel));
 			}
-			
+
 			return submenuContainer;
 		};
 
@@ -4294,7 +4299,7 @@ function renderDetails(recordID) {
 
 
 
-	
+
 	var data = hitList[recordID];
 
 	if (data) {
@@ -4336,7 +4341,7 @@ function renderDetails(recordID) {
 				data['md-other-person-clean'].push(data['md-other-person'][personIndex]);
 			}
 		}
-		
+
 		appendInfoToContainer( detailLineAuto('author-clean'), detailsList );
 		appendInfoToContainer( detailLineAuto('other-person-clean'), detailsList );
 		appendInfoToContainer( detailLineAuto('abstract'), detailsList );
@@ -6064,7 +6069,7 @@ var localisations = {
 		'Client_Error': 'Fehler',
 		'Client_Disconnected': 'Verbindungsabbruch'
 	},
-	
+
 	'en': {
 		// Facets
 		'gefiltert': 'filtered',
