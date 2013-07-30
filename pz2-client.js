@@ -6049,6 +6049,7 @@ var localisations = {
 		'diese Ausgabe nicht verfügbar': 'diese Ausgabe nicht verfügbar',
 		'Informationen bei der Zeitschriftendatenbank': 'Verfügbarkeitsinformationen bei der Zeitschriftendatenbank ansehen',
 		'[neuere Bände im Lesesaal 2]': '[neuere Bände im Lesesaal 2]',
+		'Zugriff': 'Zugriff',
 		// Link tooltip
 		'Erscheint in separatem Fenster.': 'Erscheint in separatem Fenster.',
 		// Search Form
@@ -6172,6 +6173,7 @@ var localisations = {
 		'diese Ausgabe nicht verfügbar': 'this issue not accessible',
 		'Informationen bei der Zeitschriftendatenbank': 'View availability information at Zeitschriftendatenbank',
 		'[neuere Bände im Lesesaal 2]': '[current volumes in Lesesaal 2]',
+		'Zugriff': 'Access',
 		// Link tooltip
 		'Erscheint in separatem Fenster.': 'Link opens in a new window.',
 		// Search Form
