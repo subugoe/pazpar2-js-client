@@ -136,7 +136,7 @@ function neuerwerbungenRunSearchForForm (form) {
 	 * Only start the query if pazpar2 is initialised. Otherwise this function
 	 * will be called by on_myinit in pz2-client.js once initialisation has finished.
 	 */
-	if (domReadyFired && pz2Initialised) {
+	if (pz2Initialised) {
 		var myForm = form;
 		// If no form is passed use the first .pz2-neuerwerbungenForm.
 		if (myForm === undefined) {
