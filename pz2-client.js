@@ -1524,10 +1524,19 @@ function facetListForType (type, preferOriginalFacets) {
 	};
 
 
-	var appendFacetHistogramForDatesTo = function (terms, container) {
+
+	/*	appendFacetHistogramForDatesTo
+		Appends a histogram facet for the passed terms (years).
+
+		inputs:	terms - array of objects with keys »name« and »freq«
+				histogramContainer - DOMElement to append the histogram to
+	*/
+	var appendFacetHistogramForDatesTo = function (terms, histogramContainer) {
+		var config = {'barWidth': 1};
+
 		if (isFilteredForType('filterDate')) {
 			var cancelLink = document.createElement('a');
-			container.appendChild(cancelLink);
+			histogramContainer.appendChild(cancelLink);
 			cancelLink.setAttribute('href', '#');
 			jQuery(cancelLink).addClass('pz2-facetCancel pz2-activeFacet');
 			cancelLink.onclick = new Function('delimitResults("filterDate"); return false;');
@@ -1540,8 +1549,9 @@ function facetListForType (type, preferOriginalFacets) {
 		}
 
 		var graphDiv = document.createElement('div');
-		container.appendChild(graphDiv);
+		histogramContainer.appendChild(graphDiv);
 		jQuery(graphDiv).addClass('pz2-histogramContainer');
+
 		var graphWidth = jQuery('#pz2-termLists').width();
 		var jGraphDiv = jQuery(graphDiv);
 		var canvasHeight = 150;
@@ -1600,73 +1610,125 @@ function facetListForType (type, preferOriginalFacets) {
 			}
 		};
 
+
+		// Create plot.
 		try {
 			var plot = jQuery.plot(jGraphDiv , [{'data': graphData, 'color': graphColour}], graphOptions);
 		}
-		catch (exception){
-			// console.log(exception);
+		catch (exception) { }
+
+		// Create tooltip.
+		var jTooltip = jQuery('#pz2-histogram-tooltip');
+		if (jTooltip.length == 0) {
+			tooltipDiv = document.createElement('div');
+			tooltipDiv.setAttribute('id', 'pz2-histogram-tooltip');
+			jTooltip = jQuery(tooltipDiv).appendTo(document.body);
 		}
 
-		var removeTooltip = function () {
-			jQuery("#pz2-histogram-tooltip").remove();
+		var roundedRange = function (range) {
+			var outputRange = {};
+
+			var from = Math.floor(range.from);
+			outputRange.from = from - (from % config.barWidth);
+
+			var to = Math.ceil(range.to);
+			outputRange.to = to - (to % config.barWidth) + config.barWidth;
+			return outputRange;
 		};
 
 		var selectRanges = function (ranges) {
-			ranges.xaxis.from = Math.floor(ranges.xaxis.from);
-			ranges.xaxis.to = Math.ceil(ranges.xaxis.to);
-			plot.setSelection(ranges, true);
+			var newRange = roundedRange(ranges.xaxis);
+			plot.setSelection({'xaxis': newRange}, true);
+			hideTooltip();
 			filterArray['filterDate'] = undefined;
-			limitResults('filterDate', ranges.xaxis);
-			removeTooltip();
+			limitResults('filterDate', newRange);
 		};
 
 		jGraphDiv.bind("plotclick", function (event, pos, item) {
-			if (item) {
+			if (item && item.datapoint) {
 				var year = item.datapoint[0];
 				var ranges = {'xaxis': {'from': year, 'to': year + 1} };
 				selectRanges(ranges);
 			}
 		});
 
-		jGraphDiv.mouseout(removeTooltip);
-
 		jGraphDiv.bind('plotselected', function(event, ranges) {
 			selectRanges(ranges);
 		});
 
-		jGraphDiv.bind('plotunselected', function() {
+		jGraphDiv.bind('plotunselected', function(event) {
 			delimitResults('filterDate');
 		});
 
-		jGraphDiv.bind('plothover', function(event, ranges, item) {
+
+		/*	hideTooltip
+			Hides the tooltip.
+		*/
+		var hideTooltip = function () {
+			jTooltip.hide();
+		}
+
+
+		/*	update Tooltip
+			Updates the tooltip visiblity, position and text.
+			input:	event - the event we are called for
+					ranges - object with property »xaxis«
+					pageX - current x coordinate of the mouse
+		*/
+		var updateTooltip = function (event, ranges, pageX) {
 			var showTooltip = function(x, y, contents) {
-				var tooltipDiv = document.createElement('div');
-				tooltipDiv.setAttribute('id', 'pz2-histogram-tooltip');
-				tooltipDiv.appendChild(document.createTextNode(contents));
-				jQuery(tooltipDiv).css( {
-					'position': 'absolute',
-					'display': 'none',
-					'top': y + 5,
-					'left': x + 5
-				}).appendTo('body').fadeIn(200);
+				jTooltip.text(contents);
+				if (x) {
+					jTooltip.css( {
+						'top': y + 5,
+						'left': x + 5
+					});
+				}
+				jTooltip.show();
 			};
 
-			removeTooltip();
-			var year = Math.floor(ranges.x);
-			for (termIndex in terms) {
-				var term = parseInt(terms[termIndex].name);
-				if (term === year) {
-					var hitCount = terms[termIndex].freq;
-					var displayString = year + ': ' + hitCount + ' ' + localise('Treffer');
-					tooltipY = jGraphDiv.offset().top + canvasHeight - 20;
-					showTooltip(ranges.pageX, tooltipY, displayString);
+			var tooltipY = jGraphDiv.offset().top + canvasHeight - 20;
+			var displayString;
+			if (ranges) {
+				var range = roundedRange(ranges.xaxis);
+
+				if (histogramContainer.currentSelection && histogramContainer.currentSelection.xaxis) {
+					displayString = range.from.toString() + '-' + range.to.toString();
+				}
+				else {
+					for (var termIndex in terms) {
+						var term = parseInt(terms[termIndex].name);
+						if (term === range.from) {
+							var hitCount = terms[termIndex].freq;
+							displayString = term.toString() + ': ' + hitCount + ' ' + localise('Treffer');
+							break;
+						}
+					}
 				}
 			}
+
+			if (displayString) {
+				showTooltip(pageX, tooltipY, displayString);
+			}
+			else {
+				hideTooltip();
+			}
+		};
+
+		jGraphDiv.bind('plothover', function(event, ranges, item) {
+			updateTooltip(event, {'xaxis': {'from': ranges.x, 'to': ranges.x}}, ranges.pageX);
 		});
+
+		jGraphDiv.bind('plotselecting', function (event, info) {
+			histogramContainer.currentSelection = info;
+			updateTooltip(event, info);
+		});
+
+		jGraphDiv.mouseout(hideTooltip);
 
 		for (filterIndex in filterArray['filterDate']) {
 			plot.setSelection({'xaxis': filterArray['filterDate'][filterIndex]}, true);
-		}					
+		}
 	};
 
 
