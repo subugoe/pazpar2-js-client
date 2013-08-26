@@ -151,9 +151,9 @@ function initialisePazpar2 () {
 		pz2InitTimeout = undefined;
 	}
 
-	// Only run init if the previous init is more than 15s ago.
+	// Only run init if the previous init is more than 15 seconds ago.
 	var currentTime = (new Date).getTime();
-	if (pz2InitRequestStartTime + 15 < currentTime) {
+	if (pz2InitRequestStartTime + 15000 < currentTime) {
 		pz2InitRequestStartTime = currentTime;
 		my_paz.init(undefined, my_paz.serviceId);
 	}
