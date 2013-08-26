@@ -1913,6 +1913,13 @@ var pz2ClientDomReady = function ()  {
 		}
 	);
 
+	// Remove error handler when the user leaves the page. (Prevents error messages
+	// from appearing in some browsers when the page unloads while queries
+	// are still running.)
+	jQuery(window).on('unload', function () {
+		my_paz.errorHandler = undefined;
+	});
+
 	jQuery('.pz2-sort, .pz2-perPage').attr('onchange', 'onSelectDidChange');
 	jQuery('#pazpar2').removeClass('pz2-noJS');
 
