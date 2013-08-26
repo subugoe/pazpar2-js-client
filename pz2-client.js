@@ -121,6 +121,7 @@ function initialiseService () {
 			'onshow': my_onshow,
 			'showtime': 1000, //each timer (show, stat, term, bytarget) can be specified this way
 			'pazpar2path': actualPazpar2Path,
+			'autoInit': false,
 			'oninit': my_oninit,
 			'onstat': my_onstat,
 			/* We are not using pazpar2’s termlists but create our own.
@@ -149,7 +150,13 @@ function initialisePazpar2 () {
 		clearTimeout(pz2InitTimeout);
 		pz2InitTimeout = undefined;
 	}
-	my_paz.init(undefined, my_paz.serviceId);
+
+	// Only run init if the previous init is more than 15s ago.
+	var currentTime = (new Date).getTime();
+	if (pz2InitRequestStartTime + 15 < currentTime) {
+		pz2InitRequestStartTime = currentTime;
+		my_paz.init(undefined, my_paz.serviceId);
+	}
 }
 
 
@@ -199,6 +206,7 @@ function my_errorHandler (error) {
 
 
 // Status variables
+var pz2InitRequestStartTime = 0;
 var pz2Initialised = false;
 var errorCount = 0;
 var pz2InitTimeout = undefined;
@@ -266,6 +274,7 @@ var autocompleteSetupFunction = autocompleteSetupArray;
 	Callback for pz2.js called when initialisation is complete.
 */
 function my_oninit(data) {
+	pz2InitRequestStartTime = 0; // The request has returned: set time to 0.
 	my_paz.stat();
 	my_paz.bytarget();
 	pz2Initialised = true;
