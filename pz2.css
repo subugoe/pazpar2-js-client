@@ -781,7 +781,7 @@ pz2-client.js removes this once it it loaded.
 }
 
 .pz2-accessNote {
-	position: absolute;
+	/* position: absolute; */
 	right: 0px;
 	top: 10px;
 	width: 220px;
