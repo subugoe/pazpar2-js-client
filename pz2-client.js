@@ -4041,7 +4041,8 @@ function renderDetails(recordID) {
 								if (childPart === '#text') {
 									targetChild.appendChild(target.ownerDocument.createTextNode(child[childPart]));
 								}
-								else if (childPart[0] === '@') {
+								else if (childPart[0] === '@' && childPart[1] !== '@') {
+									// childs with names like '@@...' are not attributes!
 									targetChild.setAttribute(childPart.substr(1), child[childPart]);
 								}
 							}
