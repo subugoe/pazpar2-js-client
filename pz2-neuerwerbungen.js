@@ -51,13 +51,13 @@ function restoreCookieState() {
 
 /**
  * getPz2NeuerwerbungenCookie
- * 
+ *
  * Returns the content of our cookie as an object with a property for each
  * checkbox that should be active.
- * 
+ *
  * As the same cookie is used across all pages, it may contain information about
  * checkboxes that are not currently present.
- * 
+ *
  * output:	object with a property for each active search query
  */
 function getPz2NeuerwerbungenCookie() {
@@ -67,9 +67,9 @@ function getPz2NeuerwerbungenCookie() {
     for (var cookieIndex in cookies) {
         var cookie = cookies[cookieIndex];
         var equalsLocation = cookie.search('=');
-        if (equalsLocation != -1) {
+        if (equalsLocation !== -1) {
             var cookieName = cookie.substring(0, equalsLocation);
-            if (cookieName == 'pz2neuerwerbungen-previousQuery') {
+            if (cookieName === 'pz2neuerwerbungen-previousQuery') {
                 var cookieValue = cookie.substring(equalsLocation + 1);
                 var fieldNames = cookieValue.split(':');
                 for (var fieldNameIndex in fieldNames) {
@@ -255,7 +255,7 @@ function toggleParentCheckboxOf(checkbox) {
     var fieldset = jQuery(checkbox).parents('fieldset')[0];
     parentCheckbox = jQuery('legend :checkbox', fieldset);
 
-    parentCheckbox.attr({ 'checked': (jQuery('li :checkbox', fieldset).length == jQuery('li :checked', fieldset).length) });
+    parentCheckbox.attr({ 'checked': (jQuery('li :checkbox', fieldset).length === jQuery('li :checked', fieldset).length) });
 }
 
 
@@ -305,14 +305,14 @@ function selectedQueriesInFormWithWildcard(form, wildcard) {
 
 /**
  * searchFormStatus
- * 
+ *
  * Returns an object with a boolean property for each search term in the given
  * form. The property’s value reflects whether the search term should be used.
  * This value is not necessarily the checked status of the checkbox as
  * the search term of checkboxes inside a fieldset may be unused in case the
  * fieldset’s super-checkbox is active and provides a more general search term
  * covering those of all its sub-checkboxes.
- * 
+ *
  * input:	form - DOM element of the form to get the data from
  * output:	object - a boolean property for each search term indicating whether it is used
  */
@@ -436,7 +436,7 @@ function addSearchTermsToList(searchTerms, list, wildcard) {
 /*
  * atomURL
  *
- * Creates the URL to the Atom feed for the query if the form contains a 
+ * Creates the URL to the Atom feed for the query if the form contains a
  * selection.
  *
  * Assumes that the script / redirect providing the Atom feed is available at
