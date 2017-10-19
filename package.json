@@ -5,7 +5,7 @@
     "repository": "https://github.com/subugoe/pazpar2-js-client.git",
     "author": "SUB Göttingen <info@sub.uni-goettingen.de>",
     "scripts": {
-        "build": "cp -R node_modules/sub-iconfont ./sub-iconfont && cp -R node_modules/flot ./flot"
+        "build": "cp -R node_modules/sub-iconfont/* ./sub-iconfont/ && cp -R node_modules/flot/* ./flot/"
     },
     "license": "GPL-2.0+",
     "devDependencies": {
