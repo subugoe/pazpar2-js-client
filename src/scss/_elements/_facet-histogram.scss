@@ -1,0 +1,21 @@
+.pz2-histogramContainer {
+    margin-left: -8px;
+}
+
+#pz2-histogram-tooltip {
+    display: none;
+    position: absolute;
+    border: 1px solid #f6f3ff;
+    padding: 2px;
+    opacity: 0.8;
+    background: #fff;
+    background-color: #fff;
+    font-size: 71%;
+    font-weight: bold;
+}
+
+.filterDate-input input {
+    width: 4em;
+    margin-right: 1em;
+    margin-top: 1.5em;
+}

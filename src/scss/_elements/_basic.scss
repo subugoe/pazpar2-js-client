@@ -1,0 +1,22 @@
+/* BASIC ELEMENTS */
+#pazpar2 a {
+    text-decoration: none;
+}
+
+#pazpar2 ol {
+    margin: 0;
+}
+
+.pz2-clear {
+    display: block;
+    height: 0;
+    clear: both;
+}
+
+.pz2-basic {
+    .pz2-searchField {
+        width: 400px;
+        height: 22px;
+        padding: 4px;
+    }
+}

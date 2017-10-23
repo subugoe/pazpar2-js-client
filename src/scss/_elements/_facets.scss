@@ -1,0 +1,45 @@
+#pz2-termLists {
+    float: right;
+    width: 200px;
+
+    h4 {
+        display: none;
+    }
+}
+
+.pz2-termList {
+    margin-bottom: 1em;
+
+    h5 {
+        text-transform: uppercase;
+        font-size: 100%;
+        font-weight: bold;
+        margin-bottom: 0.25em;
+    }
+
+    ol {
+        margin-bottom: 1em;
+        padding: 0;
+    }
+
+    li {
+        list-style-type: none;
+
+        a {
+            position: relative;
+            display: block;
+            padding-left: 1em;
+            text-indent: -1em;
+            font-weight: normal;
+        }
+    }
+}
+
+.pz2-facetCount {
+    color: #999;
+    margin-left: 0.4em;
+}
+
+.pz2-facet-hidden {
+    display: none;
+}

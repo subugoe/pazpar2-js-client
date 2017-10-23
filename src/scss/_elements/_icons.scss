@@ -1,0 +1,170 @@
+.pz2-mediaIcon {
+    display: block;
+    position: absolute;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    font-size: 24px;
+
+    &::before,
+    &::after {
+        display: block;
+        position: absolute;
+        height: 20px;
+        width: 20px;
+        text-indent: 0;
+        font-family: subicons;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        speak: none;
+    }
+
+    &::before {
+        content: '\e023';        
+        color: #f1f3f6;        
+    }
+
+    &::after {
+        content: '\e022';        
+        color: #00247d
+        
+    }
+}
+
+.pz2-resultList .pz2-mediaIcon {
+    left: -38px;
+}
+
+/* .pz2-mediaIcon.article:before { content:'\e005'} */
+.pz2-mediaIcon.article:after {
+    content: '\e004'
+}
+
+.pz2-mediaIcon.audio-visual:before {
+    content: '\e011'
+}
+
+.pz2-mediaIcon.audio-visual:after {
+    content: '\e010'
+}
+
+.pz2-mediaIcon.book:before {
+    content: '\e001'
+}
+
+.pz2-mediaIcon.book:after {
+    content: '\e000'
+}
+
+.pz2-mediaIcon.data:before {
+    content: '\e00d'
+}
+
+.pz2-mediaIcon.data:after {
+    content: '\e00c'
+}
+
+.pz2-mediaIcon.electronic:before {
+    content: '\e00b'
+}
+
+.pz2-mediaIcon.electronic:after {
+    content: '\e00a'
+}
+
+.pz2-mediaIcon.image:before {
+    content: '\e01d'
+}
+
+.pz2-mediaIcon.image:after {
+    content: '\e01c'
+}
+
+.pz2-mediaIcon.journal:before {
+    content: '\e007'
+}
+
+.pz2-mediaIcon.journal:after {
+    content: '\e006'
+}
+
+.pz2-mediaIcon.letter:before {
+    content: '\e017'
+}
+
+.pz2-mediaIcon.letter:after {
+    content: '\e016'
+}
+
+.pz2-mediaIcon.map:before {
+    content: '\e00f'
+}
+
+.pz2-mediaIcon.map:after {
+    content: '\e00e'
+}
+
+.pz2-mediaIcon.manuscript:before {
+    content: '\e019'
+}
+
+.pz2-mediaIcon.manuscript:after {
+    content: '\e018'
+}
+
+.pz2-mediaIcon.microform:before {
+    content: '\e01b'
+}
+
+.pz2-mediaIcon.microform:after {
+    content: '\e01a'
+}
+
+.pz2-mediaIcon.multiple:before {
+    content: '\e021'
+}
+
+.pz2-mediaIcon.multiple:after {
+    content: '\e020'
+}
+
+.pz2-mediaIcon.multivolume:before {
+    content: '\e003'
+}
+
+.pz2-mediaIcon.multivolume:after {
+    content: '\e002'
+}
+
+.pz2-mediaIcon.music-score:before {
+    content: '\e015'
+}
+
+.pz2-mediaIcon.music-score:after {
+    content: '\e014'
+}
+
+.pz2-mediaIcon.newspaper:before {
+    content: '\e009'
+}
+
+.pz2-mediaIcon.newspaper:after {
+    content: '\e008'
+}
+
+.pz2-mediaIcon.recording:before {
+    content: '\e013'
+}
+
+.pz2-mediaIcon.recording:after {
+    content: '\e012'
+}
+
+.pz2-mediaIcon.website:before {
+    content: '\e01f'
+}
+
+.pz2-mediaIcon.website:after {
+    content: '\e01e'
+}

@@ -1,0 +1,108 @@
+#pz2-recordView {
+    padding-top: 20px;
+}
+
+.pz2-recordLink {
+    display: block;
+
+    &::after {
+        position: relative;
+        bottom: -6px;
+        font-family: subicons;
+        font-size: 23px;
+        line-height: 4px;
+        content: '\e054';
+    }
+
+    &:hover {
+        &::after {
+            color: #00247d;
+        }
+    }
+}
+
+.pz2-detailsVisible .pz2-recordLink:after {
+    display: none;
+}
+
+#pz2-results {
+    margin-right: 220px;
+    display: flex;
+
+    ol {
+        &.pz2-resultList {
+            padding-left: 35px;
+
+            li {
+                margin-bottom: 0.5em;
+                padding-left: 5px;
+                position: relative;
+                clear: both;
+                list-style-type: none;
+                border-left: 1px solid transparent;
+
+                &.pz2-detailsVisible {
+                    border-left: 1px solid #eee;
+                }
+            }
+        }
+    }
+
+    .pz2-details ul li {
+        margin: 0;
+    }
+
+    .pz2-extraLinks {
+        position: absolute;
+        right: 10px;
+        bottom: -3px;
+
+        ul {
+            text-align: right;
+
+            li {
+                display: inline;
+                padding: 0;
+                list-style-type: none;
+
+                input {
+                    border: 0 none;
+                    background: transparent;
+                    cursor: pointer;
+                }
+
+                input,
+                a {
+                    color: #666;
+                    text-decoration: none;
+                    font-weight: normal;
+                    font-size: 1em;
+                }
+            }
+        }
+
+        form,
+        input {
+            display: inline;
+        }
+    }
+
+    .pz2-extraLinksLabel {
+        display: none;
+    }
+}
+
+#pz2-results ol.pz2-resultList .pz2-details li {
+    clear: none; /* Cancel the clear done for list items in the main list on lists in .pz2-details. */
+    border-left: 0 none;
+}
+
+#pz2-results .pz2-extraLinks:hover ul li input,
+#pz2-results .pz2-extraLinks:hover ul li a {
+    color: #000;
+}
+
+#pz2-results .pz2-extraLinks ul li input:hover,
+#pz2-results .pz2-extraLinks ul li a:hover {
+    text-decoration: underline;
+}

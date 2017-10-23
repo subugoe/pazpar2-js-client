@@ -1528,13 +1528,43 @@ function facetListForType(type, preferOriginalFacets) {
     return list;
   };
 
+  var appendTextInputForHistogram = function (terms) {
 
-  /*	appendFacetHistogramForDatesTo
-		Appends a histogram facet for the passed terms (years).
+    var dates = [];
 
-		inputs:	terms - array of objects with keys »name« and »freq«
-				histogramContainer - DOMElement to append the histogram to
-	*/
+    terms.forEach(function (value, key) {
+      dates[key] = parseInt(value.name);
+    });
+
+    dates.sort(function (a, b) {
+      return a - b;
+    });
+
+    var inputContainer = document.createElement('div');
+    inputContainer.setAttribute('class', 'filterDate-input');
+
+    var inputFrom = document.createElement('input');
+    inputFrom.setAttribute('class', 'filterDate-from');
+    inputFrom.setAttribute('type', 'number');
+    inputFrom.setAttribute('value', dates[0]);
+    inputContainer.appendChild(inputFrom);
+
+    var inputTo = document.createElement('input');
+    inputTo.setAttribute('class', 'filterDate-to');
+    inputTo.setAttribute('type', 'number');
+    inputTo.setAttribute('value', dates.slice(-1)[0]);
+    inputContainer.appendChild(inputTo);
+
+    return inputContainer;
+  };
+
+  /*appendFacetHistogramForDatesTo
+      Appends a histogram facet for the passed terms (years).
+
+      inputs:
+        terms - array of objects with keys »name« and »freq«
+        histogramContainer - DOMElement to append the histogram to
+  */
   var appendFacetHistogramForDatesTo = function (terms, histogramContainer) {
     var config = {'barWidth': 1};
 
@@ -1554,6 +1584,7 @@ function facetListForType(type, preferOriginalFacets) {
 
     var graphDiv = document.createElement('div');
     histogramContainer.appendChild(graphDiv);
+
     jQuery(graphDiv).addClass('pz2-histogramContainer');
 
     var graphWidth = jQuery('#pz2-termLists').width();
@@ -1569,11 +1600,12 @@ function facetListForType(type, preferOriginalFacets) {
       }
     }
 
-    /*	Set up xaxis with two labelled ticks, one at each end.
-			Dodgy: Use whitespace to approximately position the labels in a way that they don’t
-			extend beyond the end of the graph (by default they are centered at the point of
-			their axis, thus extending beyond the width of the graph on one site.
-		*/
+
+    /* Set up xaxis with two labelled ticks, one at each end.
+        Dodgy: Use whitespace to approximately position the labels in a way that they don’t
+        extend beyond the end of the graph (by default they are centered at the point of
+        their axis, thus extending beyond the width of the graph on one site.
+    */
     var xaxisTicks = function (axis) {
       return [[axis.datamin, '	  ' + axis.datamin], [axis.datamax, axis.datamax + '	  ']];
     };
@@ -1759,6 +1791,7 @@ function facetListForType(type, preferOriginalFacets) {
     if (useHistogramForYearFacets && type === 'filterDate'
         && (!MSIEVersion() || MSIEVersion() >= 9)) {
       appendFacetHistogramForDatesTo(terms, container);
+      container.appendChild(appendTextInputForHistogram(terms));
     }
     else {
       container.appendChild(facetDisplayTermsForType(terms, type));
@@ -3011,11 +3044,12 @@ function renderDetails(recordID) {
           };
 
 
-          /*	appendLibraryNameFromResultDataTo
-					If we there is a Library name, insert it into the target container.
-					input:	* data: ElectronicData or PrintData element from ZDB XML
-							* target: DOM container to which the marked up library name is appended
-				*/
+          /* appendLibraryNameFromResultDataTo
+             If we there is a Library name, insert it into the target container.
+             input:
+              * data: ElectronicData or PrintData element from ZDB XML
+              * target: DOM container to which the marked up library name is appended
+          */
           var appendLibraryNameFromResultDataTo = function (data, target) {
             var libraryName = jQuery('Library', data)[0];
             if (libraryName) {
@@ -3027,12 +3061,12 @@ function renderDetails(recordID) {
           };
 
 
-          /*	ZDBInfoElement
-					Coverts ZDB XML data for electronic or print journals
-						to DOM elements displaying their information.
-					input:	data - ElectronicData or PrintData element from ZDB XML
-					output:	DOM element containing the information from data
-				*/
+          /* ZDBInfoElement
+              Converts ZDB XML data for electronic or print journals
+              to DOM elements displaying their information.
+              input:	data - ElectronicData or PrintData element from ZDB XML
+              output:	DOM element containing the information from data
+          */
           var ZDBInfoElement = function (data) {
             var results = jQuery('Result', data);
 
@@ -3057,15 +3091,15 @@ function renderDetails(recordID) {
 
 
           /*	ZDBInformation
-					Converts complete ZDB XML data to DOM element containing information about them.
-					input:	data - result from ZDB XML request
-					output: DOM element displaying information about journal availability.
-								If ZDB figures out the local library and the journal
-									is accessible there, we display:
-									* its name
-									* electronic journal information with access link
-									* print journal information
-				*/
+               Converts complete ZDB XML data to DOM element containing information about them.
+               input:	data - result from ZDB XML request
+               output: DOM element displaying information about journal availability.
+               If ZDB figures out the local library and the journal
+                   is accessible there, we display:
+                   * its name
+                   * electronic journal information with access link
+                   * print journal information
+           */
           var ZDBInformation = function (data) {
             var container;
 
@@ -3121,10 +3155,9 @@ function renderDetails(recordID) {
   };
 
 
-  /*	appendGoogleBooksElementTo
-		Figure out whether there is a Google Books Preview for the current data.
-		input:	DL DOM element that an additional item can be appended to
-	*/
+  /* appendGoogleBooksElementTo figure out whether there is a Google Books Preview for the current data.
+        input: DL DOM element that an additional item can be appended to
+    */
   var appendGoogleBooksElementTo = function (container) {
     // Create list of search terms from ISBN and OCLC numbers.
     var searchTerms = [];
@@ -3151,16 +3184,16 @@ function renderDetails(recordID) {
           + '&jscmd=viewapi&callback=?';
       jQuery.getJSON(googleBooksURL,
           function (data) {
-            /*	bookScore
-						Returns a score for given book to help determine which book
-						to use on the page if several results exist.
+            /* bookScore
+                 Returns a score for given book to help determine which book
+                 to use on the page if several results exist.
 
-						Preference is given existing previews and books that are
-						embeddable are preferred if there is a tie.
+                 Preference is given existing previews and books that are
+                 embeddable are preferred if there is a tie.
 
-						input: book - Google Books object
-						output: integer
-					*/
+                 input: book - Google Books object
+                 output: integer
+             */
             function bookScore(book) {
               var score = 0;
 
@@ -3179,9 +3212,9 @@ function renderDetails(recordID) {
 
 
             /*
-						If there are multiple results choose the first one with
-						the maximal score. Ignore books without a preview.
-					*/
+                If there are multiple results choose the first one with
+                the maximal score. Ignore books without a preview.
+            */
             var selectedBook;
             jQuery.each(data,
                 function (bookNumber, book) {
@@ -3198,14 +3231,13 @@ function renderDetails(recordID) {
 
             // Add link to Google Books if there is a selected book.
             if (selectedBook !== undefined) {
-              /*	createGoogleBooksLink
-							Returns a link to open the Google Books Preview.
-							Depending on the features of the Preview, it opens interactively
-							on top of our view or in a new window.
+              /*createGoogleBooksLink
+                Returns a link to open the Google Books Preview.
+                Depending on the features of the Preview, it opens interactively
+                on top of our view or in a new window.
 
-							output: DOMElement - a Element with href and possibly onclick
-						*/
-
+                output: DOMElement - a Element with href and possibly onclick
+              */
               var createGoogleBooksLink = function () {
                 var bookLink = document.createElement('a');
                 bookLink.setAttribute('href', selectedBook.preview_url);
@@ -3267,11 +3299,11 @@ function renderDetails(recordID) {
     }
 
 
-    /*	openPreview
-			Called when the Google Books button is clicked.
-			Opens Google Preview.
-			output: false (so the click isn't handled any further)
-		*/
+    /*openPreview
+        Called when the Google Books button is clicked.
+        Opens Google Preview.
+        output: false (so the click isn't handled any further)
+    */
     var openPreview = function () {
       var googlePreviewButton = this;
       // Get hold of containing <div>, creating it if necessary.
@@ -3318,20 +3350,19 @@ function renderDetails(recordID) {
   }; // end of addGoogleBooksLinkIntoElement
 
 
-  /*	mapDetailLine
-		Add a graphical map displaying the region covered by a record if
-		the metadata exist and configured to do so.
+  /* mapDetailLine
+     Add a graphical map displaying the region covered by a record if
+     the metadata exist and configured to do so.
 
-		output: Array of DOM elements containing
-				0:	DT element with title Map Location
-				1:	DD element with the graphical map and a markers for the
-						regions covered by the record
-	*/
+     output: Array of DOM elements containing
+      0: DT element with title Map Location
+      1: DD element with the graphical map and a markers for the regions covered by the record
+  */
   var mapDetailLine = function () {
-    /*	mapsLoaded
-			Callback function for Google Loader.
-			Creates and configures the Map object once it is available.
-		*/
+
+    /*  Callback function for Google Loader.
+        Creates and configures the Map object once it is available.
+    */
     var mapsLoaded = function () {
       var options = {
         'mapTypeId': google.maps.MapTypeId.TERRAIN,

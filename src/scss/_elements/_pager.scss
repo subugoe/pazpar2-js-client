@@ -1,0 +1,95 @@
+.pz2-pager {
+    padding-top: 20px;
+    position: relative;
+
+    ol {
+        padding: 0;
+        display: inline;
+    }
+
+    li {
+       display: inline;
+       list-style-type: none;
+   }
+
+    .pz2-bottom {
+        clear: both;
+        padding-bottom: 20px;
+    }
+
+    .pz2-pageNumbers {
+        position: relative;
+        margin-right: 240px;
+        text-align: center;
+    }
+}
+
+.pz2-prev,
+.pz2-next {
+    display: inline-block;
+    position: relative;
+    top: 0.35em;
+    width: 14px;
+    height: 14px;
+    overflow: hidden;
+    text-indent: -100px;
+    font-family: Helvetica, Arial, sans-serif;
+
+    &::after {
+        position: absolute;
+        top: 0;
+        width: 14px;
+        height: 14px;
+        font-family: subicons;
+        font-size: 14px;
+        line-height: 10px;
+    }
+}
+
+.pz2-prev:after {
+    left: 59px;
+    content: '\e051'
+}
+
+.pz2-next:after {
+    left: 50px;
+    content: '\e053'
+}
+
+.pz2-pageCount-0 {
+    visibility: hidden;
+}
+
+.pz2-pager a,
+.pz2-prev,
+.pz2-next,
+.pz2-pagerGap {
+    padding: 0 0.3em;
+}
+
+.pz2-pager .pz2-currentPage {
+    font-weight: bold;
+    padding: 0.3em;
+}
+
+.pz2-recordCount {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    text-align: left;
+
+    &:hover {
+        font-weight: normal;
+        cursor: pointer;
+    }
+}
+
+.pz2-noJS .pz2-recordCount:hover {
+    cursor: auto;
+}
+
+.pz2-noResults {
+    font-size: 166%;
+    white-space: nowrap;
+    -webkit-transition: all 0.2s ease;
+}

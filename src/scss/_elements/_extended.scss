@@ -1,0 +1,25 @@
+.pz2-extended {
+    .pz2-searchField {
+        width: 250px; /* 400px - 130px - 20px to end up at the same total width as basic search */
+        margin-left: 20px;
+    }
+
+    .pz2-mainForm label.pz2-textFieldLabel {
+        display: block;
+        float: left;
+        width: 130px;
+        text-align: right;
+    }
+
+    .pz2-extraFields {
+        display: block;
+    }
+
+    .pz2-checkbox {
+        display: inline;
+        
+        label {
+            display: inline;            
+        }
+    }
+}

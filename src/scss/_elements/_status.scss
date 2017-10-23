@@ -1,0 +1,42 @@
+/* STATUS DISPLAY */
+#pz2-targetView {
+    position: absolute;
+    top: -20px;
+    right: 100px;
+    padding: 10px;
+    background: #fff;
+    border: 2px solid #eee;
+    box-shadow: 1px 1px 4px #666;
+    z-index: 100;
+    font-size: 85%;
+
+    td {
+        padding: 0 3px;
+        text-align: right;
+    }
+
+    th {
+        padding: 0 3px;
+        text-align: left;
+    }
+
+    thead,
+    caption {
+        background: #eee;
+        font-weight: bold;
+    }
+
+    .pz2-target-status {
+        min-width: 120px;
+    }
+}
+
+.pz2-accessNote {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    width: 220px;
+    font-style: italic;
+    text-align: right;
+    color: #999;
+}
