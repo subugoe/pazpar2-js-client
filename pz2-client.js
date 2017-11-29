@@ -60,7 +60,7 @@ function localise(term, externalDictionary) {
   }
 
   var languageCode = pageLanguage;
-  if (dictionary[pageLanguage] === null) {
+  if (dictionary[pageLanguage] === undefined || dictionary[pageLanguage] === null) {
     languageCode = 'en';
   }
 
